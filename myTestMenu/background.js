@@ -1,22 +1,4 @@
-/*
-Called when the item has been created, or when creation failed due to an error.
-We'll just log success/failure here.
-*/
-function onCreated() {
-  if (browser.runtime.lastError) {
-    console.log(`Error: ${browser.runtime.lastError}`);
-  } else {
-    console.log("Item created successfully");
-  }
-}
 
-/*
-Called when the item has been removed.
-We'll just log success here.
-*/
-function onRemoved() {
-  console.log("Item removed successfully");
-}
 
 /*
 Called when there was an error.
@@ -55,73 +37,24 @@ function getSelectionText() {
     return text;
 }
 
-/*
-Create all the context menu items.
-*/
-browser.menus.create({
-  id: "log-selection",
-  title: browser.i18n.getMessage("menuItemSelectionLogger"),
-  contexts: ["selection"]
-}, onCreated);
-
-browser.menus.create({
-  id: "remove-me",
-  title: browser.i18n.getMessage("menuItemRemoveMe"),
-  contexts: ["all"]
-}, onCreated);
+function sendMessageToTabs(tabs) {
 
 
-
-//TODO: Maybe make context only on selection??? not sure might be more annoying
-browser.menus.create({
-  id: "Open",
-  title: browser.i18n.getMessage("menuItemOpenMe"),
-  contexts: ["all"]
-}, onCreated);
-
-/*
-Set a colored border on the document in the given tab.
-
-Note that this only work on normal web pages, not special pages
-like about:debugging.
-*/
-var blue = 'document.body.style.border = "5px solid blue"';
-var green = 'document.body.style.border = "5px solid green"';
-
-function borderify(tabId, color) {
-  browser.tabs.executeScript(tabId, {
-    code: color
-  });
-}
-
-
-
-function open() {
-
-  console.log("open test");
-
-}
-
-/*
-The click event listener, where we perform the appropriate action given the
-ID of the menu item that was clicked.
-*/
-browser.menus.onClicked.addListener((info, tab) => {
-  switch (info.menuItemId) {
-    case "log-selection":
-      console.log(info.selectionText);
-      break;
-    case "remove-me":
-      var removing = browser.menus.remove(info.menuItemId);
-      removing.then(onRemoved, onError);
-      break;
-    
-    case "Open":
-      open();
-      break;
-   
-    case "tools-menu":
-      console.log("Clicked the tools menu item");
-      break;
+  for (let tab of tabs) {
+    console.log(tabs[0].id);
+    browser.tabs.sendMessage(
+      tab.id,
+      {greeting: "Hi from background script" + tab.id}
+    ).then(response => {
+      console.log("Message from the content script:");
+      console.log(response.response);
+    }).catch(onError);
   }
+}
+
+browser.browserAction.onClicked.addListener(() => {
+  browser.tabs.query({
+    //currentWindow: true,
+    active: true
+  }).then(sendMessageToTabs).catch(onError);
 });
