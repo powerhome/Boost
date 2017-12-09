@@ -26,11 +26,24 @@
     "48": "icons/page-48.png"
   },
 
+
+
+
+"commands": {
+    "test_command": {
+      "suggested_key": {
+        "default": "MacCtrl+B"
+      },
+      "description": "is just a test comamand"
+    }
+  },
+
   "sidebar_action": {
     "default_icon": "icons/page-32.png",
     "default_title" : "My sidebar",
     "default_panel": "",
     "browser_style": true
   }
+
 
 }

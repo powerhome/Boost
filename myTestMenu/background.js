@@ -26,6 +26,35 @@ function onError(error) {
   console.log(`Error: ${error}`);
 }
 
+
+
+/*
+Sets listeners for commands
+*/
+browser.commands.onCommand.addListener(function(command) {
+  if (command == "test_command")
+  {
+    console.log("Should show selected text:");
+    console.log(getSelectionText());
+  }
+});
+
+function getSelectionText() {
+    var text = "";
+    var activeEl = document.activeElement;
+    var activeElTagName = activeEl ? activeEl.tagName.toLowerCase() : null;
+    if (
+      (activeElTagName == "textarea") || (activeElTagName == "input" &&
+      /^(?:text|search|password|tel|url)$/i.test(activeEl.type)) &&
+      (typeof activeEl.selectionStart == "number")
+    ) {
+        text = activeEl.value.slice(activeEl.selectionStart, activeEl.selectionEnd);
+    } else if (window.getSelection) {
+        text = window.getSelection().toString();
+    }
+    return text;
+}
+
 /*
 Create all the context menu items.
 */
@@ -50,65 +79,6 @@ browser.menus.create({
   contexts: ["all"]
 }, onCreated);
 
-// browser.menus.create({
-//   id: "separator-1",
-//   type: "separator",
-//   contexts: ["all"]
-// }, onCreated);
-
-// browser.menus.create({
-//   id: "greenify",
-//   type: "radio",
-//   title: browser.i18n.getMessage("menuItemGreenify"),
-//   contexts: ["all"],
-//   checked: true,
-//   icons: {
-//     "16": "icons/paint-green-16.png",
-//     "32": "icons/paint-green-32.png"
-//   }
-// }, onCreated);
-
-// browser.menus.create({
-//   id: "bluify",
-//   type: "radio",
-//   title: browser.i18n.getMessage("menuItemBluify"),
-//   contexts: ["all"],
-//   checked: false,
-//   icons: {
-//     "16": "icons/paint-blue-16.png",
-//     "32": "icons/paint-blue-32.png"
-//   }
-// }, onCreated);
-
-// browser.menus.create({
-//   id: "separator-2",
-//   type: "separator",
-//   contexts: ["all"]
-// }, onCreated);
-
-// var checkedState = true;
-
-// browser.menus.create({
-//   id: "check-uncheck",
-//   type: "checkbox",
-//   title: browser.i18n.getMessage("menuItemUncheckMe"),
-//   contexts: ["all"],
-//   checked: checkedState
-// }, onCreated);
-
-// browser.menus.create({
-//   id: "open-sidebar",
-//   title: browser.i18n.getMessage("menuItemOpenSidebar"),
-//   contexts: ["all"],
-//   command: "_execute_sidebar_action"
-// }, onCreated);
-
-// browser.menus.create({
-//   id: "tools-menu",
-//   title: browser.i18n.getMessage("menuItemToolsMenu"),
-//   contexts: ["tools_menu"],
-// }, onCreated);
-
 /*
 Set a colored border on the document in the given tab.
 
@@ -124,26 +94,7 @@ function borderify(tabId, color) {
   });
 }
 
-/*
-Toggle checkedState, and update the menu item's title
-appropriately.
 
-Note that we should not have to maintain checkedState independently like
-this, but have to because Firefox does not currently pass the "checked"
-property into the event listener.
-*/
-function updateCheckUncheck() {
-  checkedState = !checkedState;
-  if (checkedState) {
-    browser.menus.update("check-uncheck", {
-      title: browser.i18n.getMessage("menuItemUncheckMe"),
-    });
-  } else {
-    browser.menus.update("check-uncheck", {
-      title: browser.i18n.getMessage("menuItemCheckMe"),
-    });
-  }
-}
 
 function open() {
 
@@ -164,21 +115,11 @@ browser.menus.onClicked.addListener((info, tab) => {
       var removing = browser.menus.remove(info.menuItemId);
       removing.then(onRemoved, onError);
       break;
-    case "bluify":
-      borderify(tab.id, blue);
-      break;
-    case "greenify":
-      borderify(tab.id, green);
-      break;
-    case "check-uncheck":
-      updateCheckUncheck();
-      break;
+    
     case "Open":
       open();
       break;
-    case "open-sidebar":
-      console.log("Opening my sidebar");
-      break;
+   
     case "tools-menu":
       console.log("Clicked the tools menu item");
       break;

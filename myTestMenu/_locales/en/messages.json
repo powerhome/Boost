@@ -50,8 +50,8 @@
   },
 
   "menuItemOpenMe": {
-    "message": "Open Me!",
-    "destruction": "Open the target item"
+    "message": "Open Me!!",
+    "description": "Open the target item"
   }
 
 }
