@@ -1,4 +1,4 @@
-console.log("hello this is a new test");
+console.log("hello this is a new test!");
 
 
 // function onGot(tabInfo) {
@@ -24,10 +24,19 @@ function testFunction(message) {
 };
 
 browser.runtime.onMessage.addListener(request => {
-  console.log("Message from the background script:");
- // console.log(request.greeting);
-  return Promise.resolve({response: "Hi from content script"});
+
+	doSomething();
+
+
+  	console.log("Message from the background script:");
+	console.log(request.greeting);
+  return Promise.resolve({answer: "Hi from content script"});
 });
-// function handler(message) {
-// 	console.log("test");
-// }
+
+
+function doSomething() {
+
+
+
+	console.log("doing something");
+}

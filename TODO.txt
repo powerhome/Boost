@@ -1,1 +1,4 @@
 annotate-page - example regarding sidebar
+
+
+Messaging works - look at code before messaging in  content script
