@@ -13,20 +13,36 @@ console.log("hello this is a new test!");
 // var gettingCurrent = browser.tabs.getCurrent();
 // gettingCurrent.then(onGot, onError);
 
+let title = document.getElementById("ctitle");
 
-function testFunction(message) {
+
+function testFunction() {
 
 
 	console.log("test function executed");
 
 
-	console.log(document.getElementById("ctitle").innerHTML);
+	//if() 
+//<
+
+
+	if( title.innerHTML.includes("This was a triumph!"))
+	{
+		title.innerHTML = title.innerHTML + "!";
+	}
+	else
+	{
+		title.innerHTML = "<a href=\"http://www.google.com\">This was a triumph!</a>";
+	}
+
+
 };
 
 browser.runtime.onMessage.addListener(request => {
 
 	doSomething();
 
+	testFunction();
 
   	console.log("Message from the background script:");
 	console.log(request.greeting);
@@ -36,7 +52,11 @@ browser.runtime.onMessage.addListener(request => {
 
 function doSomething() {
 
+	let items = document.querySelectorAll( ":hover" );
 
-
+	console.log(items[items.length - 1]);
 	console.log("doing something");
+
+
+	
 }
