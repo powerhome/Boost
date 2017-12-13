@@ -41,7 +41,6 @@ browser.browserAction.onClicked.addListener(() => {
 function sendMessageToTab(tab,msg) {
 
   console.log(tab.id);
-  console.log(tab.id);
 
     browser.tabs.sendMessage(
       tab.id,
@@ -52,26 +51,6 @@ function sendMessageToTab(tab,msg) {
     }).catch(onError);
 
 }
-
-
-function sendMessageToTabs(tabs) {
-
-  tab = tabs[0];
-
-  console.log(tab.id);
-
-    browser.tabs.sendMessage(
-      tab.id,
-      {greeting: "Hi from background script " + tab.id}
-    ).then(response => {
-      console.log("Message from the content script:");
-      console.log(response.answer);
-    }).catch(onError);
-
-}
-
-
-
 
 
 //TO BE USED LATER MAYBE

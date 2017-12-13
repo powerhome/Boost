@@ -1,24 +1,22 @@
 console.log("hello this is a new test!");
 
-
-// function onGot(tabInfo) {
-//   console.log(tabInfo);
-// }
-
-// function onError(error) {
-//   console.log(`Error: ${error}`);
-// }
+var homePatt = /H#\d{1,8}/;
 
 
-// var gettingCurrent = browser.tabs.getCurrent();
-// gettingCurrent.then(onGot, onError);
+//console.log(homePattern.test("H#100"));
+
+
+
+
+function onError(error) {
+  console.log(`Error: ${error}`);
+}
+
 
 let title = document.getElementById("ctitle");
 
 
 function testFunction() {
-
-
 	console.log("test function executed");
 
 	if(title != null) {
@@ -34,20 +32,7 @@ function testFunction() {
 	else {
 		console.log("title ctitle not found");
 	}
-
 }
-
-browser.runtime.onMessage.addListener(request => {
-
-	doSomething();
-
-	testFunction();
-
-  	console.log("Message from the background script:");
-	console.log(request.greeting);
-  return Promise.resolve({answer: "Hi from content script"});
-});
-
 
 function doSomething() {
 
@@ -57,7 +42,16 @@ function doSomething() {
 	}
 
 	console.log("doing something");
-
-
-	
 }
+
+browser.runtime.onMessage.addListener(request => {
+
+	// doSomething();
+	// testFunction();
+
+  	console.log("Message from the background script:");
+	console.log(request.greeting);
+  return Promise.resolve({answer: "Hi from content script"});
+});
+
+
