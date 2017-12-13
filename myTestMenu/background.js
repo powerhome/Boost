@@ -17,32 +17,42 @@ browser.commands.onCommand.addListener(function(command) {
   
   console.log("command pressed")
   
-  if(command == "test_command") {
-      browser.tabs.query({
-        //currentWindow: true,
-        active: true
-      }).then(sendMessageToTabs).catch(onError);
-}
-
-
-
+  browser.tabs.query({
+    //currentWindow: true,
+    active: true
+  }).then(tabs => sendMessageToTab(tabs[0], "Command Pressed")).catch(onError);
 });
 
-function getSelectionText() {
-    var text = "";
-    var activeEl = document.activeElement;
-    var activeElTagName = activeEl ? activeEl.tagName.toLowerCase() : null;
-    if (
-      (activeElTagName == "textarea") || (activeElTagName == "input" &&
-      /^(?:text|search|password|tel|url)$/i.test(activeEl.type)) &&
-      (typeof activeEl.selectionStart == "number")
-    ) {
-        text = activeEl.value.slice(activeEl.selectionStart, activeEl.selectionEnd);
-    } else if (window.getSelection) {
-        text = window.getSelection().toString();
-    }
-    return text;
+
+
+/*
+Sets listener for browser action
+*/
+browser.browserAction.onClicked.addListener(() => {
+  browser.tabs.query({
+    //currentWindow: true,
+    active: true
+  }).then(tabs => sendMessageToTab(tabs[0], "action clicked")).catch(onError);
+});
+
+
+
+
+function sendMessageToTab(tab,msg) {
+
+  console.log(tab.id);
+  console.log(tab.id);
+
+    browser.tabs.sendMessage(
+      tab.id,
+      {greeting: msg + " " + tab.id}
+    ).then(response => {
+      console.log("Message from the content script:");
+      console.log(response.answer);
+    }).catch(onError);
+
 }
+
 
 function sendMessageToTabs(tabs) {
 
@@ -60,9 +70,23 @@ function sendMessageToTabs(tabs) {
 
 }
 
-browser.browserAction.onClicked.addListener(() => {
-  browser.tabs.query({
-    //currentWindow: true,
-    active: true
-  }).then(sendMessageToTabs).catch(onError);
-});
+
+
+
+
+//TO BE USED LATER MAYBE
+function getSelectionText() {
+    var text = "";
+    var activeEl = document.activeElement;
+    var activeElTagName = activeEl ? activeEl.tagName.toLowerCase() : null;
+    if (
+      (activeElTagName == "textarea") || (activeElTagName == "input" &&
+      /^(?:text|search|password|tel|url)$/i.test(activeEl.type)) &&
+      (typeof activeEl.selectionStart == "number")
+    ) {
+        text = activeEl.value.slice(activeEl.selectionStart, activeEl.selectionEnd);
+    } else if (window.getSelection) {
+        text = window.getSelection().toString();
+    }
+    return text;
+}

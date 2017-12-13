@@ -21,22 +21,21 @@ function testFunction() {
 
 	console.log("test function executed");
 
-
-	//if() 
-//<
-
-
-	if( title.innerHTML.includes("This was a triumph!"))
-	{
-		title.innerHTML = title.innerHTML + "!";
+	if(title != null) {
+		if( title.innerHTML.includes("This was a triumph!"))
+		{
+			title.innerHTML = title.innerHTML + "!";
+		}
+		else
+		{
+			title.innerHTML = "<a href=\"http://www.google.com\">This was a triumph!</a>";
+		}
 	}
-	else
-	{
-		title.innerHTML = "<a href=\"http://www.google.com\">This was a triumph!</a>";
+	else {
+		console.log("title ctitle not found");
 	}
 
-
-};
+}
 
 browser.runtime.onMessage.addListener(request => {
 
@@ -53,8 +52,10 @@ browser.runtime.onMessage.addListener(request => {
 function doSomething() {
 
 	let items = document.querySelectorAll( ":hover" );
+	if(items.length > 0) {
+		console.log(items[items.length - 1]);
+	}
 
-	console.log(items[items.length - 1]);
 	console.log("doing something");
 
 
