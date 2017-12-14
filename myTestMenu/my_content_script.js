@@ -5,7 +5,7 @@ console.log("hello this is a new test!");
 
 
 var homePatt = /H#\d{1,8}/;
-var testPatt = /test/;
+var testPatt = /Content/i;
 
 console.log(homePatt.exec("H#100H#3182371234323423"));
 
@@ -90,13 +90,17 @@ function linkifyAtMouseover() {
 	let target = getMouseoverElement();
 
 
-	let text = target.innerHTML
+	let text = target.textContent;
 
+	console.log(text);
 	if( testPatt.test(text))
 	{
 		console.log("text matches at mouse over");
 	}
-
+	else
+	{
+		console.log("no match at mouse over");
+	}
 	
 }
 
