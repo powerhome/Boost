@@ -4,10 +4,7 @@ console.log("hello this is a new test!");
 // TODO document.URL 	Returns the complete URL of the document 
 
 
-var homePatt = /H#\d{1,8}/;
-var testPatt = /content/i;
-
-console.log(homePatt.exec("H#100H#3182371234323423"));
+var homePatt = /H#\d{1,8}/i;
 
 
 browser.runtime.onMessage.addListener(request => {
@@ -93,9 +90,19 @@ function linkifyAtMouseover() {
 	let text = target.textContent;
 
 	console.log(text);
-	if( testPatt.test(text))
+
+	var result = homePatt.exec(text);
+
+
+
+	var resultDiv = document.createElement("DIV");
+	resultDiv.innerHTML = result[0];
+
+	if(result !== null)
 	{
-		console.log("text matches at mouse over");
+
+		target.parentNode.insertBefore(resultDiv, target.nextSibling);
+		console.log("match found: " + result[0]);
 	}
 	else
 	{
