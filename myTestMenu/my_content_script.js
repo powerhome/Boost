@@ -5,7 +5,7 @@ console.log("hello this is a new test!");
 
 
 var homePatt = /H#\d{1,8}/;
-var testPatt = /Content/i;
+var testPatt = /content/i;
 
 console.log(homePatt.exec("H#100H#3182371234323423"));
 
