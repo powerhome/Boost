@@ -1,8 +1,7 @@
-const action_msg = "action pressed";
+const action_msg = "action clicked";
 const command_msg = "command pressed";
 
 console.log("BG Loaded");
-
 
 
 /*
@@ -19,7 +18,7 @@ function onError(error) {
 Sets listeners for commands
 */
 browser.commands.onCommand.addListener(function(command) {
-  
+
   console.log("command pressed")
   
   browser.tabs.query({
@@ -40,7 +39,7 @@ browser.browserAction.onClicked.addListener(() => {
   browser.tabs.query({
     currentWindow: true,
     active: true
-  }).then(tabs => sendMessageToTab(tabs[0], "test")).catch(onError);
+  }).then(tabs => sendMessageToTab(tabs[0], action_msg)).catch(onError);
 });
 
 
@@ -48,13 +47,12 @@ browser.browserAction.onClicked.addListener(() => {
 
 function sendMessageToTab(tab,msg) {
 
-  console.log(tab.id);
+  console.log(`sent: ${msg} to tab ${tab.id}`);
 
     browser.tabs.sendMessage(
       tab.id,
-      {greeting: msg + " " + tab.id}
+      {greeting:  msg}
     ).then(response => {
-      console.log("Message from the content script:");
       console.log(response.answer);
     }).catch(onError);
 
