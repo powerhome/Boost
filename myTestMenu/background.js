@@ -1,4 +1,9 @@
+const action_msg = "action pressed";
+const command_msg = "command pressed";
+
 console.log("BG Loaded");
+
+
 
 /*
 Called when there was an error.
@@ -18,9 +23,9 @@ browser.commands.onCommand.addListener(function(command) {
   console.log("command pressed")
   
   browser.tabs.query({
-    //currentWindow: true,
+    currentWindow: true,
     active: true
-  }).then(tabs => sendMessageToTab(tabs[0], "Command Pressed")).catch(onError);
+  }).then(tabs => sendMessageToTab(tabs[0], command_msg)).catch(onError);
 });
 
 
@@ -29,10 +34,13 @@ browser.commands.onCommand.addListener(function(command) {
 Sets listener for browser action
 */
 browser.browserAction.onClicked.addListener(() => {
+
+  console.log("action clicked");
+
   browser.tabs.query({
-    //currentWindow: true,
+    currentWindow: true,
     active: true
-  }).then(tabs => sendMessageToTab(tabs[0], "action clicked")).catch(onError);
+  }).then(tabs => sendMessageToTab(tabs[0], "test")).catch(onError);
 });
 
 
