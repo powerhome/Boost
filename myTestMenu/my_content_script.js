@@ -18,18 +18,17 @@ browser.runtime.onMessage.addListener(request => {
 	if(request.greeting == "action clicked")	
 	{
 		response += "action click recieved";
-		console.log("action msg good");
+		console.log("action click conf");
 	}
 	if(request.greeting == "command pressed")
 	{
 		response += "command pressed recieved";
-		addTextAtMouse();
-
-		console.log("command msg good");
+		//addTextAtMouse();
+		console.log("command press conf");
+		linkifyAtMouseover();
 	}
 
-  	console.log("Message from the background script:");
-	console.log(request.greeting);
+	console.log("from bg: " + request.greeting);
 	return Promise.resolve({answer: response});
 });
 
@@ -45,6 +44,8 @@ function getMouseoverElement() {
 	var items = document.querySelectorAll( ":hover" );
 		
 	if(items.length > 0) {
+
+		console.log("item at mouseover: ");
 		console.log(items[items.length - 1]);
 		return items[items.length - 1];
 	}
@@ -84,12 +85,14 @@ function testFunction() {
 //TODO
 function linkifyAtMouseover() {
 
+	console.log("Linkify running");
+
 	let target = getMouseoverElement();
 
 
 	let text = target.innerHTML
 
-	if( testPatt.matches(text))
+	if( testPatt.test(text))
 	{
 		console.log("text matches at mouse over");
 	}
@@ -102,7 +105,7 @@ function linkifyAtMouseover() {
 adds predefined span with "TEST" text before mouseover element
 */
 function addTextAtMouse() {
-	console.log("doing something");
+	console.log("add text at mouse running");
 
 	var resultLink = document.createElement("SPAN");
 	resultLink.appendChild(document.createTextNode("TEST"));
