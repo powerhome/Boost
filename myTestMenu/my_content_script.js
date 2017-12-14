@@ -52,33 +52,6 @@ function getMouseoverElement() {
 }
 
 
-function changeTitle() {
-	var title = document.getElementById("ctitle");
-
-	if(title !== null) {
-		if( title.innerHTML.includes("This was a triumph!"))
-		{
-			title.innerHTML = title.innerHTML + "!";
-		}
-		else
-		{
-			title.innerHTML = "<a href=\"http://www.google.com\">This was a triumph!</a>";
-		}
-	}
-	else {
-		console.log("title ctitle not found");
-	}
-}
-
-
-
-
-function testFunction() {
-	console.log("test function executed");
-	changeTitle();
-	
-}
-
 //TODO
 function linkifyAtMouseover() {
 
@@ -108,25 +81,6 @@ function linkifyAtMouseover() {
 	{
 		console.log("no match at mouse over");
 	}
-	
-}
-
-
-/*
-adds predefined span with "TEST" text before mouseover element
-*/
-function addTextAtMouse() {
-	console.log("add text at mouse running");
-
-	var resultLink = document.createElement("SPAN");
-	resultLink.appendChild(document.createTextNode("TEST"));
-	console.log(resultLink);
-
-	let target = getMouseoverElement();
-
-	target.insertBefore(resultLink, target.firstChild);
-	console.log($("#ctitle").text());
-	
 	
 }
 
