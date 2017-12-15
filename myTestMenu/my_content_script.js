@@ -68,6 +68,8 @@ function linkifyAtMouseover() {
 	
 	var links = linkifyHomes(matches);
 
+	console.log("Links: " + links);
+
 	for(let i = 0; i < matches.length; i++)
 	{
 		let item = matches[i];
@@ -104,9 +106,27 @@ function linkifyAtMouseover() {
 
 function linkifyHomes(homes)
 {
-	
+	console.log("Making links from homes");
+
+	linkedHomes = new Array(10);
+
+	//TODO ERROR HERE
+
+	for(let i = 0; i < homes.length; i++)
+	{
 
 
+		linkedhome = domain + "/homes/" + homes[i];
+
+		console.log(linkedHome);
+
+		linkedHomes.push(linkedHome);
+
+
+
+	}
+
+	return linkedHomes;	
 }
 
 /*
@@ -124,14 +144,13 @@ function getAllMatches(text) {
 function getMatchesFromText(text, pattern) {
 
 	let resultArray;
-	let numResults = 0;
 	let results = [];
 
 	while ((resultArray = pattern.exec(text)) !== null) {
 	  var msg = "Found " + resultArray[0] + ".  ";
 	  msg += "Next match starts at " + pattern.lastIndex;
-	  results[numResults] = resultArray[1];
-	  numResults++;
+	  results.push(resultArray[1]);
+	
 	  console.log(msg);
 	}
 
