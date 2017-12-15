@@ -1,10 +1,11 @@
-console.log("hello this is a new test!");
+console.log("Content Script Loaded");
+
+var domain = /https?:\/\/(?:www.)?\S*.com|file:\/\/\/\S*.html/i.exec(document.URL)[0];
+console.log("domain: " + domain);
 
 
-// TODO document.URL 	Returns the complete URL of the document 
 
-
-var homePatt = /H#\d{1,8}/i;
+var homePatt = /H#(\d{1,8})/ig;
 
 
 browser.runtime.onMessage.addListener(request => {
@@ -59,29 +60,99 @@ function linkifyAtMouseover() {
 
 	let target = getMouseoverElement();
 
-
 	let text = target.textContent;
-
 	console.log(text);
+	
+	//var result = homePatt.exec(text);
+	var matches = getAllMatches(text);
+	
+	var links = linkifyHomes(matches);
 
-	var result = homePatt.exec(text);
-
-
-
-	var resultDiv = document.createElement("DIV");
-	resultDiv.innerHTML = result[0];
-
-	if(result !== null)
+	for(let i = 0; i < matches.length; i++)
 	{
+		let item = matches[i];
+
+		let resultDiv = document.createElement("DIV");
+		console.log(item);
+		resultDiv.innerHTML = item;
 
 		target.parentNode.insertBefore(resultDiv, target.nextSibling);
-		console.log("match found: " + result[0]);
+
+
 	}
-	else
-	{
-		console.log("no match at mouse over");
-	}
+
+
+
+
+	
+	//
+	// if(result !== null)
+	// {
+
+	// 	
+	// 	console.log("match found: " + result[0]);
+	// }
+	// else
+	// {
+	// 	console.log("no match at mouse over");
+	// }
 	
 }
+
+
+
+
+function linkifyHomes(homes)
+{
+	
+
+
+}
+
+/*
+finds matches for all the patterns and returns them in one array
+*/
+function getAllMatches(text) {
+
+	//get home pattern matches
+	let homeResults = getMatchesFromText(text, homePatt);
+
+	console.log("results: " + homeResults);
+	return homeResults;
+}
+
+function getMatchesFromText(text, pattern) {
+
+	let resultArray;
+	let numResults = 0;
+	let results = [];
+
+	while ((resultArray = pattern.exec(text)) !== null) {
+	  var msg = "Found " + resultArray[0] + ".  ";
+	  msg += "Next match starts at " + pattern.lastIndex;
+	  results[numResults] = resultArray[1];
+	  numResults++;
+	  console.log(msg);
+	}
+
+
+	return results;
+
+}
+
+
+
+
+function linkifyResult(result){
+
+
+
+
+
+}
+
+
+
+
 
 
