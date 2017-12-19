@@ -4,13 +4,15 @@ var domain = /https?:\/\/(?:www.)?\S*.com|file:\/\/\/\S*.html/i.exec(document.UR
 
 var replaceWithNum = "#placeholder#";
 
+var className = "boostLink";
+
 
 var homePatt = /H#(\d{1,8})/ig;
 var phonePatt = /\(?(\d{3})\)?(?:\s|\-)*(\d{3})\-?(\d{4})/ig;
 //testing this
-var homePattern = new PatternLinker(homePatt, domain + "/homes/" + replaceWithNum);
+var homePattern = new PatternLinker(homePatt, domain + "/homes/" + replaceWithNum, "Home#: ");
 
-var phonePattern = new PatternLinker(phonePatt, domain + "/phones/" + replaceWithNum);
+var phonePattern = new PatternLinker(phonePatt, domain + "/phones/" + replaceWithNum, "Phone#: ");
 
 
 const patterns = {	home_pattern: homePattern, 
@@ -46,11 +48,13 @@ browser.runtime.onMessage.addListener(request => {
 
 /* 
 holds a regex pattern and the proper way to link to that item if it matches
+added: linkText to use when making link
 */ 
-function PatternLinker(pattern, link)
+function PatternLinker(pattern, link, linkText)
 {
 	this.pattern = pattern;
 	this.link = link;
+	this.linkText = linkText;
 }
 
 
@@ -62,7 +66,7 @@ function onError(error) {
 function checkTargetValid(elem)
 {
 
-	if(invalidTargets.includes(elem) || elem.tagName == "BODY"){
+	if(invalidTargets.includes(elem) || elem.tagName == "BODY" || elem.className.includes(className)){
 		return false;
 	}
 
@@ -94,20 +98,15 @@ function linkifyAtMouseover() {
 		console.log("Links: " + links.length + "\n Adding links to DOM");
 
 
+		// adds each of the links below the element where they were found
 		for(let i = 0; i < links.length; i++)
 		{
 			let item = links[i];
-			//wraps in link tag
-			item = linkify(item);
 
 			let resultDiv = document.createElement("DIV");
 			resultDiv.innerHTML = item;
-			//dont try to link one of the links added
-			invalidTargets.push(resultDiv);
 
 			target.parentNode.insertBefore(resultDiv, target.nextSibling);
-
-
 		}
 	}
 	else {
@@ -157,6 +156,9 @@ function getAllMatches(text) {
 			
 			//replace REPLACE WITH NUM in link for patt with num from matches
 			let res = thisPatt.link.replace(replaceWithNum, matches[i]);
+
+			res = linkify(res, thisPatt.linkText + matches[i]);
+
 			results.push(res);
 		}
 
@@ -209,9 +211,9 @@ function getMatchesFromText(text, pattern) {
 /*
 	takes a string and wraps it in a link tag
 */
-function linkify(link_address){
+function linkify(linkAddress, linkText){
 
-	result = "<a href =\"" + link_address + "\">" + link_address + "</a>";
+	result = "<a class=\"" + className + "\" href =\"" + linkAddress + "\">" + linkText + "</a>";
 
 	return result;
 }
