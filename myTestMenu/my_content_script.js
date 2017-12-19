@@ -1,8 +1,6 @@
 console.log("Content Script Loaded");
 
 var domain = /https?:\/\/(?:www.)?\S*.com|file:\/\/\/\S*.html/i.exec(document.URL)[0];
-console.log("domain: " + domain);
-
 
 var replaceWithNum = "#placeholder#";
 
@@ -24,7 +22,7 @@ const patterns = {	home_pattern: homePattern,
 
 
 browser.runtime.onMessage.addListener(request => {
-	console.log("listener code running:");
+	console.log("from bg: " + request.greeting);
 	
 	var response = "response: ";
 
@@ -41,7 +39,7 @@ browser.runtime.onMessage.addListener(request => {
 		linkifyAtMouseover();
 	}
 
-	console.log("from bg: " + request.greeting);
+
 	return Promise.resolve({answer: response});
 });
 
@@ -61,19 +59,6 @@ function onError(error) {
   console.log(`Error: ${error}`);
 }
 
-function getMouseoverElement() {
-	var items = document.querySelectorAll( ":hover" );
-		
-	if(items.length > 0) {
-
-		console.log("item at mouseover: ");
-		console.log(items[items.length - 1]);
-		return items[items.length - 1];
-	}
-
-	return null;
-
-}
 
 
 //TODO
@@ -84,7 +69,6 @@ function linkifyAtMouseover() {
 	let target = getMouseoverElement();
 
 	let text = target.textContent;
-	console.log(text);
 	
 	//var result = homePatt.exec(text);
 	//var matches = getAllMatches(text);
@@ -93,7 +77,7 @@ function linkifyAtMouseover() {
 
 	var links = getAllMatches(text);
 
-	console.log("Links: " + links);
+	console.log("Links: " + links.length + "\n Adding links to DOM");
 
 
 	for(let i = 0; i < links.length; i++)
@@ -101,7 +85,6 @@ function linkifyAtMouseover() {
 		let item = links[i];
 
 		let resultDiv = document.createElement("DIV");
-		console.log(item);
 		resultDiv.innerHTML = item;
 
 		target.parentNode.insertBefore(resultDiv, target.nextSibling);
@@ -110,6 +93,23 @@ function linkifyAtMouseover() {
 	}
 	
 }
+
+/*
+	returns the most specific element at the mouse
+*/
+function getMouseoverElement() {
+	var items = document.querySelectorAll( ":hover" );
+		
+	if(items.length > 0) {
+
+		console.log("item at mouseover: " + items[items.length - 1].tagName);
+		return items[items.length - 1];
+	}
+
+	return null;
+
+}
+
 
 
 
@@ -122,28 +122,25 @@ function getAllMatches(text) {
 	//accumulate all the matches
 	var results = [];
 
+	console.log("matching patterns");
 	for(patt in patterns) {
 		let thisPatt = patterns[patt];
 		//gets all the matches for the pattern in the text
-		console.log(thisPatt + " " + thisPatt.pattern);
 
 		matches = getMatchesFromText(text, thisPatt.pattern);
-		
-		console.log("matches for " + thisPatt.pattern + ": " + matches.length);
 
 		// for every match, replace the placeholder with the actual number
 		for(let i = 0; i < matches.length; i++)
 		{
-			console.log("attempting to fill link ");
+			
 			//replace REPLACE WITH NUM in link for patt with num from matches
 			let res = thisPatt.link.replace(replaceWithNum, matches[i]);
-			console.log("result of replacement: " + res);
 			results.push(res);
 		}
 
 	}
 
-	console.log("matches made: " + results);
+	console.log("matches made: " + results.length);
 	return results;
 }
 
@@ -170,13 +167,9 @@ function getMatchesFromText(text, pattern) {
 			result += resultArray[i];
 
 		  }
-
-		  	console.log(result);
-
-
 		  results.push(result);
 	
-		  console.log(msg);
+		  //console.log(msg);
 		}
 		else {
 			console.log("no matches");
