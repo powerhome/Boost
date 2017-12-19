@@ -10,7 +10,11 @@ var homePatt = /H#(\d{1,8})/ig;
 //testing this
 var homePattern = new PatternLinker(homePatt, domain + "/homes/" + replaceWithNum);
 
-var patterns = {"home_pattern": homePattern};
+const patterns = {	home_pattern: homePattern, 
+//todo fix
+	test_patt: new PatternLinker(/testpattNoMatch/ig,"thisisntareallink")
+					
+				};
 
 
 
@@ -79,15 +83,18 @@ function linkifyAtMouseover() {
 	console.log(text);
 	
 	//var result = homePatt.exec(text);
-	var matches = getAllMatches(text);
+	//var matches = getAllMatches(text);
 	
-	var links = linkifyHomes(matches);
+	//var links = linkifyHomes(matches);
+
+	var links = getAllMatches(text);
 
 	console.log("Links: " + links);
 
-	for(let i = 0; i < matches.length; i++)
+
+	for(let i = 0; i < links.length; i++)
 	{
-		let item = matches[i];
+		let item = links[i];
 
 		let resultDiv = document.createElement("DIV");
 		console.log(item);
@@ -97,96 +104,67 @@ function linkifyAtMouseover() {
 
 
 	}
-
-
-
-
-	
-	//
-	// if(result !== null)
-	// {
-
-	// 	
-	// 	console.log("match found: " + result[0]);
-	// }
-	// else
-	// {
-	// 	console.log("no match at mouse over");
-	// }
 	
 }
 
 
-
-
-function linkifyHomes(homes)
-{
-	console.log("Making links from homes");
-
-	linkedHomes = new Array(10);
-
-	//TODO ERROR HERE
-
-	for(let i = 0; i < homes.length; i++)
-	{
-
-
-		linkedhome = domain + "/homes/" + homes[i];
-
-		console.log(linkedHome);
-
-		linkedHomes.push(linkedHome);
-
-
-
-	}
-
-	return linkedHomes;	
-}
 
 /*
 finds matches for all the patterns and returns them in one array
 */
 function getAllMatches(text) {
-
+	console.log("Getting matches from text and making links");
 	var	matches = [];
-	var finalResults = [];
+	//accumulate all the matches
+	var results = [];
 
 	for(patt in patterns) {
+		let thisPatt = patterns[patt];
 		//gets all the matches for the pattern in the text
-		matches = getMatchesFromText(text, patt);
+		console.log(thisPatt + " " + thisPatt.pattern);
 
+		matches = getMatchesFromText(text, thisPatt.pattern);
+		
+		console.log("matches for " + thisPatt.pattern + ": " + matches.length);
+
+		// for every match, replace the placeholder with the actual number
 		for(let i = 0; i < matches.length; i++)
 		{
+			console.log("attempting to fill link ");
 			//replace REPLACE WITH NUM in link for patt with num from matches
-			matches[i].
+			let res = thisPatt.link.replace(replaceWithNum, matches[i]);
+			console.log("result of replacement: " + res);
+			results.push(res);
 		}
 
 	}
 
-
-
-
-
-//this bit works - blocking to try new pattern
-	// //get home pattern matches
-	// let homeResults = getMatchesFromText(text, homePatt);
-
-	// console.log("results: " + homeResults);
-	// return homeResults;
+	console.log("matches made: " + results);
+	return results;
 }
 
+/*
+	gets all the matches for pattern from text
+	returns the first capture group from the matches
+*/
 function getMatchesFromText(text, pattern) {
 
 	let resultArray;
 	let results = [];
 
+	//finds all the  matches in the text
 	while ((resultArray = pattern.exec(text)) !== null) {
-	  var msg = "Found " + resultArray[0] + ".  ";
-	  msg += "Next match starts at " + pattern.lastIndex;
-	  results.push(resultArray[1]);
+		if(resultArray !== null) {
+		  var msg = "Found " + resultArray[0] + ".  ";
+		  msg += "Next match starts at " + pattern.lastIndex;
+		  results.push(resultArray[1]);
 	
-	  console.log(msg);
+		  console.log(msg);
+		}
+		else {
+			console.log("no matches");
+		}
+
 	}
 
 
