@@ -5,26 +5,44 @@ var domain = /https?:\/\/(?:www.)?\S*.com|file:\/\/\/\S*.html/i.exec(document.UR
 var invalidTargets = [];
 
 var replaceWithNum = "#placeholder#";
-var className = "boostLink";
+var boostClassName = "boostLink";
 
 var patterns;
 
 (function setupPatterns() {
 	patterns = new Object();
 
-	var homePatt = /H#(\d{1,8})/ig;
-	var homePattern = new PatternLinker(homePatt, domain + "/homes/" + replaceWithNum, "Home#: ");
-	addPattern("home pattern", homePattern);
+	var homePatt = /H#(\d{1,8})/igm;
+	var homePatternLinker = new PatternLinker(homePatt, domain + "/homes/" + replaceWithNum, "Home#: ");
+	addPattern("home pattern", homePatternLinker);
 
-	var phonePatt = /\(?(\d{3})\)?(?:\s|\-)*(\d{3})\-?(\d{4})/ig;
-	var phonePattern = new PatternLinker(phonePatt, domain + "/phones/" + replaceWithNum, "Phone#: ");
-	addPattern("phone pattern", phonePattern);
+	var phonePatt = /\(?(\d{3})\)?(?:\s|\-)*(\d{3})\-?(\d{4})/igm;
+	var phonePatternLinker = new PatternLinker(phonePatt, domain + "/phones/" + replaceWithNum, "Phone#: ");
+	addPattern("phone pattern", phonePatternLinker);
 
-	//adds patterns to patterns obj
-	function addPattern(name, pattern)
+	var projPatt = /(?:^|\b)(3\d\-?\d{5})\b/igm;
+	var projPatternLinker = new PatternLinker(projPatt, domain + "/projs/" + replaceWithNum, "Project#: ");
+	addPattern("project pattern", projPatternLinker);
+
+
+
+	//adds patternlinkers to patterns obj
+	function addPattern(name, patternLinker)
 	{
-		patterns[name] = pattern;
+		patterns[name] = patternLinker;
 	}
+
+	/* 
+	holds a regex pattern and the proper way to link to that item if it matches
+	added: linkText to use when making link
+	*/ 
+	function PatternLinker(pattern, link, linkText)
+	{
+		this.pattern = pattern;
+		this.link = link;
+		this.linkText = linkText;
+	}
+
 })();
 
 
@@ -56,16 +74,6 @@ browser.runtime.onMessage.addListener(request => {
 });
 
 
-/* 
-holds a regex pattern and the proper way to link to that item if it matches
-added: linkText to use when making link
-*/ 
-function PatternLinker(pattern, link, linkText)
-{
-	this.pattern = pattern;
-	this.link = link;
-	this.linkText = linkText;
-}
 
 
 
@@ -75,8 +83,8 @@ function onError(error) {
 
 function checkTargetValid(elem)
 {
-
-	if(invalidTargets.includes(elem) || elem.tagName == "BODY" || elem.className.includes(className)){
+	if(invalidTargets.includes(elem) || elem.tagName == "BODY" || elem.className.includes(boostClassName)){
+		console.log("elem " + elem);
 		return false;
 	}
 
@@ -96,7 +104,7 @@ function linkifyAtMouseover() {
 
 	if(checkTargetValid(target)) {
 
-		let text = target.textContent;
+		let text = target.innerText;
 		
 		//var result = homePatt.exec(text);
 		//var matches = getAllMatches(text);
@@ -132,9 +140,10 @@ function getMouseoverElement() {
 	var items = document.querySelectorAll( ":hover" );
 		
 	if(items.length > 0) {
+		item = items[items.length - 1];
+		console.log("item at mouseover: " + item.tagName);
 
-		console.log("item at mouseover: " + items[items.length - 1].tagName);
-		return items[items.length - 1];
+		return item;
 	}
 
 	return null;
@@ -223,7 +232,7 @@ function getMatchesFromText(text, pattern) {
 */
 function linkify(linkAddress, linkText){
 
-	result = "<a target=\"_blank\" class=\"" + className + "\" href =\"" + linkAddress + "\">" + linkText + "</a>";
+	result = "<a target=\"_blank\" class=\"" + boostClassName + "\" href =\"" + linkAddress + "\">" + linkText + "</a>";
 
 	return result;
 }
