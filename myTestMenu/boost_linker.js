@@ -1,26 +1,36 @@
 console.log("Content Script Loaded");
 
 var domain = /https?:\/\/(?:www.)?\S*.com|file:\/\/\/\S*.html/i.exec(document.URL)[0];
+//targets not to hit with links
+var invalidTargets = [];
 
 var replaceWithNum = "#placeholder#";
-
 var className = "boostLink";
 
+var patterns;
 
-var homePatt = /H#(\d{1,8})/ig;
-var phonePatt = /\(?(\d{3})\)?(?:\s|\-)*(\d{3})\-?(\d{4})/ig;
-//testing this
-var homePattern = new PatternLinker(homePatt, domain + "/homes/" + replaceWithNum, "Home#: ");
+(function setupPatterns() {
+	patterns = new Object();
 
-var phonePattern = new PatternLinker(phonePatt, domain + "/phones/" + replaceWithNum, "Phone#: ");
+	var homePatt = /H#(\d{1,8})/ig;
+	var homePattern = new PatternLinker(homePatt, domain + "/homes/" + replaceWithNum, "Home#: ");
+	addPattern("home pattern", homePattern);
+
+	var phonePatt = /\(?(\d{3})\)?(?:\s|\-)*(\d{3})\-?(\d{4})/ig;
+	var phonePattern = new PatternLinker(phonePatt, domain + "/phones/" + replaceWithNum, "Phone#: ");
+	addPattern("phone pattern", phonePattern);
+
+	//adds patterns to patterns obj
+	function addPattern(name, pattern)
+	{
+		patterns[name] = pattern;
+	}
+})();
 
 
-const patterns = {	home_pattern: homePattern, 
-//todo fix
-	phone_pattern: phonePattern					
-				};
 
-var invalidTargets = [];
+
+
 
 
 browser.runtime.onMessage.addListener(request => {
@@ -213,7 +223,7 @@ function getMatchesFromText(text, pattern) {
 */
 function linkify(linkAddress, linkText){
 
-	result = "<a class=\"" + className + "\" href =\"" + linkAddress + "\">" + linkText + "</a>";
+	result = "<a target=\"_blank\" class=\"" + className + "\" href =\"" + linkAddress + "\">" + linkText + "</a>";
 
 	return result;
 }
