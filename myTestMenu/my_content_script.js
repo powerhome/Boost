@@ -18,7 +18,7 @@ const patterns = {	home_pattern: homePattern,
 	phone_pattern: phonePattern					
 				};
 
-
+var invalidTargets = [];
 
 
 browser.runtime.onMessage.addListener(request => {
@@ -59,6 +59,18 @@ function onError(error) {
   console.log(`Error: ${error}`);
 }
 
+function checkTargetValid(elem)
+{
+
+	if(invalidTargets.includes(elem) || elem.tagName == "BODY"){
+		return false;
+	}
+
+	invalidTargets.push(elem);
+	return true;
+
+
+}
 
 
 //TODO
@@ -68,28 +80,38 @@ function linkifyAtMouseover() {
 
 	let target = getMouseoverElement();
 
-	let text = target.textContent;
-	
-	//var result = homePatt.exec(text);
-	//var matches = getAllMatches(text);
-	
-	//var links = linkifyHomes(matches);
+	if(checkTargetValid(target)) {
 
-	var links = getAllMatches(text);
+		let text = target.textContent;
+		
+		//var result = homePatt.exec(text);
+		//var matches = getAllMatches(text);
+		
+		//var links = linkifyHomes(matches);
 
-	console.log("Links: " + links.length + "\n Adding links to DOM");
+		var links = getAllMatches(text);
 
-
-	for(let i = 0; i < links.length; i++)
-	{
-		let item = links[i];
-
-		let resultDiv = document.createElement("DIV");
-		resultDiv.innerHTML = item;
-
-		target.parentNode.insertBefore(resultDiv, target.nextSibling);
+		console.log("Links: " + links.length + "\n Adding links to DOM");
 
 
+		for(let i = 0; i < links.length; i++)
+		{
+			let item = links[i];
+			//wraps in link tag
+			item = linkify(item);
+
+			let resultDiv = document.createElement("DIV");
+			resultDiv.innerHTML = item;
+			//dont try to link one of the links added
+			invalidTargets.push(resultDiv);
+
+			target.parentNode.insertBefore(resultDiv, target.nextSibling);
+
+
+		}
+	}
+	else {
+		console.log("Invalid Target");
 	}
 	
 }
@@ -184,13 +206,14 @@ function getMatchesFromText(text, pattern) {
 
 
 
+/*
+	takes a string and wraps it in a link tag
+*/
+function linkify(link_address){
 
-function linkifyResult(result){
+	result = "<a href =\"" + link_address + "\">" + link_address + "</a>";
 
-
-
-
-
+	return result;
 }
 
 

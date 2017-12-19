@@ -25,7 +25,7 @@
 
   "content_scripts": [
     {
-      "exclude_globs": ["*nitro*"],
+      "exclude_globs": ["*power*"],
       "matches": ["*://*/*","file://*/*"],
       "js": ["jquery.js", "my_content_script.js"]
     }
