@@ -4,8 +4,15 @@ var domain = /https?:\/\/(?:www.)?\S*.com|file:\/\/\/\S*.html/i.exec(document.UR
 console.log("domain: " + domain);
 
 
+var replaceWithNum = "#placeholder#";
 
 var homePatt = /H#(\d{1,8})/ig;
+//testing this
+var homePattern = new PatternLinker(homePatt, domain + "/homes/" + replaceWithNum);
+
+var patterns = {"home_pattern": homePattern};
+
+
 
 
 browser.runtime.onMessage.addListener(request => {
@@ -31,6 +38,14 @@ browser.runtime.onMessage.addListener(request => {
 });
 
 
+/* 
+holds a regex pattern and the proper way to link to that item if it matches
+*/ 
+function PatternLinker(pattern, link)
+{
+	this.pattern = pattern;
+	this.link = link;
+}
 
 
 
@@ -134,11 +149,31 @@ finds matches for all the patterns and returns them in one array
 */
 function getAllMatches(text) {
 
-	//get home pattern matches
-	let homeResults = getMatchesFromText(text, homePatt);
+	var	matches = [];
+	var finalResults = [];
 
-	console.log("results: " + homeResults);
-	return homeResults;
+	for(patt in patterns) {
+		//gets all the matches for the pattern in the text
+		matches = getMatchesFromText(text, patt);
+
+		for(let i = 0; i < matches.length; i++)
+		{
+			//replace REPLACE WITH NUM in link for patt with num from matches
+			matches[i].
+		}
+
+	}
+
+
+
+
+
+//this bit works - blocking to try new pattern
+	// //get home pattern matches
+	// let homeResults = getMatchesFromText(text, homePatt);
+
+	// console.log("results: " + homeResults);
+	// return homeResults;
 }
 
 function getMatchesFromText(text, pattern) {
