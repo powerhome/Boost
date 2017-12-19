@@ -6,14 +6,18 @@ console.log("domain: " + domain);
 
 var replaceWithNum = "#placeholder#";
 
+
 var homePatt = /H#(\d{1,8})/ig;
+var phonePatt = /\(?(\d{3})\)?(?:\s|\-)*(\d{3})\-?(\d{4})/ig;
 //testing this
 var homePattern = new PatternLinker(homePatt, domain + "/homes/" + replaceWithNum);
 
+var phonePattern = new PatternLinker(phonePatt, domain + "/phones/" + replaceWithNum);
+
+
 const patterns = {	home_pattern: homePattern, 
 //todo fix
-	test_patt: new PatternLinker(/testpattNoMatch/ig,"thisisntareallink")
-					
+	phone_pattern: phonePattern					
 				};
 
 
@@ -157,7 +161,20 @@ function getMatchesFromText(text, pattern) {
 		if(resultArray !== null) {
 		  var msg = "Found " + resultArray[0] + ".  ";
 		  msg += "Next match starts at " + pattern.lastIndex;
-		  results.push(resultArray[1]);
+
+		  result = "";
+
+		  for(let i = 1; typeof resultArray[i] !== 'undefined'; i++)
+		  {
+
+			result += resultArray[i];
+
+		  }
+
+		  	console.log(result);
+
+
+		  results.push(result);
 	
 		  console.log(msg);
 		}
