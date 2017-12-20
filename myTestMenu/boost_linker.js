@@ -28,6 +28,9 @@ invalidTargets.push(document.body);
 	var projPatternLinker = new PatternLinker(projPatt, domain + "/projects?&q[project_number_eq]=" + replaceWithNum, "Project#: ");
 	addPattern("project pattern", projPatternLinker);
 
+	var apptPatt = /(?:A#|\s|^)([0-2|4-9]\d{3,7})\b/igm;
+	var apptPatternLinker = new PatternLinker(apptPatt, domain + "/homes?homes_filter[lead_id_cond]=eq&homes_filter[lead_id]=" + replaceWithNum, "Appt #: ");
+	addPattern("appointment pattern", apptPatternLinker);
 
 
 	//adds patternlinkers to patterns obj
