@@ -3,12 +3,16 @@ console.log("Content Script Loaded");
 var domain = /https?:\/\/(?:www.)?\S*.com|file:\/\/\/\S*.html/i.exec(document.URL)[0];
 //targets not to hit with links
 var invalidTargets = [];
-
 var replaceWithNum = "#placeholder#";
-var boostClassName = "boostLink";
-
 var patterns;
 
+(function setup() {
+
+//dont let body be a target
+invalidTargets.push(document.body);
+
+//sets up the patterns used to match for links
+//stored in patterns var
 (function setupPatterns() {
 	patterns = new Object();
 
@@ -45,7 +49,7 @@ var patterns;
 
 })();
 
-
+//sets up listener to get command press from BG Script
 browser.runtime.onMessage.addListener(request => {
 	console.log("from bg: " + request.greeting);
 	
@@ -69,66 +73,62 @@ browser.runtime.onMessage.addListener(request => {
 });
 
 
-
+})();
 
 
 function onError(error) {
   console.log(`Error: ${error}`);
 }
 
+//checks to see that the target is valid
+//only can check one, sets to invalid if value currently
 function checkTargetValid(elem)
 {
-	if(invalidTargets.includes(elem) ){//|| elem.className.includes(boostClassName)){
+	if(invalidTargets.includes(elem) ){
 		console.log("invalid elem: " + elem);
 		return false;
 	}
 
 	invalidTargets.push(elem);
 	return true;
-
-
 }
 
 
-//TODO
+/**
+	Gets the most specific html element at the mouse
+	pulls all the children elements of that element
+	Adds links after elem if they contain text that match a pattern set in setup
+	Sets all nodes to invalid targets once they are visited once to avoid dups
+*/
 function linkifyAtMouseover() {
 
 	console.log("Linkify running");
 
 	let target = getMouseoverElement();
-
-	console.log(target);
 	var nextArray = [];
-
 	nextArray.push(target);
-
-	console.log(nextArray.length);
 
 	while(nextArray.length > 0)
 	{
-
 		let node = nextArray.pop();
-
-		console.log("While loop start: " + node.nodeType);
 
 		if(node.nodeType == Node.ELEMENT_NODE && checkTargetValid(node))
 		{
 			let children = node.childNodes;
 
+			//adds the children nodes of current node that need to be checked
 			children.forEach( function(currentChild, currentIndex, children) {
 				let type = currentChild.nodeType;
 				if(type == Node.ELEMENT_NODE || type == Node.TEXT_NODE)
 				{
-
 					nextArray.push(currentChild);
 				}
-
 			}, 'thisArg');
 	
 		}
 		else if (node.nodeType == Node.TEXT_NODE && checkTargetValid(node))
 		{
-			let links = linkifyTextNode(node);
+			let links = linksFromText(node.nodeValue);
 
 			for(let i = 0; i < links.length; i++) {
 
@@ -144,76 +144,9 @@ function linkifyAtMouseover() {
 				//puts the div and the link elems into invalid targets so you cant make links from links
 				invalidTargets.push(thisDiv);
 				invalidTargets.push(thisDiv.childNodes[0]);
-
 			}
-
 		}
-	}
-
-
-
-//	linkifyTarget(target);
-	
-	
-}
-
-function linkifyTextNode(node) {
-
-	console.log("linkifying node maybe");
-
-	if(true) {//checkTargetValid(node)) {
-
-		console.log("target is good");
-
-		let text = node.nodeValue;
-
-		var links = getAllMatches(text);
-
-
-	
-		return links;
-	}
-	else {
-		console.log("Invalid Target");
-	}
-}
-
-
-/**
-	Takes a element and matches patterns in it
-*/
-function linkifyTarget(target) {
-	if(checkTargetValid(target)) {
-
-
-		let text = target.textContent;
-		
-		//var result = homePatt.exec(text);
-		//var matches = getAllMatches(text);
-		
-		//var links = linkifyHomes(matches);
-
-		var links = getAllMatches(text);
-
-		console.log("Links: " + links.length + "\n Adding links to DOM");
-
-
-		// adds each of the links below the element where they were found
-		for(let i = 0; i < links.length; i++)
-		{
-			let item = links[i];
-
-			let resultDiv = document.createElement("DIV");
-			resultDiv.innerHTML = item;
-
-			target.parentNode.insertBefore(resultDiv, target.nextSibling);
-		}
-	}
-	else {
-		console.log("Invalid Target");
-	}
-
-
+	}	
 }
 
 /*
@@ -233,13 +166,10 @@ function getMouseoverElement() {
 
 }
 
-
-
-
 /*
-finds matches for all the patterns and returns them in one array
+	Checks all patterns in patterns obj against text and returns links for those matches
 */
-function getAllMatches(text) {
+function linksFromText(text) {
 	console.log("Getting matches from text and making links");
 	var	matches = [];
 	//accumulate all the matches
@@ -268,57 +198,50 @@ function getAllMatches(text) {
 
 	console.log("matches made: " + results.length);
 	return results;
-}
 
-/*
-	gets all the matches for pattern from text
-	returns the first capture group from the matches
-*/
-function getMatchesFromText(text, pattern) {
+	/*
+		gets all the matches for pattern from text
+		returns a concatenation of the capture groups for the patter
+		assumes that the capture group collectively concat to the proper number
+	*/
+	function getMatchesFromText(text, pattern) {
 
-	let resultArray;
-	let results = [];
+		let resultArray;
+		let results = [];
 
-	//finds all the  matches in the text
-	while ((resultArray = pattern.exec(text)) !== null) {
-		if(resultArray !== null) {
-		  var msg = "Found " + resultArray[0] + ".  ";
-		  msg += "Next match starts at " + pattern.lastIndex;
+		//finds all the  matches in the text
+		while ((resultArray = pattern.exec(text)) !== null) {
+			if(resultArray !== null) {
 
-		  result = "";
+			  result = "";
 
-		  for(let i = 1; typeof resultArray[i] !== 'undefined'; i++)
-		  {
+			  for(let i = 1; typeof resultArray[i] !== 'undefined'; i++)
+			  {
+				result += resultArray[i];
 
-			result += resultArray[i];
-
-		  }
-		  results.push(result);
-	
-		  //console.log(msg);
+			  }
+			  results.push(result);
+			}
+			else {
+				console.log("no matches");
+			}
 		}
-		else {
-			console.log("no matches");
-		}
-
+		return results;
 	}
 
+	/*
+		takes a string and wraps it in a link tag
+	*/
+	function linkify(linkAddress, linkText){
 
-	return results;
+		result = "<a target=\"_blank\" href =\"" + linkAddress + "\">" + linkText + "</a>";
 
+		return result;
+	}
 }
 
 
 
-/*
-	takes a string and wraps it in a link tag
-*/
-function linkify(linkAddress, linkText){
-
-	result = "<a target=\"_blank\" class=\"" + boostClassName + "\" href =\"" + linkAddress + "\">" + linkText + "</a>";
-
-	return result;
-}
 
 
 
