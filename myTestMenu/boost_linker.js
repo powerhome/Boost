@@ -21,11 +21,11 @@ invalidTargets.push(document.body);
 	addPattern("home pattern", homePatternLinker);
 
 	var phonePatt = /\(?(\d{3})\)?(?:\s|\-)*(\d{3})\-?(\d{4})/igm;
-	var phonePatternLinker = new PatternLinker(phonePatt, domain + "/phones/" + replaceWithNum, "Phone#: ");
+	var phonePatternLinker = new PatternLinker(phonePatt, domain + "/homes?page=1&homes_filter[phone_number_cond]=eq&homes_filter[phone_number]=" + replaceWithNum, "Phone#: ");
 	addPattern("phone pattern", phonePatternLinker);
 
 	var projPatt = /(?:^|\b)(3\d\-?\d{5})\b/igm;
-	var projPatternLinker = new PatternLinker(projPatt, domain + "/projs/" + replaceWithNum, "Project#: ");
+	var projPatternLinker = new PatternLinker(projPatt, domain + "/projects?&q[project_number_eq]=" + replaceWithNum, "Project#: ");
 	addPattern("project pattern", projPatternLinker);
 
 
