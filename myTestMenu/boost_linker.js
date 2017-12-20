@@ -46,11 +46,6 @@ var patterns;
 })();
 
 
-
-
-
-
-
 browser.runtime.onMessage.addListener(request => {
 	console.log("from bg: " + request.greeting);
 	
@@ -83,8 +78,8 @@ function onError(error) {
 
 function checkTargetValid(elem)
 {
-	if(invalidTargets.includes(elem) || elem.tagName == "BODY" || elem.className.includes(boostClassName)){
-		console.log("elem " + elem);
+	if(invalidTargets.includes(elem) ){//|| elem.className.includes(boostClassName)){
+		console.log("invalid elem: " + elem);
 		return false;
 	}
 
@@ -103,7 +98,7 @@ function linkifyAtMouseover() {
 	let target = getMouseoverElement();
 
 	console.log(target);
-	nextArray = [];
+	var nextArray = [];
 
 	nextArray.push(target);
 
@@ -116,17 +111,24 @@ function linkifyAtMouseover() {
 
 		console.log("While loop start: " + node.nodeType);
 
-		if(node.nodeType == Node.ELEMENT_NODE)
+		if(node.nodeType == Node.ELEMENT_NODE && checkTargetValid(node))
 		{
-			console.log(node.childNodes);
-			Array.prototype.push.apply(nextArray, node.childNodes);
-		}
-		else if (node.nodeType == Node.TEXT_NODE)
-		{
-			console.log("Text Node!!");
-			let links = linkifyTextNode(node);
+			let children = node.childNodes;
 
-			console.log("Got links");
+			children.forEach( function(currentChild, currentIndex, children) {
+				let type = currentChild.nodeType;
+				if(type == Node.ELEMENT_NODE || type == Node.TEXT_NODE)
+				{
+
+					nextArray.push(currentChild);
+				}
+
+			}, 'thisArg');
+	
+		}
+		else if (node.nodeType == Node.TEXT_NODE && checkTargetValid(node))
+		{
+			let links = linkifyTextNode(node);
 
 			for(let i = 0; i < links.length; i++) {
 
@@ -135,11 +137,13 @@ function linkifyAtMouseover() {
 
 				thisDiv.innerHTML = item;
 
+				//inserts the new div after the current text nodes parent elem
+				//right after the element that you mouseovered
 				node.parentNode.parentNode.insertBefore(thisDiv, node.parentNode.nextSibling);
 
+				//puts the div and the link elems into invalid targets so you cant make links from links
 				invalidTargets.push(thisDiv);
-				invalidTargets.push(node.parentNode);
-
+				invalidTargets.push(thisDiv.childNodes[0]);
 
 			}
 
@@ -157,7 +161,7 @@ function linkifyTextNode(node) {
 
 	console.log("linkifying node maybe");
 
-	if(checkTargetValid(node.parentNode)) {
+	if(true) {//checkTargetValid(node)) {
 
 		console.log("target is good");
 
