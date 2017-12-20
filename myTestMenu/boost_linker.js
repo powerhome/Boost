@@ -102,9 +102,87 @@ function linkifyAtMouseover() {
 
 	let target = getMouseoverElement();
 
+	console.log(target);
+	nextArray = [];
+
+	nextArray.push(target);
+
+	console.log(nextArray.length);
+
+	while(nextArray.length > 0)
+	{
+
+		let node = nextArray.pop();
+
+		console.log("While loop start: " + node.nodeType);
+
+		if(node.nodeType == Node.ELEMENT_NODE)
+		{
+			console.log(node.childNodes);
+			Array.prototype.push.apply(nextArray, node.childNodes);
+		}
+		else if (node.nodeType == Node.TEXT_NODE)
+		{
+			console.log("Text Node!!");
+			let links = linkifyTextNode(node);
+
+			console.log("Got links");
+
+			for(let i = 0; i < links.length; i++) {
+
+				let item = links[i];
+				let thisDiv = document.createElement("DIV");
+
+				thisDiv.innerHTML = item;
+
+				node.parentNode.parentNode.insertBefore(thisDiv, node.parentNode.nextSibling);
+
+				invalidTargets.push(thisDiv);
+				invalidTargets.push(node.parentNode);
+
+
+			}
+
+		}
+	}
+
+
+
+//	linkifyTarget(target);
+	
+	
+}
+
+function linkifyTextNode(node) {
+
+	console.log("linkifying node maybe");
+
+	if(checkTargetValid(node.parentNode)) {
+
+		console.log("target is good");
+
+		let text = node.nodeValue;
+
+		var links = getAllMatches(text);
+
+
+	
+		return links;
+	}
+	else {
+		console.log("Invalid Target");
+	}
+}
+
+
+/**
+	Takes a element and matches patterns in it
+*/
+function linkifyTarget(target) {
 	if(checkTargetValid(target)) {
 
-		let text = target.innerText;
+
+		let text = target.textContent;
 		
 		//var result = homePatt.exec(text);
 		//var matches = getAllMatches(text);
@@ -130,7 +208,8 @@ function linkifyAtMouseover() {
 	else {
 		console.log("Invalid Target");
 	}
-	
+
+
 }
 
 /*
