@@ -1,0 +1,8 @@
+.BLresult {
+
+		maxWidth: 150px;
+		minWidth: 150px;
+		borderWidth: 0px 0px 0px 5px;
+		borderStyle: solid;
+		borderColor: 0072ce;
+}
