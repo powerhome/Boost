@@ -3,6 +3,32 @@
 
 */
 
-body {
-	border: 5px solid;
+
+.BLresult {
+	border-width: 0px 0px 0px 0px;
+	border-style: none none none none;
+	min-width: 130px;
+	max-width: 25%;
+	padding-bottom: 3px;
+
+	background: rgb(0, 114, 206);
+
+}
+
+
+.BLtitle {
+
+	padding-left: 3px;
+	font-size: .75em;
+	font-weight: 600;
+	color: white;
+}
+
+.BLitems {
+	padding: 0px 3px;
+	margin: 0px 3px;
+	font-size: .8em;
+	background: white;
+	border-radius: 3px;
+
 }

@@ -171,14 +171,17 @@ function linkifyAtMouseover() {
 	function buildResultDiv() {
 
 		let resultDiv = document.createElement("DIV");
+		resultDiv.className = "BLresult";
 
 		let title = document.createElement("DIV");
+		title.className = "BLtitle";
 		title.innerHTML = "Boosted Links:";
 		invalidTargets.push(title);
 
 		resultDiv.appendChild(title);
 
 		let itemsDiv = document.createElement("DIV");
+		itemsDiv.className = "BLitems";
 		invalidTargets.push(itemsDiv);
 		resultDiv.appendChild(itemsDiv);
 
