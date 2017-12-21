@@ -27,8 +27,8 @@
     {
       "exclude_globs": ["*power*"],
       "matches": ["*://*/*","file://*/*"],
-      "js": ["boost_linker.js"]
-
+      "js": ["boost_linker.js"],
+      "css": ["linker.css"]
     }
 
   ],
