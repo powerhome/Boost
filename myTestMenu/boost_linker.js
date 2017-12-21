@@ -20,7 +20,7 @@ invalidTargets.push(document.body);
 	var homePatternLinker = new PatternLinker(homePatt, domain + "/homes/" + replaceWithNum, "Home#: ");
 	addPattern("home pattern", homePatternLinker);
 
-	var phonePatt = /\(?(\d{3})\)?(?:\s|\-)*(\d{3})\-?(\d{4})/igm;
+	var phonePatt = /\(?(\d{3})\)?(?: |\-)*(\d{3})\-?(\d{4})/igm;
 	var phonePatternLinker = new PatternLinker(phonePatt, domain + "/homes?page=1&homes_filter[phone_number_cond]=eq&homes_filter[phone_number]=" + replaceWithNum, "Phone#: ");
 	addPattern("phone pattern", phonePatternLinker);
 
@@ -28,10 +28,13 @@ invalidTargets.push(document.body);
 	var projPatternLinker = new PatternLinker(projPatt, domain + "/projects?&q[project_number_eq]=" + replaceWithNum, "Project#: ");
 	addPattern("project pattern", projPatternLinker);
 
-	var apptPatt = /(?:A#|\s|^)([0-2|4-9]\d{3,7})\b/igm;
+	var apptPatt = /(?:^|\s|[^ht]#)([0-2|4-9])(\d{4,7})\b/igm;
 	var apptPatternLinker = new PatternLinker(apptPatt, domain + "/homes?homes_filter[lead_id_cond]=eq&homes_filter[lead_id]=" + replaceWithNum, "Appt #: ");
 	addPattern("appointment pattern", apptPatternLinker);
 
+	var ticketPatt = /\b(?:t(?:icket)? ?#? ?)(\d+)\b/igm;
+	var ticketPatternLinker = new PatternLinker(ticketPatt, domain + "/support/tickets/" + replaceWithNum, "Ticket #:");
+	addPattern("ticket pattern", ticketPatternLinker);
 
 	//adds patternlinkers to patterns obj
 	function addPattern(name, patternLinker)
@@ -110,9 +113,12 @@ function linkifyAtMouseover() {
 	let target = getMouseoverElement();
 	var nextArray = [];
 	nextArray.push(target);
+	let resultDiv = buildResultDiv();
+	let matchFound = false;
 
 	while(nextArray.length > 0)
 	{
+		
 		let node = nextArray.pop();
 
 		if(node.nodeType == Node.ELEMENT_NODE && checkTargetValid(node))
@@ -132,24 +138,57 @@ function linkifyAtMouseover() {
 		else if (node.nodeType == Node.TEXT_NODE && checkTargetValid(node))
 		{
 			let links = linksFromText(node.nodeValue);
+			
 
 			for(let i = 0; i < links.length; i++) {
-
+				matchFound = true;
 				let item = links[i];
 				let thisDiv = document.createElement("DIV");
 
 				thisDiv.innerHTML = item;
 
-				//inserts the new div after the current text nodes parent elem
-				//right after the element that you mouseovered
-				node.parentNode.parentNode.insertBefore(thisDiv, node.parentNode.nextSibling);
+				//inserts the matched link in the result div
+				addToResult(resultDiv, thisDiv);
+				
 
 				//puts the div and the link elems into invalid targets so you cant make links from links
 				invalidTargets.push(thisDiv);
 				invalidTargets.push(thisDiv.childNodes[0]);
 			}
+		
+
 		}
+
+
+
 	}	
+
+	if(matchFound){
+		target.parentNode.insertBefore(resultDiv, target.nextSibling);
+	}
+	invalidTargets.push(resultDiv);
+
+	function buildResultDiv() {
+
+		let resultDiv = document.createElement("DIV");
+
+		let title = document.createElement("DIV");
+		title.innerHTML = "Boosted Links:";
+		invalidTargets.push(title);
+
+		resultDiv.appendChild(title);
+
+		let itemsDiv = document.createElement("DIV");
+		invalidTargets.push(itemsDiv);
+		resultDiv.appendChild(itemsDiv);
+
+		return resultDiv
+	}
+
+	function addToResult(resultDiv, elem)
+	{
+		resultDiv.childNodes[1].appendChild(elem);
+	}
 }
 
 /*
@@ -192,7 +231,7 @@ function linksFromText(text) {
 			//replace REPLACE WITH NUM in link for patt with num from matches
 			let res = thisPatt.link.replace(replaceWithNum, matches[i]);
 
-			res = linkify(res, thisPatt.linkText + matches[i]);
+			res = thisPatt.linkText + linkify(res,  matches[i]);
 
 			results.push(res);
 		}
