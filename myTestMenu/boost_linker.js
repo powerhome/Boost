@@ -27,7 +27,7 @@ var patternLinkerContainer;
 		var projPatternLinker = new PatternLinker(/(?:^|\b)(3\d)\-?(\d{5})\b/igm, domain + "projects?q[project_number_eq]=" + placeholder, "Project#: ");
 		addPattern("project pattern", projPatternLinker);
 
-		var apptPatternLinker = new PatternLinker(/(?:^|\s|[^ht]#)([0-2|4-9])(\d{4,7})\b/igm, domain + "homes?homes_filter[lead_id_cond]=eq&homes_filter[lead_id]=" + placeholder, "Appt #: ");
+		var apptPatternLinker = new PatternLinker(/(?:^|\s|[^ht]#)([0-2|4-9]\d{4,7})\b/igm, domain + "homes?homes_filter[lead_id_cond]=eq&homes_filter[lead_id]=" + placeholder, "Appt #: ");
 		addPattern("appointment pattern", apptPatternLinker);
 
 		var ticketPatternLinker = new PatternLinker(/\b(?:t(?:icket)? ?#? ?)(\d+)\b/igm, domain + "support/tickets/" + placeholder, "Ticket #:");
