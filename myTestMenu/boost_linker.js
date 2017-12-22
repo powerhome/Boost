@@ -86,9 +86,9 @@ function onError(error) {
   console.log(`Error: ${error}`);
 }
 
-//checks to see that the target is valid
-//only can check one, sets to invalid if value currently
-function checkTargetValid(elem)
+//checks to see that a node is valid
+//if it is, adds to list so it wont be again
+function validateNode(elem)
 {
 	if(invalidTargets.includes(elem) ){
 		console.log("invalid elem: " + elem);
@@ -111,79 +111,67 @@ function linkifyAtMouseover() {
 	console.log("Linkify running");
 
 	let target = getMouseoverElement();
-	var nextArray = [];
-	nextArray.push(target);
+	let nextArray = [target];
 	let resultDiv = buildResultDiv();
-	let matchFound = false;
 
+	//loops through nodes -elem get children, text check for matches
 	while(nextArray.length > 0)
 	{
-		
+
 		let node = nextArray.pop();
+		if(!validateNode(node)) node = false; //if node is not valid, dont eval the rest
+			switch(node.nodeType) {
 
-		if(node.nodeType == Node.ELEMENT_NODE && checkTargetValid(node))
-		{
-			let children = node.childNodes;
-
-			//adds the children nodes of current node that need to be checked
-			children.forEach( function(currentChild, currentIndex, children) {
-				let type = currentChild.nodeType;
-				if(type == Node.ELEMENT_NODE || type == Node.TEXT_NODE)
-				{
-					nextArray.push(currentChild);
+				case Node.ELEMENT_NODE: {
+					let children = node.childNodes;
+					//adds the children nodes of current node that need to be checked
+					children.forEach( function(currentChild, currentIndex, children) {
+						//elem = 1, text = 3, 2 depricated. checks that node is good to use
+						if(currentChild.nodeType <= 3)
+						{
+							nextArray.push(currentChild);
+						}
+					});
+					break;
 				}
-			}, 'thisArg');
-	
-		}
-		else if (node.nodeType == Node.TEXT_NODE && checkTargetValid(node))
-		{
-			let links = linksFromText(node.nodeValue);
 			
+				case Node.TEXT_NODE: {
+					let links = linksFromText(node.nodeValue);
+					
+					for(let i = 0; i < links.length; i++) {
+						let thisDiv = document.createElement("DIV");
+						thisDiv.innerHTML = links[i];
 
-			for(let i = 0; i < links.length; i++) {
-				matchFound = true;
-				let item = links[i];
-				let thisDiv = document.createElement("DIV");
-
-				thisDiv.innerHTML = item;
-
-				//inserts the matched link in the result div
-				addToResult(resultDiv, thisDiv);
-				
-
-				//puts the div and the link elems into invalid targets so you cant make links from links
-				invalidTargets.push(thisDiv);
-				invalidTargets.push(thisDiv.childNodes[0]);
-			}
-		
-
-		}
-
-
-
-	}	
-
-	if(matchFound){
+						//inserts the matched link in the result div
+						addToResult(resultDiv, thisDiv);
+						
+						//puts the div and the link elems into invalid targets so you cant make links from links
+						invalidTargets.push(thisDiv);
+						invalidTargets.push(thisDiv.childNodes[1]);
+					}
+					break;
+				}
+			}	//switch
+	}	//while
+	if(resultDiv.childNodes[1].firstChild !== null){ //if any links have been added
 		target.parentNode.insertBefore(resultDiv, target.nextSibling);
 	}
-	invalidTargets.push(resultDiv);
 
 	function buildResultDiv() {
-
 		let resultDiv = document.createElement("DIV");
 		resultDiv.className = "BLresult";
+		invalidTargets.push(resultDiv);
 
 		let title = document.createElement("DIV");
 		title.className = "BLtitle";
-		title.innerHTML = "Boosted Links:";
-		invalidTargets.push(title);
-
+		title.innerHTML = "Boost Links:";
 		resultDiv.appendChild(title);
+		invalidTargets.push(title);
 
 		let itemsDiv = document.createElement("DIV");
 		itemsDiv.className = "BLitems";
-		invalidTargets.push(itemsDiv);
 		resultDiv.appendChild(itemsDiv);
+		invalidTargets.push(itemsDiv);
 
 		return resultDiv
 	}
@@ -206,9 +194,7 @@ function getMouseoverElement() {
 
 		return item;
 	}
-
 	return null;
-
 }
 
 /*
@@ -216,16 +202,15 @@ function getMouseoverElement() {
 */
 function linksFromText(text) {
 	console.log("Getting matches from text and making links");
-	var	matches = [];
+	
 	//accumulate all the matches
 	var results = [];
 
-	console.log("matching patterns");
+	//patterns holds the patterns to match AND the link to fill with the match
 	for(patt in patterns) {
 		let thisPatt = patterns[patt];
-		//gets all the matches for the pattern in the text
 
-		matches = getMatchesFromText(text, thisPatt.pattern);
+		let matches = getMatchesFromText(text, thisPatt.pattern);
 
 		// for every match, replace the placeholder with the actual number
 		for(let i = 0; i < matches.length; i++)
@@ -240,7 +225,6 @@ function linksFromText(text) {
 		}
 
 	}
-
 	console.log("matches made: " + results.length);
 	return results;
 
@@ -256,26 +240,21 @@ function linksFromText(text) {
 
 		//finds all the  matches in the text
 		while ((resultArray = pattern.exec(text)) !== null) {
-			if(resultArray !== null) {
-
 			  result = "";
 
+			  //index 1,2,3... correspond to capture groups
 			  for(let i = 1; typeof resultArray[i] !== 'undefined'; i++)
 			  {
 				result += resultArray[i];
 
 			  }
 			  results.push(result);
-			}
-			else {
-				console.log("no matches");
-			}
 		}
 		return results;
 	}
 
 	/*
-		takes a string and wraps it in a link tag
+		Takes an address and text for link and builds the tag accordingly
 	*/
 	function linkify(linkAddress, linkText){
 

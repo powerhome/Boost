@@ -10,6 +10,7 @@
 	min-width: 130px;
 	max-width: 25%;
 	padding-bottom: 3px;
+	font-family: "Proxima Nova";
 
 	background: rgb(0, 114, 206);
 
@@ -20,7 +21,7 @@
 
 	padding-left: 3px;
 	font-size: .75em;
-	font-weight: 600;
+	font-weight: 550;
 	color: white;
 }
 
