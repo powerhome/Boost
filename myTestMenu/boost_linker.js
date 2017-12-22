@@ -16,21 +16,21 @@ var patternLinkerContainer;
 
 		let patternLinkers = new Object();
 		
-		let domain = /https?:\/\/(?:www.)?\S*.com|file:\/\/\/\S*.html/i.exec(document.URL)[0];
+		let domain = /https?:\/\/(?:www.)?\S{1,30}.com\/|file:\/\/\/\S*.html/i.exec(document.URL)[0];
 
-		var homePatternLinker = new PatternLinker(/H#(\d{1,8})/igm, domain + "/homes/" + placeholder, "Home#: ");
+		var homePatternLinker = new PatternLinker(/H#(\d{1,8})/igm, domain + "homes/" + placeholder, "Home#: ");
 		addPattern("home pattern", homePatternLinker);
 
-		var phonePatternLinker = new PatternLinker(/\(?(\d{3})\)?(?: |\-)*(\d{3})\-?(\d{4})/igm, domain + "/homes?page=1&homes_filter[phone_number_cond]=eq&homes_filter[phone_number]=" + placeholder, "Phone#: ");
+		var phonePatternLinker = new PatternLinker(/\(?(\d{3})\)?(?: |\-)*(\d{3})\-?(\d{4})/igm, domain + "homes?page=1&homes_filter[phone_number_cond]=eq&homes_filter[phone_number]=" + placeholder, "Phone#: ");
 		addPattern("phone pattern", phonePatternLinker);
 
-		var projPatternLinker = new PatternLinker(/(?:^|\b)(3\d\-?\d{5})\b/igm, domain + "/projects?q[project_number_eq]=" + placeholder, "Project#: ");
+		var projPatternLinker = new PatternLinker(/(?:^|\b)(3\d)\-?(\d{5})\b/igm, domain + "projects?q[project_number_eq]=" + placeholder, "Project#: ");
 		addPattern("project pattern", projPatternLinker);
 
-		var apptPatternLinker = new PatternLinker(/(?:^|\s|[^ht]#)([0-2|4-9])(\d{4,7})\b/igm, domain + "/homes?homes_filter[lead_id_cond]=eq&homes_filter[lead_id]=" + placeholder, "Appt #: ");
+		var apptPatternLinker = new PatternLinker(/(?:^|\s|[^ht]#)([0-2|4-9])(\d{4,7})\b/igm, domain + "homes?homes_filter[lead_id_cond]=eq&homes_filter[lead_id]=" + placeholder, "Appt #: ");
 		addPattern("appointment pattern", apptPatternLinker);
 
-		var ticketPatternLinker = new PatternLinker(/\b(?:t(?:icket)? ?#? ?)(\d+)\b/igm, domain + "/support/tickets/" + placeholder, "Ticket #:");
+		var ticketPatternLinker = new PatternLinker(/\b(?:t(?:icket)? ?#? ?)(\d+)\b/igm, domain + "support/tickets/" + placeholder, "Ticket #:");
 		addPattern("ticket pattern", ticketPatternLinker);
 
 		//store patternLinkers in PLC
@@ -226,6 +226,7 @@ function linksFromText(text) {
 			  //index 1,2,3... correspond to capture groups in regex
 			  for(let i = 1; typeof resultArray[i] !== 'undefined'; i++)
 			  {
+			  	if(i == 2) { result += "-"; }
 				result += resultArray[i];
 
 			  }

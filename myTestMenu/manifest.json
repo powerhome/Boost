@@ -25,7 +25,7 @@
 
   "content_scripts": [
     {
-      "exclude_globs": [],
+      "exclude_globs": [""],
       "matches": ["*://*/*","file://*/*"],
       "js": ["boost_linker.js"],
       "css": ["linker.css"]
