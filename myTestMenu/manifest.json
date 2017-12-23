@@ -34,14 +34,17 @@
   ],
 
 
-  
   "browser_action": {
   "default_icon": {
     "16": "icons/paint-blue-16.png"
     },
     "default_title": "BOOST"
   },
-  
+
+  "sidebar_action": {
+    "default_panel": "side_bar.html",
+    "default_icon": "icons/paint-blue-16.png"
+  },  
 
 
   "icons": {
@@ -56,6 +59,11 @@
         "default": "MacCtrl+B"
       },
       "description": "is just a test comamand"
+    },
+    "_execute_sidebar_action": {
+      "suggested_key": {
+        "default": "MacCtrl+Z"
+      }
     }
   }
 

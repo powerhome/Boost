@@ -19,7 +19,7 @@ Sets listeners for commands
 */
 browser.commands.onCommand.addListener(function(command) {
 
-  console.log("command pressed")
+  console.log(command);
   
   browser.tabs.query({
     currentWindow: true,
