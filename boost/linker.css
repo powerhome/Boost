@@ -34,3 +34,9 @@
 	border-radius: 3px;
 
 }
+
+.SBtitle {
+	margin: 0 0 3px 0;
+	color: white;
+	background: rgb(0, 114, 206);
+}
