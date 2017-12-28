@@ -1,36 +1,45 @@
 # menu-demo
 
-A demo of the [menus API](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/menus/).
+WIP of boost for a particular web page
 
-**This add-on injects JavaScript into web pages. The `addons.mozilla.org` domain disallows this operation, so this add-on will not work properly when it's run on pages in the `addons.mozilla.org` domain.**
 
-**This add-on uses the `menus` namespace to access the functions it needs to create menu items. Note that Chrome, Edge, and Opera all use the `contextMenus` namespace for this, so this extension will not work in these browsers. For compatibility with these browsers, Firefox also offers the `contextMenus` namespace, so to make this extension work with other browsers, use `contextMenus`.**
+## how to
+The default key to active is MacCommand B, this is set in the manifest.
+The script listens for this command and when found, checks the text at the target element on the page
+In the target element and its children, if a match is found against one of the patterns, a link is created to that item.
 
 ## What it does
 
-This add-on adds several items to the browser's context menu:
-
-* one shown when there is a selection in the page, that logs the selected text
-to the browser console when clicked.
-* one shown in all contexts, that is removed when clicked.
-* two "radio" items that are shown in all contexts.
-These items are grouped using a separator item on each side.
-One radio item adds a blue border to the page, the other adds a green border.
-Note that these buttons only work on normal web pages, not special pages
-like about:debugging.
-* one "checkbox" item, shown in all contexts, whose title is updated when the
-item is clicked.
-* one item that uses the "commands" property to open the add-on's sidebar.
-
-It also adds one item to the browser's "Tools" menu.
+This Addon finds common patterns various things(projects, homes, phone numbers) and creates an easily clicked link related to that number.
 
 ## What it shows
 
-* How to create various types of menu item:
-  * normal
-  * radio
-  * separator
-  * checkbox
-* How to use contexts to control when an item appears.
-* How to update an item's properties.
-* How to remove an item.
+a link to the item it found in text.
+
+## how the pattern linker object is structed 
+
+patternLinkerContainer: {
+	
+	//when trying to find a match, this obj is iterated over. Each pattern is checked against the target
+	//text, when matches are found, links are build using the related link and link text
+	patternLinkers: {
+		"some pattern linker": {
+			pattern: Regex pattern,
+			link: link text to fill,
+			linkText: link text to display
+		},
+
+		"some other pattern linker": {
+			pattern: Regex pattern,
+			link: link text to fill,
+			linkText: link text to display
+		}
+	},
+
+	//text put into link to be replaced when pattern is matched
+	placeholder: "#placeholder#",
+
+	//domain of the site, used to build link
+	domain: domain_pulled_from_page
+
+}
