@@ -17,6 +17,7 @@ var patternLinkerContainer;
 		let patternLinkers = new Object();
 		
 		let domain = /https?:\/\/(?:www.)?\S{1,30}.com\/|file:\/\/\/\S*.html/i.exec(document.URL)[0];
+		patternLinkerContainer["domain"] = domain;
 
 		var homePatternLinker = new PatternLinker(/H#(\d{1,8})/igm, domain + "homes/" + placeholder, "Home#: ");
 		addPattern("home pattern", homePatternLinker);
