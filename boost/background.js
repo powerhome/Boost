@@ -12,7 +12,31 @@ function onError(error) {
   console.log(`Error: ${error}`);
 }
 
+/*
+  adds a listener to messages
+*/
+browser.runtime.onMessage.addListener(request => {
 
+    console.log("msg recieved: " + request.greeting);
+    var response = "response: ";
+
+    switch(request.greeting) {
+      case "hello from sidebar":  
+        response += "hi from bg";
+        console.log("val received: " + request.value);
+        break;
+      case "command pressed":
+        response += "command pressed recieved";
+        //addTextAtMouse();
+        console.log("command press conf");
+        break;
+      default:
+        response += "unknown message";
+        console.log("unknown message: " + request.greeting);
+        break;
+    }
+    return Promise.resolve({answer: response});
+  });
 
 /*
 Sets listeners for commands

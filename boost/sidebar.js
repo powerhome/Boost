@@ -18,6 +18,7 @@ window.onload = () =>  {
 */
 function formSubmitted(form)
 {
+	browser.runtime.sendMessage({greeting: "hello from sidebar", value: form.childNodes[1].value});
 	console.log("processing " + form.name);
 	console.log(form.childNodes[1].value);
 
