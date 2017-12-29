@@ -9,6 +9,15 @@ function onError(error) {
 }
 
 window.onload = () =>  {
+
+	browser.runtime.sendMessage({greeting: "test", value: 5}
+		).then(response => {
+      console.log(response.response);
+    }).catch(onError);
+
+
+
+
 	let form = document.getElementById('smart_search');
 	form.onsubmit = e => {
 
@@ -28,7 +37,7 @@ function formSubmitted(form)
 {
 	browser.runtime.sendMessage({greeting: "hello from sidebar", value: form.childNodes[1].value}
 		).then(response => {
-      console.log(response.answer);
+      console.log(response.response);
     }).catch(onError);
 
 	console.log("processing " + form.name);

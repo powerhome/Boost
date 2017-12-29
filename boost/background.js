@@ -70,19 +70,31 @@ console.log(patternLinkerContainer);
 browser.runtime.onMessage.addListener(request => {
 
     console.log("msg recieved: " + request.greeting);
+    let answer = new Object();
     var response = "response: ";
 
     switch(request.greeting) {
       case "hello from sidebar":  
-        response += "hi from bg";
+        response = "hi from bg";
         console.log("val received: " + request.value);
         break;
+
+        case "test":  
+        response = "returning patt linker con";
+        answer["patternLinkerContainer"] = patternLinkerContainer;
+        console.log(response);
+        break;
+
+
+
       default:
         response += "unknown message";
         console.log("unknown message: " + request.greeting);
         break;
     }
-    return Promise.resolve({answer: response});
+
+    answer["response"] = response;
+    return Promise.resolve(answer);
   });
 
 /*
