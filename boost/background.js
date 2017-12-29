@@ -82,7 +82,7 @@ browser.runtime.onMessage.addListener(request => {
         case "get PLC":  
         response += "returning patt linker con";
         answer["patternLinkerContainer"] = patternLinkerContainer;
-        console.log(response);
+        console.log("BG"+response);
         break;
 
 
@@ -107,7 +107,8 @@ browser.commands.onCommand.addListener(function(command) {
   browser.tabs.query({
     currentWindow: true,
     active: true
-  }).then(tabs => sendMessageToTab(tabs[0], command_msg)).catch(onError);
+  }).then(tabs =>
+    sendMessageToTab(tabs[0], command_msg).catch(onError));
 });
 
 
@@ -129,6 +130,7 @@ browser.browserAction.onClicked.addListener(() => {
 
 
 function sendMessageToTab(tab,msg) {
+
 
   console.log(`sent: ${msg} to tab ${tab.id}`);
 

@@ -1,65 +1,21 @@
-console.log("Content Script Loaded");
+console.log("Content Script Loade 1d");
 
 //targets not to hit with links
 var invalidTargets = [];
 var patternLinkerContainer;
 
-(function setup() {
+
+/*
+	Sets up the listeners and fetches the PLC from bg
+*/
+(function () {
+	console.log("setup");
 	invalidTargets.push(document.body);
-
-	//patternLinkerContainer holds all the patterns, links, thier text, and the placeholder val for numbers
-	(function setupPatternLinkers() {
-
-		patternLinkerContainer = new Object();
-		let placeholder = "#placeholder#";
-		patternLinkerContainer["placeholder"] = placeholder;
-
-		let patternLinkers = new Object();
-		
-		let domain = /https?:\/\/(?:www.)?\S{1,30}.com\/|file:\/\/\/\S*.html/i.exec(document.URL)[0];
-		patternLinkerContainer["domain"] = domain;
-
-		var homePatternLinker = new PatternLinker(/H#(\d{1,8})/igm, domain + "homes/" + placeholder, "Home#: ");
-		addPattern("home pattern", homePatternLinker);
-
-		var phonePatternLinker = new PatternLinker(/\(?(\d{3})\)?(?: |\-)*(\d{3})\-?(\d{4})/igm, domain + "homes?page=1&homes_filter[phone_number_cond]=eq&homes_filter[phone_number]=" + placeholder, "Phone#: ");
-		addPattern("phone pattern", phonePatternLinker);
-
-		var projPatternLinker = new PatternLinker(/(?:^|\b)(3\d)\-?(\d{5})\b/igm, domain + "projects?q[project_number_eq]=" + placeholder, "Project#: ");
-		addPattern("project pattern", projPatternLinker);
-
-		var apptPatternLinker = new PatternLinker(/(?:^|\s|[^ht]#)([0-2|4-9]\d{4,7})\b/igm, domain + "homes?homes_filter[lead_id_cond]=eq&homes_filter[lead_id]=" + placeholder, "Appt #: ");
-		addPattern("appointment pattern", apptPatternLinker);
-
-		var ticketPatternLinker = new PatternLinker(/\b(?:t(?:icket)? ?#? ?)(\d+)\b/igm, domain + "support/tickets/" + placeholder, "Ticket #:");
-		addPattern("ticket pattern", ticketPatternLinker);
-
-		//store patternLinkers in PLC
-		patternLinkerContainer["patternLinkers"] = patternLinkers;
-
-		//adds patternlinkers to patternLinkers obj
-		function addPattern(name, patternLinker)
-		{
-			patternLinkers[name] = patternLinker;
-		}
-
-		/* 
-		holds a regex pattern and the proper way to link to that item if it matches
-		added: linkText to use when making link
-		*/ 
-		function PatternLinker(pattern, link, linkText)
-		{
-			this.pattern = pattern;
-			this.link = link;
-			this.linkText = linkText;
-		}
-
-	})();
 
 	//sets up listener to get command press from BG Script
 	browser.runtime.onMessage.addListener(request => {
 		console.log("from bg: " + request.greeting);
-		var response = "response: ";
+		let response = "response: ";
 
 		switch(request.greeting) {
 			case "action clicked":	
@@ -79,8 +35,20 @@ var patternLinkerContainer;
 		}
 		return Promise.resolve({answer: response});
 	});
+
+	//gets the pattern linker to use from the BG script
+	browser.runtime.sendMessage({greeting: "get PLC", value: 5}
+		).then(response => {
+      console.log(response.response);
+      patternLinkerContainer = response.patternLinkerContainer;
+      console.log(patternLinkerContainer);
+
+    }).catch(onError);
+
 	console.log("Setup complete");
+
 })();
+
 
 //checks to see that a node is valid
 //if it is, adds to list so it wont be again
