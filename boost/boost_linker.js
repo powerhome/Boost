@@ -4,6 +4,13 @@ console.log("Content Script Loade 1d");
 var invalidTargets = [];
 var patternLinkerContainer;
 
+/*
+Called when there was an error.
+We'll just log the error here.
+*/
+function onError(error) {
+  console.log(`Error: ${error}`);
+}
 
 /*
 	Sets up the listeners and fetches the PLC from bg
@@ -15,12 +22,13 @@ var patternLinkerContainer;
 	//sets up listener to get command press from BG Script
 	browser.runtime.onMessage.addListener(request => {
 		console.log("from bg: " + request.greeting);
+		let answer = new Object();
 		let response = "response: ";
 
 		switch(request.greeting) {
 			case "action clicked":	
-				response += "action click recieved";
-				console.log("action click conf");
+				response = getDomain();
+				console.log("action click conf - returning domain");
 				break;
 			case "command pressed":
 				response += "command pressed recieved";
@@ -28,26 +36,39 @@ var patternLinkerContainer;
 				console.log("command press conf");
 				linkifyAtMouseover();
 				break;
+			case "sending PLC":
+				console.log(request.obj);
+				patternLinkerContainer = request.obj;
+				response += "got PLC";
+				break;
 			default:
 				response += "unknown message";
 				console.log("unknown message recieved");
 				break;
 		}
-		return Promise.resolve({answer: response});
+		answer["response"] = response;
+		console.log(response);
+		return Promise.resolve(answer);
 	});
 
 	//gets the pattern linker to use from the BG script
-	browser.runtime.sendMessage({greeting: "get PLC", value: 5}
+	browser.runtime.sendMessage({greeting: "get PLC"}
 		).then(response => {
-      console.log(response.response);
       patternLinkerContainer = response.patternLinkerContainer;
-      console.log(patternLinkerContainer);
 
     }).catch(onError);
 
 	console.log("Setup complete");
 
 })();
+
+function getDomain() {
+	let domain = /https?:\/\/(?:www.)?\S{1,30}.com\/|file:\/\/\/\S*.html/i.exec(document.URL)[0];
+	console.log(domain);
+	return domain;
+
+
+}
 
 
 //checks to see that a node is valid
@@ -94,10 +115,7 @@ function linkifyAtMouseover() {
 					});
 					break;
 				case Node.TEXT_NODE: 
-					console.log("test");
 					let links = linksFromText(node.nodeValue);
-					console.log("test");
-					
 					for(let i = 0; i < links.length; i++) {
 						let thisDiv = document.createElement("DIV");
 						thisDiv.innerHTML = links[i];
@@ -207,8 +225,8 @@ function linksFromText(text) {
 	/*
 		Takes an address and text for link and builds the tag accordingly
 	*/
-	function linkify(linkAddress, linkText) {
-		result = "<a target=\"_blank\" href =\"" + linkAddress + "\">" + linkText + "</a>";
+	function linkify(linkAddress, textToLink) {
+		result = "<a target=\"_blank\" href =\"" + linkAddress + "\">" + textToLink + "</a>";
 
 		return result;
 	}

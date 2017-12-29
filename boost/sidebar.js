@@ -12,12 +12,9 @@ var patternLinkerContainer;
 
 window.onload = () =>  {
 
-	browser.runtime.sendMessage({greeting: "get PLC", value: 5}
+	browser.runtime.sendMessage({greeting: "get PLC"}
 		).then(response => {
-      console.log(response.response);
       patternLinkerContainer = response.patternLinkerContainer;
-      console.log(patternLinkerContainer);
-
     }).catch(onError);
 
 

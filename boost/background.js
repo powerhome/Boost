@@ -1,5 +1,6 @@
 const action_msg = "action clicked";
 const command_msg = "command pressed";
+const sending_pattern_msg = "sending PLC";
 
 console.log("BG Loaded");
 
@@ -12,57 +13,56 @@ function onError(error) {
   console.log(`Error: ${error}`);
 }
 
-var patternLinkerContainer;
+var patternLinkerContainer = false;
 
-(function setupPatternLinkers() {
+//sets up pattern linker using domain 
+function setupPatternLinkers(newDomain) {
 
-    patternLinkerContainer = new Object();
-    let placeholder = "#placeholder#";
-    patternLinkerContainer["placeholder"] = placeholder;
+  patternLinkerContainer = new Object();
+  let placeholder = "#placeholder#";
+  patternLinkerContainer["placeholder"] = placeholder;
 
-    let patternLinkers = new Object();
-    
-    let domain = "test";//https?:\/\/(?:www.)?\S{1,30}.com\/|file:\/\/\/\S*.html/i.exec(document.URL)[0];
-    patternLinkerContainer["domain"] = domain;
+  let patternLinkers = new Object();
+  
+  let domain = newDomain;//https?:\/\/(?:www.)?\S{1,30}.com\/|file:\/\/\/\S*.html/i.exec(document.URL)[0];
+  patternLinkerContainer["domain"] = domain;
 
-    var homePatternLinker = new PatternLinker(/H#(\d{1,8})/igm, domain + "homes/" + placeholder, "Home#: ");
-    addPattern("home pattern", homePatternLinker);
+  var homePatternLinker = new PatternLinker(/H#(\d{1,8})/igm, domain + "homes/" + placeholder, "Home#: ");
+  addPattern("home pattern", homePatternLinker);
 
-    var phonePatternLinker = new PatternLinker(/\(?(\d{3})\)?(?: |\-)*(\d{3})\-?(\d{4})/igm, domain + "homes?page=1&homes_filter[phone_number_cond]=eq&homes_filter[phone_number]=" + placeholder, "Phone#: ");
-    addPattern("phone pattern", phonePatternLinker);
+  var phonePatternLinker = new PatternLinker(/\(?(\d{3})\)?(?: |\-)*(\d{3})\-?(\d{4})/igm, domain + "homes?page=1&homes_filter[phone_number_cond]=eq&homes_filter[phone_number]=" + placeholder, "Phone#: ");
+  addPattern("phone pattern", phonePatternLinker);
 
-    var projPatternLinker = new PatternLinker(/(?:^|\b)(3\d)\-?(\d{5})\b/igm, domain + "projects?q[project_number_eq]=" + placeholder, "Project#: ");
-    addPattern("project pattern", projPatternLinker);
+  var projPatternLinker = new PatternLinker(/(?:^|\b)(3\d)\-?(\d{5})\b/igm, domain + "projects?q[project_number_eq]=" + placeholder, "Project#: ");
+  addPattern("project pattern", projPatternLinker);
 
-    var apptPatternLinker = new PatternLinker(/(?:^|\s|[^ht]#)([0-2|4-9]\d{4,7})\b/igm, domain + "homes?homes_filter[lead_id_cond]=eq&homes_filter[lead_id]=" + placeholder, "Appt #: ");
-    addPattern("appointment pattern", apptPatternLinker);
+  var apptPatternLinker = new PatternLinker(/(?:^|\s|[^ht]#)([0-2|4-9]\d{4,7})\b/igm, domain + "homes?homes_filter[lead_id_cond]=eq&homes_filter[lead_id]=" + placeholder, "Appt #: ");
+  addPattern("appointment pattern", apptPatternLinker);
 
-    var ticketPatternLinker = new PatternLinker(/\b(?:t(?:icket)? ?#? ?)(\d+)\b/igm, domain + "support/tickets/" + placeholder, "Ticket #:");
-    addPattern("ticket pattern", ticketPatternLinker);
+  var ticketPatternLinker = new PatternLinker(/\b(?:t(?:icket)? ?#? ?)(\d+)\b/igm, domain + "support/tickets/" + placeholder, "Ticket #:");
+  addPattern("ticket pattern", ticketPatternLinker);
 
-    //store patternLinkers in PLC
-    patternLinkerContainer["patternLinkers"] = patternLinkers;
+  //store patternLinkers in PLC
+  patternLinkerContainer["patternLinkers"] = patternLinkers;
 
-    //adds patternlinkers to patternLinkers obj
-    function addPattern(name, patternLinker)
-    {
-      patternLinkers[name] = patternLinker;
-    }
+  //adds patternlinkers to patternLinkers obj
+  function addPattern(name, patternLinker)
+  {
+    patternLinkers[name] = patternLinker;
+  }
 
-    /* 
-    holds a regex pattern and the proper way to link to that item if it matches
-    added: linkText to use when making link
-    */ 
-    function PatternLinker(pattern, link, linkText)
-    {
-      this.pattern = pattern;
-      this.link = link;
-      this.linkText = linkText;
-    }
+  /* 
+  holds a regex pattern and the proper way to link to that item if it matches
+  added: linkText to use when making link
+  */ 
+  function PatternLinker(pattern, link, linkText)
+  {
+    this.pattern = pattern;
+    this.link = link;
+    this.linkText = linkText;
+  }
 
-  })();
-
-console.log(patternLinkerContainer);
+}
 
 /*
   adds a listener to messages
@@ -108,7 +108,11 @@ browser.commands.onCommand.addListener(function(command) {
     currentWindow: true,
     active: true
   }).then(tabs =>
-    sendMessageToTab(tabs[0], command_msg).catch(onError));
+    sendMessageToTab(tabs[0], command_msg))
+    .then(response => {
+      console.log(response.answer);
+    }).catch(onError);
+
 });
 
 
@@ -117,29 +121,55 @@ browser.commands.onCommand.addListener(function(command) {
 Sets listener for browser action
 */
 browser.browserAction.onClicked.addListener(() => {
-
   console.log("action clicked");
 
   browser.tabs.query({
     currentWindow: true,
     active: true
-  }).then(tabs => sendMessageToTab(tabs[0], action_msg)).catch(onError);
+  }).then(tabs =>
+    sendMessageToTab(tabs[0], action_msg)
+    .then(resp => {
+      let domain = resp.response;
+      setupPatternLinkers(domain);
+      console.log(patternLinkerContainer);
+      sendPatternLinkersToScripts();
+    })
+    .catch(onError));
+
+  
 });
 
 
+function sendPatternLinkersToScripts()
+{
+
+  //sends to contentScri[t]
+  browser.tabs.query({
+    currentWindow: true,
+    active: true
+  }).then(tabs =>
+    sendMessageToTab(tabs[0], sending_pattern_msg, patternLinkerContainer))
+    .then(response => {
+      console.log(response.response);
+    }).catch(onError);
+}
 
 
-function sendMessageToTab(tab,msg) {
-
+function sendMessageToTab(tab,msg,obj) {
 
   console.log(`sent: ${msg} to tab ${tab.id}`);
 
-    browser.tabs.sendMessage(
+    message = {greeting:  msg};
+    if(obj)
+    {
+      message["obj"] = obj;
+    }
+
+
+    return browser.tabs.sendMessage(
       tab.id,
-      {greeting:  msg}
-    ).then(response => {
-      console.log(response.answer);
-    }).catch(onError);
+      message
+    );
 
 }
 
