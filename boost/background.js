@@ -75,12 +75,12 @@ browser.runtime.onMessage.addListener(request => {
 
     switch(request.greeting) {
       case "hello from sidebar":  
-        response = "hi from bg";
+        response += "hi from bg";
         console.log("val received: " + request.value);
         break;
 
-        case "test":  
-        response = "returning patt linker con";
+        case "get PLC":  
+        response += "returning patt linker con";
         answer["patternLinkerContainer"] = patternLinkerContainer;
         console.log(response);
         break;

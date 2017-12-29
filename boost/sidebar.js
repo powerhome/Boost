@@ -8,11 +8,16 @@ function onError(error) {
   console.log(`Error: ${error}`);
 }
 
+var patternLinkerContainer;
+
 window.onload = () =>  {
 
-	browser.runtime.sendMessage({greeting: "test", value: 5}
+	browser.runtime.sendMessage({greeting: "get PLC", value: 5}
 		).then(response => {
       console.log(response.response);
+      patternLinkerContainer = response.patternLinkerContainer;
+      console.log(patternLinkerContainer);
+
     }).catch(onError);
 
 
