@@ -89,7 +89,7 @@ browser.runtime.onMessage.addListener(request => {
         response += "returning links";
         console.log(request.value);
 
-        answer["links"] = linksFromText(request.value);//, request.domain);
+        answer["links"] = buildLinksFromInput(request.value);//, request.domain);
 
         console.log("returning links");
         break;
@@ -180,15 +180,29 @@ function sendMessageToTab(tab,msg,obj) {
 
 }
 
-/*
-  Checks all patternLinkers in patternLinkers obj against text and returns links for those matches
-*/
-function linksFromText(text, domain) {
-
+function buildLinksFromInput(textArr, domain) {
   if(domain) {
     console.log("domain changed");
   }
 
+  if(!(textArr instanceof Array)) {
+      textArr = [textArr];
+  }
+
+  result = [];
+
+  for(let i = 0; i < textArr.length; i++) {
+    let item = textArr[i];
+    result = result.concat(linksFromText(item));//redo eventually. makes new array 
+  }
+
+  return result;
+}
+
+/*
+  Checks all patternLinkers in patternLinkers obj against text and returns links for those matches
+*/
+function linksFromText(text) {
 
   //accumulate all the matches
   let results = [];

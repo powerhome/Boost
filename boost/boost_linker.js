@@ -115,7 +115,7 @@ function linkifyAtMouseover() {
 				break;
 			case Node.TEXT_NODE: 
 				//let links = linksFromText(node.nodeValue);
-
+				console.log(node.nodeValue);
 				linksToSend.push(node.nodeValue);
 				break;
 		}	//switch
@@ -126,7 +126,7 @@ function linkifyAtMouseover() {
 	function sendLinksToBG(textArr, target) {
 		var resultDiv;
 
-		msg = {greeting: "get links", value: textArr[0]};
+		msg = {greeting: "get links", value: textArr};
 
 
 
@@ -135,7 +135,7 @@ function linkifyAtMouseover() {
 			let resultDiv = buildResultDiv();
 			console.log("textArr sent");
 
-			let links = ["test","test2"]; //get from result eventually
+			let links = response.links; //get from result eventually
 
 			
 		    for(let i = 0; i < links.length; i++) {
