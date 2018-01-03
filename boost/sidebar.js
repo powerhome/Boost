@@ -10,6 +10,10 @@ function onError(error) {
 
 var patternLinkerContainer;
 
+
+
+
+
 window.onload = () =>  {
 
 	//gets patterns to search from from BG
@@ -46,18 +50,46 @@ function formSubmitted(form)
 	//gets value from input field
 	let value =  form.childNodes[1].value;
 
-	let links = linksFromText(value);
+	//let links = linksFromText(value);
+	let gettingLinks = getLinksFromBG(value);
+	
+	gettingLinks.then(response => {
+       links = response.links;
+       console.log(links);
 
-	if(links.length > 0) {
+       if(links.length > 0) {
 		addResultsToDiv(resultDiv, links);
 		return true;
-	}
-	else {
-		noMatches(resultDiv, value);
-		return false;
-	}
+		}
+		else {
+			noMatches(resultDiv, value);
+			return false;
+		}
+
+
+		
+       return links;
+    }).catch(onError);
+
+	
 
 }
+
+function getLinksFromBG(targetValue) {
+
+	let msg = {greeting: "get links"};
+	msg.value = targetValue;
+	let links = "no links";
+	msg.value = targetValue;
+
+	return browser.runtime.sendMessage(msg);
+
+	
+
+		
+
+}
+
 
 //helper method to put message in for no matches
 //uses same code as adding result 
