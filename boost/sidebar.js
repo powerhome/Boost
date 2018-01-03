@@ -23,7 +23,10 @@ window.onload = () =>  {
 		e.preventDefault();
 
 		console.log("form submitted");
-		formSubmitted(e.target);
+		if(formSubmitted(e.target))
+		{
+			e.target.reset();
+		}
 
 		//prevents the normal form submission
 		return false;
@@ -40,20 +43,18 @@ function formSubmitted(form)
 
 	let resultDiv = document.getElementById("smart_search_results");
 
-
+	//gets value from input field
 	let value =  form.childNodes[1].value;
-	console.log(value);
+
 	let links = linksFromText(value);
-	console.log(form.parentNode);
 
 	if(links.length > 0) {
 		addResultsToDiv(resultDiv, links);
+		return true;
 	}
 	else {
 		noMatches(resultDiv, value);
-		// let noMatches = document.createElement("DIV");
-		// noMatches.innerHTML = "No Matches found for: " + value;
-		// resultDiv.append(noMatches);
+		return false;
 	}
 
 }
