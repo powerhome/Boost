@@ -88,7 +88,8 @@ browser.runtime.onMessage.addListener(request => {
         case "get links":
         response += "returning links";
         console.log(request.value);
-        answer["links"] = linksFromText(request.value);
+
+        answer["links"] = linksFromText(request.value);//, request.domain);
 
         console.log("returning links");
         break;
@@ -117,7 +118,7 @@ browser.commands.onCommand.addListener(function(command) {
   }).then(tabs =>
     sendMessageToTab(tabs[0], command_msg))
     .then(response => {
-      console.log(response.answer);
+      console.log(response.response);
     }).catch(onError);
 
 });
@@ -147,8 +148,7 @@ browser.browserAction.onClicked.addListener(() => {
 });
 
 
-function sendPatternLinkersToScripts()
-{
+function sendPatternLinkersToScripts() {
 
   //sends to contentScri[t]
   browser.tabs.query({
@@ -183,7 +183,13 @@ function sendMessageToTab(tab,msg,obj) {
 /*
   Checks all patternLinkers in patternLinkers obj against text and returns links for those matches
 */
-function linksFromText(text) {
+function linksFromText(text, domain) {
+
+  if(domain) {
+    console.log("domain changed");
+  }
+
+
   //accumulate all the matches
   let results = [];
   //patternLinkers in PLC holds the patterns to match
@@ -238,19 +244,19 @@ function linksFromText(text) {
   }
 
 }
-//TO BE USED LATER MAYBE
-function getSelectionText() {
-    var text = "";
-    var activeEl = document.activeElement;
-    var activeElTagName = activeEl ? activeEl.tagName.toLowerCase() : null;
-    if (
-      (activeElTagName == "textarea") || (activeElTagName == "input" &&
-      /^(?:text|search|password|tel|url)$/i.test(activeEl.type)) &&
-      (typeof activeEl.selectionStart == "number")
-    ) {
-        text = activeEl.value.slice(activeEl.selectionStart, activeEl.selectionEnd);
-    } else if (window.getSelection) {
-        text = window.getSelection().toString();
-    }
-    return text;
-}
+// //TO BE USED LATER MAYBE
+// function getSelectionText() {
+//     var text = "";
+//     var activeEl = document.activeElement;
+//     var activeElTagName = activeEl ? activeEl.tagName.toLowerCase() : null;
+//     if (
+//       (activeElTagName == "textarea") || (activeElTagName == "input" &&
+//       /^(?:text|search|password|tel|url)$/i.test(activeEl.type)) &&
+//       (typeof activeEl.selectionStart == "number")
+//     ) {
+//         text = activeEl.value.slice(activeEl.selectionStart, activeEl.selectionEnd);
+//     } else if (window.getSelection) {
+//         text = window.getSelection().toString();
+//     }
+//     return text;
+// }

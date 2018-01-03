@@ -60,9 +60,7 @@ function formSubmitted(form)
 
 function getLinksFromBG(targetValue) {
 
-	let msg = {greeting: "get links"};
-	msg.value = targetValue;
-	let links = "no links";
+	let msg = {greeting: "get links", value: targetValue};
 	msg.value = targetValue;
 
 	return browser.runtime.sendMessage(msg);

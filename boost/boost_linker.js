@@ -1,4 +1,4 @@
-console.log("Content Script Loade 1d");
+console.log("Content Script Loaded");
 
 //targets not to hit with links
 var invalidTargets = [];
@@ -32,7 +32,6 @@ function onError(error) {
 				break;
 			case "command pressed":
 				response += "command pressed recieved";
-				//addTextAtMouse();
 				console.log("command press conf");
 				linkifyAtMouseover();
 				break;
@@ -95,45 +94,72 @@ function linkifyAtMouseover() {
 
 	let target = getMouseoverElement();
 	let nextArray = [target];
-	let resultDiv = buildResultDiv();
+	
+	let linksToSend = [];
 
 	//loops through nodes -elem add children to list, text check for matches
-	while(nextArray.length > 0)
-	{
+	while(nextArray.length > 0) {
 		let node = nextArray.pop();
 		if(!validateNode(node)) node = false; //if node is not valid, dont eval it at all
-			switch(node.nodeType) {
-				case Node.ELEMENT_NODE:
-					let children = node.childNodes;
-					//adds the children nodes of current node that need to be checked
-					children.forEach( function(currentChild, currentIndex, children) {
-						//elem = 1, text = 3, 2 depricated. checks that node is good to use
-						if(currentChild.nodeType <= 3)
-						{
-							nextArray.push(currentChild);
-						}
-					});
-					break;
-				case Node.TEXT_NODE: 
-					let links = linksFromText(node.nodeValue);
-					for(let i = 0; i < links.length; i++) {
-						let thisDiv = document.createElement("DIV");
-						thisDiv.innerHTML = links[i];
-
-						//inserts the matched link in the result div
-						addToResult(resultDiv, thisDiv);
-						
-						//puts the div and the link elems into invalid targets so you cant make links from links
-						invalidTargets.push(thisDiv);
-						invalidTargets.push(thisDiv.childNodes[1]);
+		switch(node.nodeType) {
+			case Node.ELEMENT_NODE:
+				let children = node.childNodes;
+				//adds the children nodes of current node that need to be checked
+				children.forEach( function(currentChild, currentIndex, children) {
+					//elem = 1, text = 3, 2 depricated. checks that node is good to use
+					if(currentChild.nodeType <= 3)
+					{
+						nextArray.push(currentChild);
 					}
-					break;
-			}	//switch
+				});
+				break;
+			case Node.TEXT_NODE: 
+				//let links = linksFromText(node.nodeValue);
+
+				linksToSend.push(node.nodeValue);
+				break;
+		}	//switch
 	}	//while
 
-	if(resultDiv.childNodes[1].firstChild !== null){ //if any links have been added
-		target.parentNode.insertBefore(resultDiv, target.nextSibling); //add result div to dom after target
+	sendLinksToBG(linksToSend, target);
+
+	function sendLinksToBG(textArr, target) {
+		var resultDiv;
+
+		msg = {greeting: "get links", value: textArr[0]};
+
+
+
+		browser.runtime.sendMessage(msg)
+		.then(response => {
+			let resultDiv = buildResultDiv();
+			console.log("textArr sent");
+
+			let links = ["test","test2"]; //get from result eventually
+
+			
+		    for(let i = 0; i < links.length; i++) {
+				let thisDiv = document.createElement("DIV");
+				thisDiv.innerHTML = links[i];
+				console.log(thisDiv);
+				//inserts the matched link in the result div
+				addToResult(resultDiv, thisDiv);
+				
+				//puts the div and the link elems into invalid targets so you cant make links from links
+				invalidTargets.push(thisDiv);
+				invalidTargets.push(thisDiv.childNodes[1]);
+			}
+
+			if(resultDiv.childNodes[1].firstChild !== null) { //if any links have been added
+				target.parentNode.insertBefore(resultDiv, target.nextSibling); //add result div to dom after target
+			}
+
+		}).catch(onError);
 	}
+	
+
+
+	
 
 	function buildResultDiv() {
 		let resultDiv = document.createElement("DIV");
@@ -174,63 +200,8 @@ function getMouseoverElement() {
 	return null;
 }
 
-/*
-	Checks all patternLinkers in patternLinkers obj against text and returns links for those matches
-*/
-function linksFromText(text) {
-	//accumulate all the matches
-	let results = [];
-	//patternLinkers in PLC holds the patterns to match
-	for(patt in patternLinkers = patternLinkerContainer.patternLinkers) {
-		let thisPatt = patternLinkers[patt];
-		let matches = getMatchesFromText(text, thisPatt.pattern);
-		// for every match, replace the placeholder with the actual number
-		for(let i = 0; i < matches.length; i++)
-		{
-			//replace placeholder value in link with num from matches
-			let res = thisPatt.link.replace(patternLinkerContainer.placeholder, matches[i]);
-			res = thisPatt.linkText + linkify(res,  matches[i]);
-			results.push(res);
-		}
-	}
-	console.log("matches made: " + results.length);
-	return results;
 
-	/*
-		gets all the matches for pattern from text
-		returns a concatenation of the capture groups for the patter
-		assumes that the capture group collectively concat to the proper number
-	*/
-	function getMatchesFromText(text, pattern) {
 
-		let resultArray;
-		let results = [];
-
-		//finds all the  matches in the text for this pattern
-		while ((resultArray = pattern.exec(text)) !== null) {
-			  result = "";
-
-			  //index 1,2,3... correspond to capture groups in regex
-			  for(let i = 1; typeof resultArray[i] !== 'undefined'; i++)
-			  {
-			  	if(i == 2) { result += "-"; }
-				result += resultArray[i];
-
-			  }
-			  results.push(result);
-		}
-		return results;
-	}
-
-	/*
-		Takes an address and text for link and builds the tag accordingly
-	*/
-	function linkify(linkAddress, textToLink) {
-		result = "<a target=\"_blank\" href =\"" + linkAddress + "\">" + textToLink + "</a>";
-
-		return result;
-	}
-}
 
 
 
