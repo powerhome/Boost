@@ -12,6 +12,7 @@ var patternLinkerContainer;
 
 window.onload = () =>  {
 
+	//gets patterns to search from from BG
 	browser.runtime.sendMessage({greeting: "get PLC"}
 		).then(response => {
       patternLinkerContainer = response.patternLinkerContainer;
@@ -36,30 +37,49 @@ window.onload = () =>  {
 function formSubmitted(form)
 {
 	console.log("processing " + form.name);
+
+	let resultDiv = document.getElementById("smart_search_results");
+
+
 	let value =  form.childNodes[1].value;
 	console.log(value);
 	let links = linksFromText(value);
+	console.log(form.parentNode);
 
-	addResultsAfterForm(form, links);
+	if(links.length > 0) {
+		addResultsToDiv(resultDiv, links);
+	}
+	else {
+		noMatches(resultDiv, value);
+		// let noMatches = document.createElement("DIV");
+		// noMatches.innerHTML = "No Matches found for: " + value;
+		// resultDiv.append(noMatches);
+	}
 
+}
+
+//helper method to put message in for no matches
+//uses same code as adding result 
+function noMatches(div, value)
+{
+	let msgForNoMatches = ["No Matches found for: " + value];
+	addResultsToDiv(div, msgForNoMatches);
 }
 
 /*
 
 */
-function addResultsAfterForm(form, links) {
+function addResultsToDiv(div, links) {
 
-	let resultDiv = document.getElementById("smart_search_results");
+	
 
 	for(let i = 0; i < links.length; i++)
 	{
+		let resultLink = document.createElement("DIV");
 		console.log(links[i]);
-		resultDiv.appendChild(links[i]);
-		console.log("test");
+		resultLink.innerHTML = links[i];
+		div.insertBefore(resultLink, div.firstChild);
 	}
-
-	console.log(resultDiv);
-	form.parentNode.insertBefore(resultDiv, form.nextSibling);
 
 
 

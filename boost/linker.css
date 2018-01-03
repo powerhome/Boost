@@ -46,10 +46,15 @@
 
 .SBbody {
 	background: rgb(0, 44, 71);
+	width: 225px;
 }
 
 .SBform {
 	background: white;
+}
+
+.SBtitle {
+	padding-left: 2px;
 }
 
 .SBcontent {
@@ -58,6 +63,11 @@
 	padding: 3px;
 	max-width: 250px;
 	margin: 3px;
+
+
+}
+
+#smart_search_results {
 
 
 }
