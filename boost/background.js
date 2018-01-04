@@ -74,10 +74,6 @@ browser.runtime.onMessage.addListener(request => {
     var response = "response: ";
 
     switch(request.greeting) {
-      // case "hello from sidebar":  
-      //   response += "hi from bg";
-      //   console.log("val received: " + request.value);
-      //   break;
 
         case "get PLC":  
         response += "returning patt linker con";
@@ -87,11 +83,8 @@ browser.runtime.onMessage.addListener(request => {
 
         case "get links":
         response += "returning links";
-        console.log(request.value);
-
-        answer["links"] = buildLinksFromInput(request.value);//, request.domain);
-
-        console.log("returning links");
+        answer["links"] = buildLinksFromInput(request.value, request.domain);
+        console.log("returning links ");
         break;
 
 
@@ -124,7 +117,6 @@ browser.commands.onCommand.addListener(function(command) {
 });
 
 
-
 /*
 Sets listener for browser action
 */
@@ -143,8 +135,6 @@ browser.browserAction.onClicked.addListener(() => {
       sendPatternLinkersToScripts();
     })
     .catch(onError));
-
-  
 });
 
 
@@ -172,7 +162,6 @@ function sendMessageToTab(tab,msg,obj) {
       message["obj"] = obj;
     }
 
-
     return browser.tabs.sendMessage(
       tab.id,
       message
@@ -182,7 +171,7 @@ function sendMessageToTab(tab,msg,obj) {
 
 function buildLinksFromInput(textArr, domain) {
   if(domain) {
-    console.log("domain changed");
+    console.log("domain changed to " + domain);
   }
 
   if(!(textArr instanceof Array)) {

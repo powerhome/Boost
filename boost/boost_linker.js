@@ -2,7 +2,7 @@ console.log("Content Script Loaded");
 
 //targets not to hit with links
 var invalidTargets = [];
-var patternLinkerContainer;
+var currDomain;
 
 /*
 Called when there was an error.
@@ -18,6 +18,12 @@ function onError(error) {
 (function () {
 	console.log("setup");
 	invalidTargets.push(document.body);
+
+	if(currDomain == undefined) {
+		currDomain = /https?:\/\/(?:www.)?\S{1,30}.com\/|file:\/\/\/\S*.html/i.exec(document.URL)[0];
+		console.log(currDomain);
+	}
+
 
 	//sets up listener to get command press from BG Script
 	browser.runtime.onMessage.addListener(request => {
@@ -49,13 +55,6 @@ function onError(error) {
 		console.log(response);
 		return Promise.resolve(answer);
 	});
-
-	//gets the pattern linker to use from the BG script
-	browser.runtime.sendMessage({greeting: "get PLC"}
-		).then(response => {
-      patternLinkerContainer = response.patternLinkerContainer;
-
-    }).catch(onError);
 
 	console.log("Setup complete");
 
@@ -126,7 +125,7 @@ function linkifyAtMouseover() {
 	function sendLinksToBG(textArr, target) {
 		var resultDiv;
 
-		msg = {greeting: "get links", value: textArr};
+		msg = {greeting: "get links", value: textArr, domain: currDomain};
 
 
 
@@ -156,9 +155,6 @@ function linkifyAtMouseover() {
 
 		}).catch(onError);
 	}
-	
-
-
 	
 
 	function buildResultDiv() {
