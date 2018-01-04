@@ -189,11 +189,14 @@ function buildLinksFromInput(textArr, domain) {
       textArr = [textArr];
   }
 
-  result = [];
+  let result = [];
 
   for(let i = 0; i < textArr.length; i++) {
     let item = textArr[i];
-    result = result.concat(linksFromText(item));//redo eventually. makes new array 
+    console.log("item: " + item);
+  
+    let links = linksFromText(item);
+    result.push(links.join());
   }
 
   return result;

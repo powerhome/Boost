@@ -9,7 +9,7 @@ Called when there was an error.
 We'll just log the error here.
 */
 function onError(error) {
-  console.log(`Error: ${error}`);
+  console.log(error);
 }
 
 /*
