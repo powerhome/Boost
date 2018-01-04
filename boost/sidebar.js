@@ -15,10 +15,10 @@ window.onload = () =>  {
 		e.preventDefault();
 
 		console.log("form submitted");
-		if(formSubmitted(e.target))
-		{
-			e.target.reset();
-		}
+		formSubmitted(e.target);
+		
+
+		
 
 		//prevents the normal form submission
 		return false;
@@ -46,12 +46,11 @@ function formSubmitted(form)
        console.log(links);
 
        if(links.length > 0) {
-		addResultsToDiv(resultDiv, links);
-		return true;
+			addResultsToDiv(resultDiv, links);
+			form.reset();
 		}
 		else {
 			noMatches(resultDiv, value);
-			return false;
 		}
 
     }).catch(onError);
@@ -61,7 +60,6 @@ function formSubmitted(form)
 function getLinksFromBG(targetValue) {
 
 	let msg = {greeting: "get links", value: targetValue};
-	msg.value = targetValue;
 
 	return browser.runtime.sendMessage(msg);
 }
