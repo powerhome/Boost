@@ -183,11 +183,8 @@ function buildLinksFromInput(textArr, domain) {
 
   for(let i = 0; i < textArr.length; i++) {
     let item = textArr[i];
-    console.log("item: " + item);
-  
     let links = linksFromText(item);
-    console.log(links);
-    console.log(links.length);
+    
     if(links.length > 0){
       result.push(links.join());
     }

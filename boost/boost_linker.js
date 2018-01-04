@@ -124,10 +124,7 @@ function linkifyAtMouseover() {
 
 	function sendLinksToBG(textArr, target) {
 		var resultDiv;
-
 		msg = {greeting: "get links", value: textArr, domain: currDomain};
-
-
 
 		browser.runtime.sendMessage(msg)
 		.then(response => {
@@ -141,7 +138,6 @@ function linkifyAtMouseover() {
 		    for(let i = 0; i < links.length; i++) {
 				let thisDiv = document.createElement("DIV");
 				thisDiv.innerHTML = links[i];
-				console.log(thisDiv);
 				//inserts the matched link in the result div
 				addToResult(resultDiv, thisDiv);
 				
