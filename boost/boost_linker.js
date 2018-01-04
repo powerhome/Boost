@@ -20,10 +20,10 @@ function onError(error) {
 	invalidTargets.push(document.body);
 
 	if(currDomain == undefined) {
-		currDomain = /https?:\/\/(?:www.)?\S{1,30}.com\/|file:\/\/\/\S*.html/i.exec(document.URL)[0];
-		console.log(currDomain);
-	}
+		currDomain = getDomain();
 
+	}
+	console.log(currDomain);
 
 	//sets up listener to get command press from BG Script
 	browser.runtime.onMessage.addListener(request => {
@@ -135,7 +135,8 @@ function linkifyAtMouseover() {
 			console.log("textArr sent");
 
 			let links = response.links; //get from result eventually
-
+			console.log(links);
+			console.log(links.length);
 			
 		    for(let i = 0; i < links.length; i++) {
 				let thisDiv = document.createElement("DIV");

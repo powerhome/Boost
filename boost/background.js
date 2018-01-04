@@ -172,6 +172,7 @@ function sendMessageToTab(tab,msg,obj) {
 function buildLinksFromInput(textArr, domain) {
   if(domain) {
     console.log("domain changed to " + domain);
+    setupPatternLinkers(domain);
   }
 
   if(!(textArr instanceof Array)) {
@@ -185,7 +186,11 @@ function buildLinksFromInput(textArr, domain) {
     console.log("item: " + item);
   
     let links = linksFromText(item);
-    result.push(links.join());
+    console.log(links);
+    console.log(links.length);
+    if(links.length > 0){
+      result.push(links.join());
+    }
   }
 
   return result;
