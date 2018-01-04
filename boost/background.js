@@ -131,25 +131,9 @@ browser.browserAction.onClicked.addListener(() => {
     .then(resp => {
       let domain = resp.response;
       setupPatternLinkers(domain);
-      console.log(patternLinkerContainer);
-      sendPatternLinkersToScripts();
     })
     .catch(onError));
 });
-
-
-function sendPatternLinkersToScripts() {
-
-  //sends to contentScri[t]
-  browser.tabs.query({
-    currentWindow: true,
-    active: true
-  }).then(tabs =>
-    sendMessageToTab(tabs[0], sending_pattern_msg, patternLinkerContainer))
-    .then(response => {
-      console.log(response.response);
-    }).catch(onError);
-}
 
 
 function sendMessageToTab(tab,msg,obj) {
@@ -184,7 +168,7 @@ function buildLinksFromInput(textArr, domain) {
   for(let i = 0; i < textArr.length; i++) {
     let item = textArr[i];
     let links = linksFromText(item);
-    
+
     if(links.length > 0){
       result.push(links.join());
     }
