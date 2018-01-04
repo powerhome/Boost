@@ -60,12 +60,10 @@ function onError(error) {
 
 })();
 
+//gets the current domain from the url of the page
 function getDomain() {
 	let domain = /https?:\/\/(?:www.)?\S{1,30}.com\/|file:\/\/\/\S*.html/i.exec(document.URL)[0];
-	console.log(domain);
 	return domain;
-
-
 }
 
 
@@ -113,8 +111,7 @@ function linkifyAtMouseover() {
 				});
 				break;
 			case Node.TEXT_NODE: 
-				//let links = linksFromText(node.nodeValue);
-				console.log(node.nodeValue);
+				//add the current node to the array of nodes to check
 				linksToSend.push(node.nodeValue);
 				break;
 		}	//switch
@@ -129,15 +126,12 @@ function linkifyAtMouseover() {
 		browser.runtime.sendMessage(msg)
 		.then(response => {
 			let resultDiv = buildResultDiv();
-			console.log("textArr sent");
-
 			let links = response.links; //get from result eventually
-			console.log(links);
-			console.log(links.length);
 			
 		    for(let i = 0; i < links.length; i++) {
 				let thisDiv = document.createElement("DIV");
 				thisDiv.innerHTML = links[i];
+				console.log(links[i]);
 				//inserts the matched link in the result div
 				addToResult(resultDiv, thisDiv);
 				
@@ -192,15 +186,3 @@ function getMouseoverElement() {
 	}
 	return null;
 }
-
-
-
-
-
-
-
-
-
-
-
-

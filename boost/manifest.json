@@ -57,13 +57,15 @@
   "commands": {
     "test_command": {
       "suggested_key": {
-        "default": "MacCtrl+B"
+        "default": "F1",
+        "mac": "MacCtrl+Z"
       },
       "description": "is just a test comamand"
     },
     "_execute_sidebar_action": {
       "suggested_key": {
-        "default": "MacCtrl+Z"
+        "default": "F2",
+        "mac": "MacCtrl+Z"
       }
     }
   }
