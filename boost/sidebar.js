@@ -10,15 +10,18 @@ function onError(error) {
 
 window.onload = () =>  {
 
+	let button = document.getElementById("clearButton");
+	button.onclick = () => {
+		document.getElementById("smart_search_results").innerHTML = "";
+	}
+
+
 	let form = document.getElementById('smart_search');
 	form.onsubmit = e => {
 		e.preventDefault();
 
 		console.log("form submitted");
 		formSubmitted(e.target);
-		
-
-		
 
 		//prevents the normal form submission
 		return false;
@@ -53,7 +56,18 @@ function formSubmitted(form)
 			noMatches(resultDiv, value);
 		}
 
+		showClearResultsButton();
+
     }).catch(onError);
+
+}
+
+function showClearResultsButton() {
+	let button = document.getElementById("clearButton");
+	if(button.style.display == "none")
+	{
+		button.style.display = "inline";
+	}
 
 }
 
