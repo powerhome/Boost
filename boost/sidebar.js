@@ -20,9 +20,7 @@ window.onload = () =>  {
 	form.onsubmit = e => {
 		e.preventDefault();
 
-		console.log("form submitted");
 		formSubmitted(e.target);
-
 		//prevents the normal form submission
 		return false;
 	}
@@ -30,12 +28,10 @@ window.onload = () =>  {
 
 
 /*
-	takes an htmlformelement and parses it
+	gets the value from the input field in the form and processes it
 */
 function formSubmitted(form)
 {
-	console.log("processing " + form.name);
-
 	let resultDiv = document.getElementById("smart_search_results");
 
 	//gets value from input field
@@ -46,7 +42,6 @@ function formSubmitted(form)
 	
 	gettingLinks.then(response => {
        links = response.links;
-       console.log(links);
 
        if(links.length > 0) {
 			addResultsToDiv(resultDiv, links);
@@ -57,27 +52,26 @@ function formSubmitted(form)
 		}
 
 		showClearResultsButton();
-
     }).catch(onError);
 
 }
 
+//sets the clearResults button to show
 function showClearResultsButton() {
 	let button = document.getElementById("clearButton");
 	if(button.style.display == "none")
 	{
 		button.style.display = "inline";
 	}
-
 }
 
+//gets links made from matches for target value
 function getLinksFromBG(targetValue) {
 
 	let msg = {greeting: "get links", value: targetValue};
 
 	return browser.runtime.sendMessage(msg);
 }
-
 
 //helper method to put message in for no matches
 //uses same code as adding result 
@@ -95,7 +89,6 @@ function addResultsToDiv(div, links) {
 	for(let i = 0; i < links.length; i++)
 	{
 		let resultLink = document.createElement("DIV");
-		console.log(links[i]);
 		resultLink.innerHTML = links[i];
 		div.insertBefore(resultLink, div.firstChild);
 	}
