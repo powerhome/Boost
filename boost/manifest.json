@@ -2,12 +2,11 @@
 
   "manifest_version": 2,
   "name": "__MSG_extensionName__",
-  "description": "__MSG_extensionDescription__",
+  "description": "Gives Nitro A Boost",
   "version": "1.0",
   "default_locale": "en",
   "applications": {
     "gecko": {
-      "id": "fake@text.com",
       "strict_min_version": "56.0a1"
     }
   },
@@ -55,12 +54,12 @@
   },
 
   "commands": {
-    "test_command": {
+    "boost_command": {
       "suggested_key": {
         "default": "F1",
-        "mac": "MacCtrl+Z"
+        "mac": "MacCtrl+B"
       },
-      "description": "is just a test comamand"
+      "description": "Boost Command"
     },
     "_execute_sidebar_action": {
       "suggested_key": {
