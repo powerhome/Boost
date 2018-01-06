@@ -14,9 +14,17 @@ function onError(error) {
 }
 
 var patternLinkerContainer = false;
+var recentMatches = [];
 
 //sets up pattern linker using domain 
 function setupPatternLinkers(newDomain) {
+
+  if(newDomain === patternLinkerContainer.domain)
+  {
+    console.log("DOMAIN SAME");
+    return;
+  }
+  recentMatches = [];
 
   patternLinkerContainer = new Object();
   let placeholder = "#placeholder#";
@@ -74,6 +82,14 @@ browser.runtime.onMessage.addListener(request => {
     var response = "response: ";
 
     switch(request.greeting) {
+
+        case "clear Recent":
+        recentMatches = [];
+        break;
+
+        case "get Recent":
+        answer.value = recentMatches;
+        break;
 
         case "get PLC":  
         response += "returning patt linker con";
@@ -171,7 +187,10 @@ function buildLinksFromInput(textArr, domain) {
 
     if(links.length > 0){
       for(let i = 0; i < links.length; i++) {
+        //links to return
         result.push(links[i]);
+        //links saved in history
+        recentMatches.push(links[i]);
       }
     }
   }

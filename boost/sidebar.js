@@ -10,11 +10,22 @@ function onError(error) {
 
 window.onload = () =>  {
 
+
+	let gettingRecent = browser.runtime.sendMessage({greeting: "get Recent"});
+	gettingRecent.then(response => {
+		console.log(response.value);
+		if(response.value[0]){
+			addResults(response.value);
+		}
+	});
+
+
 	let button = document.getElementById("clearButton");
 	button.onclick = () => {
 		document.getElementById("smart_search_results").innerHTML = "";
-	}
+		let clearingRecent = browser.runtime.sendMessage({greeting: "clear Recent"});
 
+	}
 
 	let form = document.getElementById('smart_search');
 	form.onsubmit = e => {
@@ -32,7 +43,7 @@ window.onload = () =>  {
 */
 function formSubmitted(form)
 {
-	let resultDiv = document.getElementById("smart_search_results");
+	
 
 	//gets value from input field
 	let value =  form.childNodes[1].value;
@@ -44,14 +55,13 @@ function formSubmitted(form)
        links = response.links;
 
        if(links.length > 0) {
-			addResultsToDiv(resultDiv, links);
+			addResults(links);
 			form.reset();
 		}
 		else {
-			noMatches(resultDiv, value);
+			noMatches(value);
 		}
 
-		showClearResultsButton();
     }).catch(onError);
 
 }
@@ -75,21 +85,23 @@ function getLinksFromBG(targetValue) {
 
 //helper method to put message in for no matches
 //uses same code as adding result 
-function noMatches(div, value)
+function noMatches(value)
 {
 	let msgForNoMatches = ["No Matches found for: " + value];
-	addResultsToDiv(div, msgForNoMatches);
+	addResults(msgForNoMatches);
 }
 
 /*
 	adds the links in array "links" to the result div
 */
-function addResultsToDiv(div, links) {
+function addResults(links) {
+	let resultDiv = document.getElementById("smart_search_results");
+	showClearResultsButton();
 
 	for(let i = 0; i < links.length; i++)
 	{
 		let resultLink = document.createElement("DIV");
 		resultLink.innerHTML = links[i];
-		div.insertBefore(resultLink, div.firstChild);
+		resultDiv.insertBefore(resultLink, resultDiv.firstChild);
 	}
 }
