@@ -75,7 +75,7 @@ function setupPatternLinkers(newDomain) {
 /*
   adds a listener to messages
 */
-chrome.runtime.onMessage.addListener(request => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     console.log("msg recieved: " + request.greeting);
     let answer = new Object();
@@ -101,6 +101,7 @@ chrome.runtime.onMessage.addListener(request => {
         response += "returning links";
         answer["links"] = buildLinksFromInput(request.value, request.domain);
         console.log("returning links " + answer);
+        console.log(answer);
         break;
 
 
@@ -111,8 +112,10 @@ chrome.runtime.onMessage.addListener(request => {
     }
 
     answer["response"] = response;
-    return Promise.resolve(answer);
+    sendResponse(answer);
   });
+
+
 
 /*
 Sets listeners for commands
