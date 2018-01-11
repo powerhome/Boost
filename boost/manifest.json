@@ -5,11 +5,6 @@
   "description": "Gives It A Boost",
   "version": "1.0",
   "default_locale": "en",
-  "applications": {
-    "gecko": {
-      "strict_min_version": "56.0a1"
-    }
-  },
 
   "background": {
     "scripts": ["background.js"]
@@ -17,7 +12,6 @@
 
 
   "permissions": [
-    "menus",
     "tabs"
   ],
   
@@ -56,16 +50,10 @@
   "commands": {
     "boost_command": {
       "suggested_key": {
-        "default": "F1",
-        "mac": "MacCtrl+B"
-      },
-      "description": "Boost Command"
-    },
-    "_execute_sidebar_action": {
-      "suggested_key": {
-        "default": "F2",
+        "default": "Alt+Z",
         "mac": "MacCtrl+Z"
-      }
+      },
+      "description": "Boosts a certain page"
     }
   }
 

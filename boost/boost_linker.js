@@ -22,7 +22,7 @@ function onError(error) {
 	}
 
 	//sets up listener to get command press from BG Script
-	browser.runtime.onMessage.addListener(request => {
+	chrome.runtime.onMessage.addListener(request => {
 		console.log("from bg: " + request.greeting);
 		let answer = new Object();
 		let response = "response: ";
@@ -105,8 +105,8 @@ function linkifyAtMouseover() {
 		var resultDiv;
 		msg = {greeting: "get links", value: textArr, domain: currDomain};
 
-		browser.runtime.sendMessage(msg)
-		.then(response => {
+		chrome.runtime.sendMessage(msg, function(response) {
+			console.log("resp: " + response);
 			let resultDiv = buildResultDiv();
 			let links = response.links; //get from result eventually
 			
@@ -125,7 +125,7 @@ function linkifyAtMouseover() {
 				target.parentNode.insertBefore(resultDiv, target.nextSibling); //add result div to dom after target
 			}
 
-		}).catch(onError);
+		});
 	})(textToSend, target);
 	
 	//builds the div to hold results and eventually put on screen (if needed)

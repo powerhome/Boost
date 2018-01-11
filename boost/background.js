@@ -75,7 +75,7 @@ function setupPatternLinkers(newDomain) {
 /*
   adds a listener to messages
 */
-browser.runtime.onMessage.addListener(request => {
+chrome.runtime.onMessage.addListener(request => {
 
     console.log("msg recieved: " + request.greeting);
     let answer = new Object();
@@ -100,7 +100,7 @@ browser.runtime.onMessage.addListener(request => {
         case "get links":
         response += "returning links";
         answer["links"] = buildLinksFromInput(request.value, request.domain);
-        console.log("returning links ");
+        console.log("returning links " + answer);
         break;
 
 
@@ -117,18 +117,31 @@ browser.runtime.onMessage.addListener(request => {
 /*
 Sets listeners for commands
 */
-browser.commands.onCommand.addListener(function(command) {
+chrome.commands.onCommand.addListener(function(command) {
 
   console.log(command);
   
-  browser.tabs.query({
-    currentWindow: true,
-    active: true
-  }).then(tabs =>
-    sendMessageToTab(tabs[0], command_msg))
-    .then(response => {
-      console.log(response.response);
-    }).catch(onError);
+chrome.tabs.query({active:true,windowType:"normal", currentWindow: true}
+  ,function(tabs){
+    chrome.tabs.sendMessage(
+      tabs[0].id,
+      {greeting: command_msg}
+    );
+  });
+
+
+
+
+
+
+  // chrome.tabs.query({
+  //   currentWindow: true,
+  //   active: true
+  // }).then(tabs =>
+  //   sendMessageToTab(tabs[0], command_msg))
+  //   .then(response => {
+  //     console.log(response.response);
+  //   }).catch(onError);
 
 });
 
@@ -136,38 +149,51 @@ browser.commands.onCommand.addListener(function(command) {
 /*
 Sets listener for browser action
 */
-browser.browserAction.onClicked.addListener(() => {
+chrome.browserAction.onClicked.addListener(() => {
   console.log("action clicked");
 
-  browser.tabs.query({
-    currentWindow: true,
-    active: true
-  }).then(tabs =>
-    sendMessageToTab(tabs[0], action_msg)
-    .then(resp => {
-      let domain = resp.response;
-      setupPatternLinkers(domain);
-    })
-    .catch(onError));
+chrome.tabs.query({active:true,windowType:"normal", currentWindow: true}
+  ,function(tabs){
+    chrome.tabs.sendMessage(
+      tabs[0].id,
+      {greeting: action_msg},
+      function(response) {
+        let domain = resp.response;
+        setupPatternLinkers(domain);
+      }
+    );
+  });
+
+
+  // chrome.tabs.query({
+  //   currentWindow: true,
+  //   active: true
+  // }).then(tabs =>
+  //   sendMessageToTab(tabs[0], action_msg)
+  //   .then(resp => {
+  //     let domain = resp.response;
+  //     setupPatternLinkers(domain);
+  //   })
+  //   .catch(onError));
 });
 
 
-function sendMessageToTab(tab,msg,obj) {
+// function sendMessageToTab(tab,msg,obj) {
 
-  console.log(`sent: ${msg} to tab ${tab.id}`);
+//   console.log(`sent: ${msg} to tab ${tab.id}`);
 
-    message = {greeting:  msg};
-    if(obj)
-    {
-      message["obj"] = obj;
-    }
+//     message = {greeting:  msg};
+//     if(obj)
+//     {
+//       message["obj"] = obj;
+//     }
 
-    return browser.tabs.sendMessage(
-      tab.id,
-      message
-    );
+//     return chrome.tabs.sendMessage(
+//       tab.id,
+//       message
+//     );
 
-}
+// }
 
 function buildLinksFromInput(textArr, domain) {
   if(domain) {
