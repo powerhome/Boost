@@ -40,6 +40,10 @@
     "default_icon": "icons/paint-blue-16.png"
   },  
 
+  "web_accessible_resources": [
+    "sidebar.html"
+  ],
+
 
   "icons": {
     "16": "icons/page-16.png",
