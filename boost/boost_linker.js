@@ -35,10 +35,7 @@ function onError(error) {
 				response += "command pressed recieved";
 				linkifyAtMouseover();
 				break;
-			case "sending PLC":
-				patternLinkerContainer = request.obj;
-				response += "got PLC";
-				break;
+			
 			default:
 				response += "unknown message";
 				break;
@@ -46,7 +43,26 @@ function onError(error) {
 		answer["response"] = response;
 		return Promise.resolve(answer);
 	});
+
+	setupBottomBar();
+
+
+
 })();
+
+function setupBottomBar() {
+
+	let div = document.createElement("DIV");
+	div.style = "position: fixed; bottom: 0; padding: 5px; left: 25%; width: 50%; background: blue; height: 6%; color: white";
+	div.innerHTML = "THIS IS A TEST";
+
+	let body = document.querySelector("Body");
+
+	body.appendChild(div);
+
+	
+
+}
 
 //gets the current domain from the url of the page
 function getDomain() {
