@@ -66,14 +66,6 @@ function formSubmitted(form)
 
 }
 
-//sets the clearResults button to show
-function showClearResultsButton() {
-	let button = document.getElementById("clearButton");
-	if(button.style.display == "none")
-	{
-		button.style.display = "inline";
-	}
-}
 
 //gets links made from matches for target value
 function getLinksFromBG(targetValue) {
@@ -96,7 +88,6 @@ function noMatches(value)
 */
 function addResults(links) {
 	let resultDiv = document.getElementById("smart_search_results");
-	showClearResultsButton();
 
 	for(let i = 0; i < links.length; i++)
 	{

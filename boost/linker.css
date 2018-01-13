@@ -46,28 +46,41 @@
 
 .SBbody {
 	background: rgb(0, 44, 71);
-	width: 225px;
-}
 
-.SBform {
-	background: white;
-}
-
-.SBtitle {
-	padding-left: 2px;
 }
 
 .SBcontent {
 	background: white;
 	border-radius: 3px;
 	padding: 3px;
-	max-width: 250px;
 	margin: 3px;
+	overflow: auto;
+}
 
+.SBcontent::after {
+	content: "";
+    clear: both;
+    display: table;
 
 }
 
-#smart_search_results {
+.SBform {
+	float: left;
+	background: white;
+	width: 50%;
+}
 
+.SBtitle {
+	padding-left: 2px;
+}
+
+#clearButton {
+
+}
+
+
+#smart_search_results_con {
+	width: 50%;
+	margin-left: 50%;
 
 }

@@ -53,12 +53,24 @@ function onError(error) {
 function setupBottomBar() {
 
 	let div = document.createElement("DIV");
-	div.style = "position: fixed; bottom: 0; padding: 5px; left: 25%; width: 50%; background: blue; height: 6%; color: white";
-	div.innerHTML = "THIS IS A TEST";
+	div.style = "position: fixed; bottom: 0; left: 25%; width: 50%; height: 10%; color: white";
+	// div.innerHTML = "THIS IS A TEST";
 
-	let body = document.querySelector("Body");
-
+		let body = document.querySelector("Body");
 	body.appendChild(div);
+
+	let frame = document.createElement("IFRAME");
+
+	console.log(div.offsetWidth);
+	frame.style.width = "" + div.offsetWidth + "px";
+
+	frame.src = chrome.extension.getURL("sidebar.html");
+	div.appendChild(frame);
+
+
+
+
+	
 
 	
 
