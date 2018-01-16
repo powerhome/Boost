@@ -54,7 +54,7 @@
 	border-radius: 3px;
 	padding: 3px;
 	margin: 3px;
-	overflow: auto;
+	overflow: hidden;
 }
 
 .SBcontent::after {
@@ -65,22 +65,40 @@
 }
 
 .SBform {
-	float: left;
+	display:inline-block;
 	background: white;
-	width: 50%;
+	width: 25%;
 }
 
 .SBtitle {
 	padding-left: 2px;
 }
 
-#clearButton {
+
+#smart_search_results_con {
+	height: 100%;
+	width: 100%;
+
+	display: inline-block;
+	border: 5px solid;
 
 }
 
+#clearButton {
+	width: 5%;
+}
 
-#smart_search_results_con {
-	width: 50%;
-	margin-left: 50%;
+#bottomBar {
+	position: fixed;
+	overflow: hidden;
+	 bottom: 0;
+	 width: 100%;
+	 height: 10%;
+	 color: white;
+}
+
+#spacingDiv {
+	margin-top: 5%;
+
 
 }
