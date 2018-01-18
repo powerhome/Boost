@@ -50,37 +50,7 @@ function onError(error) {
 
 })();
 
-function setupBottomBar() {
 
-	let div = document.createElement("DIV");
-	let spacingDiv = document.createElement("DIV");
-
-	spacingDiv.id = "spacingDiv";
-	
-	// div.innerHTML = "THIS IS A TEST";
-	div.id = "bottomBar";
-	let body = document.querySelector("Body");
-	body.appendChild(spacingDiv);
-	body.appendChild(div);
-
-
-	let frame = document.createElement("IFRAME");
-
-	console.log(div.clientWidth);
-	frame.width = `${div.clientWidth} + px`;
-	console.log(frame.width);
-
-	frame.src = chrome.extension.getURL("sidebar.html");
-	div.appendChild(frame);
-
-
-
-
-	
-
-	
-
-}
 
 //gets the current domain from the url of the page
 function getDomain() {
@@ -199,4 +169,37 @@ function getMouseoverElement() {
 		return item;
 	}
 	return null;
+}
+
+function setupBottomBar() {
+
+	let div = document.createElement("DIV");
+	let spacingDiv = document.createElement("DIV");
+
+	spacingDiv.id = "spacingDiv";
+	
+	// div.innerHTML = "THIS IS A TEST";
+	div.id = "bottomBar";
+	let body = document.querySelector("Body");
+	body.appendChild(spacingDiv);
+	body.appendChild(div);
+
+
+	let frame = document.createElement("IFRAME");
+	frame.id = "bottomFrame";
+
+	console.log(div.clientWidth);
+	frame.width = `${div.clientWidth} + px`;
+	console.log(frame.width);
+
+	frame.src = chrome.extension.getURL("bottomBar.html");
+	div.appendChild(frame);
+
+
+
+
+	
+
+	
+
 }

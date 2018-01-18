@@ -1,8 +1,3 @@
-/*this is a test for now 
-
-
-*/
-
 
 .BLresult {
 	border-width: 0px 0px 0px 0px;
@@ -35,70 +30,44 @@
 
 }
 
-.SBtitle {
-	margin: 0px 0 3px 0;
-	padding: 3px 0 3px 0;
-	color: white;
-	background: rgb(0, 114, 206);
-	border-radius: 3px;
-
+.flexContainer {
+	display:flex;
 }
 
-.SBbody {
-	background: rgb(0, 44, 71);
-
-}
-
-.SBcontent {
-	background: white;
-	border-radius: 3px;
+#smartSearchForm {
 	padding: 3px;
-	margin: 3px;
-	overflow: hidden;
+	margin: 0px 0px;
 }
 
-.SBcontent::after {
-	content: "";
-    clear: both;
-    display: table;
-
+#smartSearchText {
+	width: 150px;
 }
 
-.SBform {
-	display:inline-block;
-	background: white;
-	width: 25%;
-}
+.bottomTitle {
+	padding-left: 3px;
+	font-size: 1.25em;
+	font-weight: 550;
+	color: white;
 
-.SBtitle {
-	padding-left: 2px;
-}
-
-
-#smart_search_results_con {
-	height: 100%;
-	width: 100%;
-
-	display: inline-block;
-	border: 5px solid;
-
-}
-
-#clearButton {
-	width: 5%;
 }
 
 #bottomBar {
+	background:  #003A5E;
 	position: fixed;
 	overflow: hidden;
 	 bottom: 0;
 	 width: 100%;
-	 height: 10%;
+	 height: 80px;
 	 color: white;
+	 z-index: 10001;
 }
 
 #spacingDiv {
 	margin-top: 5%;
 
 
+}
+
+#bottomFrame {
+	overflow: hidden;
 }
