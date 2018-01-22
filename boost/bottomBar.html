@@ -2,32 +2,35 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="description" content="Webpage for xxxx">
     <link rel="stylesheet" href="linker.css">
   </head>
   <body> 
-  	<div class="flexContainer">
-	  	<div id="smartSearchDiv">
-	  	  	
-		  	<form autocomplete="off" name="smart_search_form" target="_blank" id="smartSearchForm">
-		   	 	<input id="smartSearchText" type="text" name="text" autofocus required placeholder="search for something">
+  	<div class="flexContainer" id="bottomBarContainer">
 
-          <span class="bottomTitle">Smart(ish) Search</span>
-		   	 	<input  type="reset" value="clear">
+	  	<div id="smartSearchDiv">
+	  	  <span class="bottomTitle">Smart(ish) Search</span>
+		  	<form autocomplete="off" name="smart_search_form" target="_blank" id="smartSearchForm">
+		   	 	<input id="smartSearchText" type="text" name="text" autofocus required placeholder="search for something" class="bottomBarMid">
+
+          
+		   	 	<input id="clearSearchBtn" type="reset" value="clear">
 		   	</form>
      
 
       </div>
-      <div>
-        <div>
-          <span class="bottomTitle">Results:</span>
-          <button id="clearResultsBtn">Clear Results</button>
-        </div>
-        <div id="smartSearchResults">
+      <div id="searchResultsContainer">
+        
+        <span class="bottomTitle">Results:</span>
+          
+        
+        <div id="smartSearchResults" class="flexContainer bottomBarMid">
           TEST
         </div>
-
+        <button id="clearResultsBtn">Clear Results</button>
         
+        <div id=searchResultsCap>
+          PLACE HOLDER TEXT
+        </div>
       </div>
 	</div>
    	<script src="sidebar.js"></script>

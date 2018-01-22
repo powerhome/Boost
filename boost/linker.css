@@ -1,3 +1,8 @@
+body {
+	padding: 0;
+	margin: 0;
+}
+
 
 .BLresult {
 	border-width: 0px 0px 0px 0px;
@@ -30,27 +35,6 @@
 
 }
 
-.flexContainer {
-	display:flex;
-}
-
-#smartSearchDiv {
-	padding: 3px;
-	margin: 0px 0px;
-}
-
-#smartSearchText {
-	width: 150px;
-}
-
-.bottomTitle {
-	padding-left: 3px;
-	font-size: 1.25em;
-	font-weight: 550;
-	color: white;
-
-}
-
 #bottomBar {
 	background:  #003A5E;
 	position: fixed;
@@ -62,14 +46,91 @@
 	 z-index: 10001;
 }
 
-#smartSearchResults {
+.flexContainer {
 	display:flex;
+}
+
+#bottomBarContainer {
+	padding-left: 3px;
+	height: 100%;
+
+}
+
+#smartSearchDiv {
+	padding: 3px;
+	margin: 0 2px 0 0 ;
+
+	border-color: #0072CE;
+	border-width: 0 2px 0 0;
+	border-style: solid;
+}
+
+#smartSearchText {
+	width: 120px;
+	padding: 0;
+	margin: 3px;
+}
+
+#clearSearchBtn {
+	
+}
+
+.bottomTitle {
+	padding-left: 3px;
+	font-size: .75em;
+	font-weight: 550;
+	color: white;
+
+}
+
+#searchResultsContainer {
+	width: 100%;
+	border-color: #0072CE;
+	border-width: 0 2px 0 0;
+	border-style: solid;
+}
+
+#smartSearchResults {
+	background: rgb(0, 114, 206);
+	width: 100%;
+	
+	
+	overflow: visible;
+}
+
+.bottomBarMid {
+	height: 2.2em;
+	
+	padding: 2px, 0, 2px, 0;
+}
+
+#searchResultsCap {
+	height: 80px;
+	width: 80px;
+
+	z-index: 1;
+	position: fixed;
+	top: 0;
+	right: 0;
+	
+	background: #003A5E;
+	border-color: #0072CE;
+	border-width: 0 0 0 2px;
+	border-style: solid;
 }
 
 #spacingDiv {
 	margin-top: 5%;
 
+}
 
+.searchResultBL {
+	min-width: 10%;
+	padding: 3px 3px;
+	margin: 2px 2px;
+	font-size: .8em;
+	background: white;
+	border-radius: 3px;
 }
 
 #bottomFrame {

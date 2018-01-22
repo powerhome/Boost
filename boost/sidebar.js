@@ -86,7 +86,7 @@ function getLinksFromBG(targetValue) {
 //uses same code as adding result 
 function noMatches(value)
 {
-	let msgForNoMatches = ["No Matches found for: " + value];
+	let msgForNoMatches = ["No Match for: " + value];
 	addResults(msgForNoMatches);
 }
 
@@ -99,6 +99,7 @@ function addResults(links) {
 	for(let i = 0; i < links.length; i++)
 	{
 		let resultLink = document.createElement("DIV");
+		resultLink.className = "searchResultBL";
 		resultLink.innerHTML = links[i];
 		resultDiv.insertBefore(resultLink, resultDiv.firstChild);
 	}
