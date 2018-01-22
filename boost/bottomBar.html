@@ -7,13 +7,13 @@
   </head>
   <body> 
   	<div class="flexContainer">
-	  	<div id="smartSearchForm">
+	  	<div id="smartSearchDiv">
 	  	  	
-		  	<form autocomplete="off" name="smart_search_form" target="_blank">
+		  	<form autocomplete="off" name="smart_search_form" target="_blank" id="smartSearchForm">
 		   	 	<input id="smartSearchText" type="text" name="text" autofocus required placeholder="search for something">
 
           <span class="bottomTitle">Smart(ish) Search</span>
-		   	 	<input id="resetSearchBtn" type="reset" value="clear">
+		   	 	<input  type="reset" value="clear">
 		   	</form>
      
 
@@ -21,10 +21,10 @@
       <div>
         <div>
           <span class="bottomTitle">Results:</span>
-          <button>Clear Results</button>
+          <button id="clearResultsBtn">Clear Results</button>
         </div>
-        <div class="BLresults">
-          
+        <div id="smartSearchResults">
+          TEST
         </div>
 
         

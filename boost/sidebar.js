@@ -11,23 +11,26 @@ function onError(error) {
 window.onload = () =>  {
 
 
-	let gettingRecent = browser.runtime.sendMessage({greeting: "get Recent"});
-	gettingRecent.then(response => {
+	browser.runtime.sendMessage({greeting: "get Recent"}, function(response) {
+
 		console.log(response.value);
 		if(response.value[0]){
 			addResults(response.value);
 		}
+
+
+
 	});
 
 
-	let button = document.getElementById("clearButton");
+	let button = document.getElementById("clearResultsBtn");
 	button.onclick = () => {
-		document.getElementById("smart_search_results").innerHTML = "";
-		let clearingRecent = browser.runtime.sendMessage({greeting: "clear Recent"});
+		document.getElementById("smartSearchResults").innerHTML = "";
+		chrome.runtime.sendMessage({greeting: "clear Recent"});
 
 	}
 
-	let form = document.getElementById('smart_search');
+	let form = document.getElementById('smartSearchForm');
 	form.onsubmit = e => {
 		e.preventDefault();
 
@@ -49,30 +52,34 @@ function formSubmitted(form)
 	let value =  form.childNodes[1].value;
 
 	//let links = linksFromText(value);
-	let gettingLinks = getLinksFromBG(value);
+	getLinksFromBG(value);
 	
-	gettingLinks.then(response => {
-       links = response.links;
-
-       if(links.length > 0) {
-			addResults(links);
-			form.reset();
-		}
-		else {
-			noMatches(value);
-		}
-
-    }).catch(onError);
+	form.reset();
+	
 
 }
 
 
 //gets links made from matches for target value
 function getLinksFromBG(targetValue) {
-
+	console.log("getting Links");
 	let msg = {greeting: "get links", value: targetValue};
 
-	return browser.runtime.sendMessage(msg);
+	chrome.runtime.sendMessage(msg, function(response) {
+		console.log("callback");
+		links = response.links;
+		console.log(links);
+		if(links.length > 0) {
+			addResults(links);
+			return true;
+		}
+		else {
+			noMatches(targetValue);
+		}
+
+		return false
+
+	})
 }
 
 //helper method to put message in for no matches
@@ -87,7 +94,7 @@ function noMatches(value)
 	adds the links in array "links" to the result div
 */
 function addResults(links) {
-	let resultDiv = document.getElementById("smart_search_results");
+	let resultDiv = document.getElementById("smartSearchResults");
 
 	for(let i = 0; i < links.length; i++)
 	{

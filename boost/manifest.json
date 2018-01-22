@@ -34,12 +34,6 @@
     "default_title": "BOOST"
   },
 
-  "sidebar_action": {
-    "default_panel": "sidebar.html",
-    "default_title": "Boost Search",
-    "default_icon": "icons/paint-blue-16.png"
-  },  
-
   "web_accessible_resources": [
     "bottomBar.html"
   ],

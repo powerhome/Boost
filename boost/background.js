@@ -161,7 +161,7 @@ chrome.tabs.query({active:true,windowType:"normal", currentWindow: true}
       tabs[0].id,
       {greeting: action_msg},
       function(response) {
-        let domain = resp.response;
+        let domain = response.response;
         setupPatternLinkers(domain);
       }
     );

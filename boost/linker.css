@@ -34,7 +34,7 @@
 	display:flex;
 }
 
-#smartSearchForm {
+#smartSearchDiv {
 	padding: 3px;
 	margin: 0px 0px;
 }
@@ -60,6 +60,10 @@
 	 height: 80px;
 	 color: white;
 	 z-index: 10001;
+}
+
+#smartSearchResults {
+	display:flex;
 }
 
 #spacingDiv {
