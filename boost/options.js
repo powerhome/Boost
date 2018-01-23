@@ -1,50 +1,81 @@
+var newBottomKey;
+var newLinkKey;
+
 function saveOptions(e) {
   console.log("saving options");
   e.preventDefault();
-  browser.storage.local.set({
-    sidebarKey: document.getElementById("sidebar").value,
-    linkKey: document.getElementById("link").value
-  });
+
+  if(newBottomKey != undefined)
+  {
+    chrome.storage.local.set({
+      bottomKey: newBottomKey
+    });
+  }
+  if(newLinkKey != undefined)
+  {
+    chrome.storage.local.set({
+      linkKey: newLinkKey
+    });
+  }
+  // let bbKey = document.getElementById("bottomInput").value;
+  // let lKey = document.getElementById("linkInput").value;
+
+  // chrome.storage.local.set({
+  //   bottomKey: bbKey,
+  //   linkKey: lKey
+  // });
 }
 
 function restoreOptions() {
-  let sidebarInput = document.getElementById("sidebar");
-  let linkInput = document.getElementById("link");
+  let bottomInput = document.getElementById("bottomInput");
+  let linkInput = document.getElementById("linkInput");
 
-  sidebarInput.onkeydown = e => {
-    processInputOnKeyDown(e,sidebarInput);
+  bottomInput.onkeypress = e => {
+    newBottomKey = processInputOnKeyPress(e,bottomInput);
+    e.preventDefault();
   };
 
-  linkInput.onkeydown = e => {
-    processInputOnKeyDown(e, linkInput);
+  linkInput.onkeypress = e => {
+    newLinkKey = processInputOnKeyPress(e, linkInput);
+    e.preventDefault();
   }
 
-  function processInputOnKeyDown(e, inputField) {
-    let result = ""
+  function processInputOnKeyPress(e, inputField) {
+    let result = "";
+    let resultObj = {};
 
     if(e.ctrlKey) {
-      result += "ctrl + ";
+      result += "Ctrl + ";
+      resultObj["mod"] = "Ctrl";
     } else if (e.altKey) {
-      result += "alt + "
+      result += "Alt + ";
+      resultObj["mod"] = "Alt";
     } else if (e.metaKey) {
-      result += "meta + "
+      result += "Meta + ";
+      resultObj["mod"] = "Meta";
+    } else {
+      resultObj["mod"] = "";
     }
 
-    result += e.key;
+    result = result + e.key;
+    resultObj["key"] = e.key;
+    console.log(resultObj);
     inputField.value = result;
+    return resultObj;
   }
 
   function setCurrentChoice(result) {
-    sidebarInput.value = result.sidebarKey || "MacCmd + Z";
-    linkInput.value = result.linkKey || "MacCtrl + B";
+    let bottomKey = result.bottomKey;
+    let linkKey = result.linkKey;
+    bottomInput.value = `${bottomKey.mod} + ${bottomKey.key}` || "MacCmd + Z";
+    linkInput.value = `${linkKey.mod} + ${linkKey.key}` || "MacCtrl + B";
   }
 
   function onError(error) {
     console.log(`Error: ${error}`);
   }
 
-  var getting = browser.storage.local.get(["sidebarKey","linkKey"]);
-  getting.then(setCurrentChoice, onError);
+  chrome.storage.local.get(["bottomKey","linkKey"], setCurrentChoice);
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);

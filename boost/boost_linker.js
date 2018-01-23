@@ -3,6 +3,8 @@ console.log("Content Script Loaded");
 //targets not to hit with links
 var invalidTargets = [];
 var currDomain;
+var bottomKey;
+var linkKey;
 
 /*
 Called when there was an error.
@@ -47,9 +49,9 @@ function onError(error) {
 	});
 
 	setupBottomBar();
+	setupPreferenceKeys();
 
-	
-
+	document.onkeypress = handleKeyPress;
 })();
 
 
@@ -219,6 +221,103 @@ function resizeBottomBar(frame, bar) {
 	bottomFrame.width = `${bottomBar.clientWidth} + px`;
 
 }
+
+function setupPreferenceKeys() {
+
+	chrome.storage.local.get(["bottomKey","linkKey"], function(result) {
+		bottomKey = result.bottomKey;
+		linkKey = result.linkKey;
+
+		console.log(bottomKey);
+		console.log(linkKey);
+
+
+
+	});
+
+}
+
+function handleKeyPress(event) {
+	console.log("key pressed event");
+	console.log(event.key);
+	console.log(event.ctrlKey);
+	let key = event.key;
+	console.log(bottomKey.key == event.key);
+
+	if(key == bottomKey.key)
+		console.log("bottom key match");
+		switch(bottomKey.mod) {
+			case "Ctrl": 
+				if(event.ctrlKey)
+				{
+					console.log("Event key control key");
+					toggleBottomBar();
+				}
+				break;
+
+			case "Alt":
+				if(event.altKey)
+				{
+					toggleBottomBar();
+				}
+				break;
+
+			case "Meta":
+			if(event.metaKey)
+				{
+					toggleBottomBar();
+				}
+				break;
+			case "":
+			linkifyAtMouseover();
+			break;
+
+			default:
+				
+
+		}
+
+		if(key == linkKey.key)
+		switch(linkKey.mod) {
+			case "Ctrl": 
+				if(event.ctrlKey)
+				{
+					linkifyAtMouseover();
+				}
+				break;
+
+			case "Alt":
+				if(event.altKey)
+				{
+					linkifyAtMouseover();
+				}
+				break;
+
+			case "Meta":
+			if(event.metaKey)
+				{
+					linkifyAtMouseover();
+				}
+				break;
+			case "":
+				linkifyAtMouseover();
+				break;
+			default:
+			
+
+		}
+
+
+}
+
+
+
+
+function toggleBottomBar() {
+	console.log("toggling bottom");
+}
+
+
 
 
 
