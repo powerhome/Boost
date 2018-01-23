@@ -238,80 +238,81 @@ function setupPreferenceKeys() {
 }
 
 function handleKeyPress(event) {
-	console.log("key pressed event");
-	console.log(event.key);
-	console.log(event.ctrlKey);
 	let key = event.key;
-	console.log(bottomKey.key == event.key);
-
-	if(key == bottomKey.key)
+	if(key == bottomKey.key) {
 		console.log("bottom key match");
 		switch(bottomKey.mod) {
 			case "Ctrl": 
 				if(event.ctrlKey)
 				{
-					console.log("Event key control key");
-					toggleBottomBar();
+					bottomCommandPressed()
 				}
 				break;
 
 			case "Alt":
 				if(event.altKey)
 				{
-					toggleBottomBar();
+					bottomCommandPressed()
 				}
 				break;
 
 			case "Meta":
 			if(event.metaKey)
 				{
-					toggleBottomBar();
+					bottomCommandPressed()
 				}
 				break;
 			case "":
-			linkifyAtMouseover();
+				bottomCommandPressed()
 			break;
 
 			default:
 				
 
 		}
+	}
 
-		if(key == linkKey.key)
+	if(key == linkKey.key) {
 		switch(linkKey.mod) {
 			case "Ctrl": 
 				if(event.ctrlKey)
 				{
-					linkifyAtMouseover();
+					linkCommandPressed()
 				}
 				break;
 
 			case "Alt":
 				if(event.altKey)
 				{
-					linkifyAtMouseover();
+					linkCommandPressed()
 				}
 				break;
 
 			case "Meta":
 			if(event.metaKey)
 				{
-					linkifyAtMouseover();
+					linkCommandPressed()
 				}
 				break;
 			case "":
-				linkifyAtMouseover();
+				linkCommandPressed()
 				break;
 			default:
 			
 
 		}
+	}
 
+	function bottomCommandPressed() {
+		toggleBottomBar();
+		event.preventDefault();
+	}
 
+	function linkCommandPressed() {
+		linkifyAtMouseover();
+		event.preventDefault();
+	}
 }
-
-
-
 
 function toggleBottomBar() {
 	console.log("toggling bottom");
