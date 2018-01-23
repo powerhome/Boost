@@ -46,7 +46,10 @@ function onError(error) {
 
 	setupBottomBar();
 
+	window.onresize = () => {
 
+		resizeBottomBar();
+	}
 
 })();
 
@@ -189,17 +192,29 @@ function setupBottomBar() {
 	frame.id = "bottomFrame";
 
 	console.log(div.clientWidth);
-	frame.width = `${div.clientWidth} + px`;
+	resizeBottomBar(frame);
 	console.log(frame.width);
 
 	frame.src = chrome.extension.getURL("bottomBar.html");
 	div.appendChild(frame);
 
+}
+
+function resizeBottomBar(frame) {
+	console.log("resizing");
+	let bottomFrame = frame || window.getElementByID("bottomFrame");
+	console.log(frame + bottomFrame);
+	let bottomBar = document.getElementByID("bottomBar");
+	bottomFrame.width = `${bottomBar.clientWidth} + px`;
 
 
 
-	
-
-	
 
 }
+
+
+
+
+
+
+
