@@ -6,11 +6,11 @@
   </head>
   <body> 
   	<div class="flexContainer" id="bottomBarContainer">
-
+      <div class="bottomSpacer"></div>
 	  	<div id="smartSearchDiv">
-	  	  <div class="bottomTitle">Smart(ish) Search</div>
+	  	  <div id="smartSearchTitle" class="bottomTitle">Smart(ish) Search</div>
 		  	<form autocomplete="off" name="smart_search_form" target="_blank" id="smartSearchForm">
-		   	 	<input id="smartSearchText" type="text" name="text" autofocus required placeholder="search for something" class="searchResultBL">
+		   	 	<input id="smartSearchText" type="text" name="text" autofocus required placeholder="search for something" class="bottomMidSection">
 
           
 		   	 	<input class="BLButton" id="clearSearchBtn" type="reset" value="Clear">
@@ -26,11 +26,8 @@
         <div id="smartSearchResults" class="flexContainer">
         </div>
         <button class="BLButton" id="clearResultsBtn">Clear Results</button>
-        
-        <div id=searchResultsCap>
-          PLACE HOLDER TEXT
-        </div>
       </div>
+      <div class="bottomSpacer"></div>
 	</div>
    	<script src="sidebar.js"></script>
   </body>

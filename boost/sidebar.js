@@ -99,7 +99,7 @@ function addResults(links) {
 	for(let i = 0; i < links.length; i++)
 	{
 		let resultLink = document.createElement("DIV");
-		resultLink.className = "searchResultBL";
+		resultLink.className = "bottomMidSection";
 		resultLink.innerHTML = links[i];
 		resultDiv.insertBefore(resultLink, resultDiv.firstChild);
 	}

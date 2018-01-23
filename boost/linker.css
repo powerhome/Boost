@@ -18,6 +18,7 @@ body {
 }
 
 
+
 .BLtitle {
 
 	padding-left: 3px;
@@ -35,6 +36,8 @@ body {
 
 }
 
+
+
 #bottomBar {
 	background:  #003A5E;
 	position: fixed;
@@ -51,7 +54,6 @@ body {
 }
 
 #bottomBarContainer {
-	height: 100%;
 
 }
 
@@ -63,6 +65,7 @@ body {
 
 .BLButton {
 	margin: 0;
+	margin-top: 3px;
 	border-width: 0px;
 	border-radius: 3px;
 	font-size: .75em;
@@ -78,10 +81,15 @@ body {
 	display: block;
 }
 
+#smartSearchTitle {
+	text-align: right;
+}
+
 .bottomTitle {
 	padding-left: 3px;
+		padding-right: 3px;
 	margin-bottom: 3px;
-	font-size: .75em;
+	font-size: .85em;
 	font-weight: 550;
 	color: white;
 	background: #0072CE;
@@ -91,18 +99,17 @@ body {
 
 #searchResultsContainer {
 	width: 100%;
-
+	max-width: 60%;
+	overflow:hidden;
 
 }
-
-
 
 
 #smartSearchResults {
 		margin: 0;
 	width: 100%;
 	
-		/*min-height: 40.1667px;*/
+	min-height: 2em;
 	overflow: visible;
 }
 
@@ -115,28 +122,23 @@ body {
 	border: none;
 }
 
-.searchResultBL {
+.bottomMidSection {
 	font-size: .8em;
-	height: 2.2em;
+	height: 2em;
 	width: 94px;
+	min-width: 94px;
 	padding: 3px 3px;
-	margin: 0px 3px 3px 0;
+	margin-right: 3px;
+	overflow: hidden;
 
 	background: white;
 	border-radius: 3px;
 }
 
-#searchResultsCap {
-	display: none;
-	height: 80px;
-	width: 80px;
-
-	z-index: 1;
-	position: fixed;
-	top: 0;
-	right: 0;
-	background: #0072CE;
+.bottomSpacer {
+	width: 30%;
 }
+
 
 #spacingDiv {
 	margin-top: 5%;
@@ -147,4 +149,6 @@ body {
 
 #bottomFrame {
 	overflow: hidden;
+	border-width: 0;
+	border-style: none;
 }
