@@ -189,11 +189,8 @@ function setupBottomBar() {
 
 	let frame = document.createElement("IFRAME");
 	frame.id = "bottomFrame";
-
-	console.log(bottomBar.clientWidth);
-	//frame.width = `${div.clientWidth} + px`;
 	resizeBottomBar(frame);
-	console.log(frame.width);
+
 
 	frame.src = chrome.extension.getURL("bottomBar.html");
 	bottomBar.appendChild(frame);
@@ -217,7 +214,6 @@ function setupBottomBar() {
 }
 
 function resizeBottomBar(frame, bar) {
-	console.log("resizing");
 	let bottomFrame = frame || window.getElementById("bottomFrame");
 	let bottomBar = bar || document.getElementById("bottomBar");
 	bottomFrame.width = `${bottomBar.clientWidth} + px`;
