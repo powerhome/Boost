@@ -8,25 +8,24 @@
   	<div class="flexContainer" id="bottomBarContainer">
 
 	  	<div id="smartSearchDiv">
-	  	  <span class="bottomTitle">Smart(ish) Search</span>
+	  	  <div class="bottomTitle">Smart(ish) Search</div>
 		  	<form autocomplete="off" name="smart_search_form" target="_blank" id="smartSearchForm">
-		   	 	<input id="smartSearchText" type="text" name="text" autofocus required placeholder="search for something" class="bottomBarMid">
+		   	 	<input id="smartSearchText" type="text" name="text" autofocus required placeholder="search for something" class="searchResultBL">
 
           
-		   	 	<input id="clearSearchBtn" type="reset" value="clear">
+		   	 	<input class="BLButton" id="clearSearchBtn" type="reset" value="Clear">
 		   	</form>
      
 
       </div>
       <div id="searchResultsContainer">
         
-        <span class="bottomTitle">Results:</span>
+        <div class="bottomTitle">Results:</div>
           
         
-        <div id="smartSearchResults" class="flexContainer bottomBarMid">
-          TEST
+        <div id="smartSearchResults" class="flexContainer">
         </div>
-        <button id="clearResultsBtn">Clear Results</button>
+        <button class="BLButton" id="clearResultsBtn">Clear Results</button>
         
         <div id=searchResultsCap>
           PLACE HOLDER TEXT

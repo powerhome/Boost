@@ -51,60 +51,83 @@ body {
 }
 
 #bottomBarContainer {
-	padding-left: 3px;
 	height: 100%;
 
 }
 
 #smartSearchDiv {
-	padding: 3px;
-	margin: 0 2px 0 0 ;
-
-	border-color: #0072CE;
-	border-width: 0 2px 0 0;
-	border-style: solid;
+	width: 150px;
+	margin-right: 3px;
+	
 }
 
-#smartSearchText {
-	width: 120px;
-	padding: 0;
-	margin: 3px;
+.BLButton {
+	margin: 0;
+	border-width: 0px;
+	border-radius: 3px;
+	font-size: .75em;
+
 }
 
 #clearSearchBtn {
-	
+	float: right;
+}
+
+#clearResultsBtn {
+	width: 100px;
+	display: block;
 }
 
 .bottomTitle {
 	padding-left: 3px;
+	margin-bottom: 3px;
 	font-size: .75em;
 	font-weight: 550;
 	color: white;
+	background: #0072CE;
+	border-radius: 0 0 3px 3px;
 
 }
 
 #searchResultsContainer {
 	width: 100%;
-	border-color: #0072CE;
-	border-width: 0 2px 0 0;
-	border-style: solid;
+
+
 }
 
+
+
+
 #smartSearchResults {
-	background: rgb(0, 114, 206);
+		margin: 0;
 	width: 100%;
 	
-	
+		/*min-height: 40.1667px;*/
 	overflow: visible;
 }
 
-.bottomBarMid {
-	height: 2.2em;
+
+#smartSearchText {
+	width: 130px;
 	
-	padding: 2px, 0, 2px, 0;
+	margin-left: 0px;
+	margin-right: 0px;
+	border: none;
+}
+
+.searchResultBL {
+	font-size: .8em;
+	height: 2.2em;
+	width: 94px;
+	padding: 3px 3px;
+	margin: 0px 3px 3px 0;
+
+	background: white;
+	border-radius: 3px;
 }
 
 #searchResultsCap {
+	display: none;
 	height: 80px;
 	width: 80px;
 
@@ -112,11 +135,7 @@ body {
 	position: fixed;
 	top: 0;
 	right: 0;
-	
-	background: #003A5E;
-	border-color: #0072CE;
-	border-width: 0 0 0 2px;
-	border-style: solid;
+	background: #0072CE;
 }
 
 #spacingDiv {
@@ -124,14 +143,7 @@ body {
 
 }
 
-.searchResultBL {
-	min-width: 10%;
-	padding: 3px 3px;
-	margin: 2px 2px;
-	font-size: .8em;
-	background: white;
-	border-radius: 3px;
-}
+
 
 #bottomFrame {
 	overflow: hidden;
