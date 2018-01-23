@@ -46,10 +46,7 @@ function onError(error) {
 
 	setupBottomBar();
 
-	window.onresize = () => {
-
-		resizeBottomBar();
-	}
+	
 
 })();
 
@@ -176,39 +173,52 @@ function getMouseoverElement() {
 
 function setupBottomBar() {
 
-	let div = document.createElement("DIV");
+	let bottomBar = document.createElement("DIV");
 	let spacingDiv = document.createElement("DIV");
+	let body = document.querySelector("Body");
 
 	spacingDiv.id = "spacingDiv";
+	bottomBar.id = "bottomBar";
+
 	
-	// div.innerHTML = "THIS IS A TEST";
-	div.id = "bottomBar";
-	let body = document.querySelector("Body");
 	body.appendChild(spacingDiv);
-	body.appendChild(div);
+	body.appendChild(bottomBar);
 
 
 	let frame = document.createElement("IFRAME");
 	frame.id = "bottomFrame";
 
-	console.log(div.clientWidth);
+	console.log(bottomBar.clientWidth);
+	//frame.width = `${div.clientWidth} + px`;
 	resizeBottomBar(frame);
 	console.log(frame.width);
 
 	frame.src = chrome.extension.getURL("bottomBar.html");
-	div.appendChild(frame);
+	bottomBar.appendChild(frame);
+
+
+	window.addEventListener("resize", resizeThrottler, false);
+
+	var resizeTimeout;
+	function resizeThrottler() {
+		// ignore resize events as long as an actualResizeHandler execution is in the queue
+    	if ( !resizeTimeout ) {
+		      	resizeTimeout = setTimeout(function() {
+		        resizeTimeout = null;
+		        resizeBottomBar(frame, bottomBar);
+	     
+	       // The actualResizeHandler will execute at a rate of 15fps
+	       }, 66);
+	    }
+	}
 
 }
 
-function resizeBottomBar(frame) {
+function resizeBottomBar(frame, bar) {
 	console.log("resizing");
-	let bottomFrame = frame || window.getElementByID("bottomFrame");
-	console.log(frame + bottomFrame);
-	let bottomBar = document.getElementByID("bottomBar");
+	let bottomFrame = frame || window.getElementById("bottomFrame");
+	let bottomBar = bar || document.getElementById("bottomBar");
 	bottomFrame.width = `${bottomBar.clientWidth} + px`;
-
-
-
 
 }
 

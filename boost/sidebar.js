@@ -62,13 +62,11 @@ function formSubmitted(form)
 
 //gets links made from matches for target value
 function getLinksFromBG(targetValue) {
-	console.log("getting Links");
 	let msg = {greeting: "get links", value: targetValue};
 
 	chrome.runtime.sendMessage(msg, function(response) {
-		console.log("callback");
-		links = response.links;
-		console.log(links);
+
+		let links = response.links;
 		if(links.length > 0) {
 			addResults(links);
 			return true;
