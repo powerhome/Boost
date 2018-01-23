@@ -183,6 +183,7 @@ function setupBottomBar() {
 
 	spacingDiv.id = "spacingDiv";
 	bottomBar.id = "bottomBar";
+	bottomBar.classList.add("slide");
 
 	
 	body.appendChild(spacingDiv);
@@ -316,6 +317,12 @@ function handleKeyPress(event) {
 
 function toggleBottomBar() {
 	console.log("toggling bottom");
+
+	let bottomBar = document.getElementById("bottomBar");
+
+	bottomBar.classList.toggle("hideBar")
+
+
 }
 
 

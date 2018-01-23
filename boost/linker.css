@@ -144,6 +144,16 @@ body {
 
 }
 
+.slide {
+	transition-property: height;
+	transition-duration: .5s;
+}
+
+.hideBar {
+	height: 0 !important;
+	
+}
+
 
 
 #bottomFrame {
