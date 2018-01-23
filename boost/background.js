@@ -155,12 +155,11 @@ Sets listener for browser action
 chrome.browserAction.onClicked.addListener(() => {
   console.log("action clicked");
 
-chrome.tabs.query({active:true,windowType:"normal", currentWindow: true}
+chrome.tabs.query({active:true, currentWindow: true}
   ,function(tabs){
-    chrome.tabs.sendMessage(
-      tabs[0].id,
-      {greeting: action_msg},
+    chrome.tabs.sendMessage(tabs[0].id,{greeting: action_msg},
       function(response) {
+        console.log("callback in send messagE");
         let domain = response.response;
         setupPatternLinkers(domain);
       }

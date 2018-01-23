@@ -11,7 +11,7 @@ function onError(error) {
 window.onload = () =>  {
 
 
-	browser.runtime.sendMessage({greeting: "get Recent"}, function(response) {
+	chrome.runtime.sendMessage({greeting: "get Recent"}, function(response) {
 
 		console.log(response.value);
 		if(response.value[0]){
@@ -31,7 +31,8 @@ window.onload = () =>  {
 	}
 
 	let form = document.getElementById('smartSearchForm');
-	form.onsubmit = e => {
+	form.onsubmit = function(e) {
+		console.log("form submitted");
 		e.preventDefault();
 
 		formSubmitted(e.target);

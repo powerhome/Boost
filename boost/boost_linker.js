@@ -22,7 +22,8 @@ function onError(error) {
 	}
 
 	//sets up listener to get command press from BG Script
-	chrome.runtime.onMessage.addListener(request => {
+	chrome.runtime.onMessage.addListener(
+		function(request, sender, sendResponse) {
 		console.log("from bg: " + request.greeting);
 		let answer = new Object();
 		let response = "response: ";
@@ -41,7 +42,8 @@ function onError(error) {
 				break;
 		}
 		answer["response"] = response;
-		return Promise.resolve(answer);
+		console.log(answer);
+		sendResponse(answer);
 	});
 
 	setupBottomBar();
