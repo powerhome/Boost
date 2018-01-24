@@ -19,9 +19,8 @@ function onError(error) {
 */
 (function () {
 	invalidTargets.push(document.body);
-	if(currDomain == undefined) {
-		currDomain = getDomain();
-	}
+
+	setupDomain();
 
 	//sets up listener to get command press from BG Script
 	chrome.runtime.onMessage.addListener(
@@ -52,15 +51,10 @@ function onError(error) {
 	setupPreferenceKeys();
 
 	document.onkeypress = handleKeyPress;
+
+
 })();
 
-
-
-//gets the current domain from the url of the page
-function getDomain() {
-	let domain = /https?:\/\/(?:www.)?\S{1,30}.com\/|file:\/\/\/\S*.html/i.exec(document.URL)[0];
-	return domain;
-}
 
 
 //checks to see that a node is valid
@@ -325,8 +319,32 @@ function toggleBottomBar() {
 
 }
 
+function setupDomain() {
+
+	//gets the current locked domain from storage
+	chrome.storage.local.get(["domain"], function(result) {
+		currDomain = result.domain;
+
+		if(currDomain == undefined) {
+
+			// chrome.tabs.query(
+   //      		{currentWindow: true, active: true},
+   //      		function(tabs) {
+   //          		chrome.pageAction.show(tabs[0].id)
+   //      	});
+
+			// currDomain = getDomain();
+		}
+	});
+}
 
 
+
+//gets the current domain from the url of the page
+function getDomain() {
+	let domain = /https?:\/\/(?:www.)?\S{1,30}.com\/|file:\/\/\/\S*.html/i.exec(document.URL)[0];
+	return domain;
+}
 
 
 

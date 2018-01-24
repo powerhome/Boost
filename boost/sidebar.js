@@ -13,13 +13,9 @@ window.onload = () =>  {
 
 	chrome.runtime.sendMessage({greeting: "get Recent"}, function(response) {
 
-		console.log(response.value);
-		if(response.value[0]){
+		if(response != undefined){
 			addResults(response.value);
 		}
-
-
-
 	});
 
 

@@ -152,7 +152,7 @@ chrome.tabs.query({active:true,windowType:"normal", currentWindow: true}
 /*
 Sets listener for browser action
 */
-chrome.browserAction.onClicked.addListener(() => {
+chrome.pageAction.onClicked.addListener(() => {
   console.log("action clicked");
 
 chrome.tabs.query({active:true, currentWindow: true}
@@ -162,6 +162,7 @@ chrome.tabs.query({active:true, currentWindow: true}
         console.log("callback in send messagE");
         let domain = response.response;
         setupPatternLinkers(domain);
+        chrome.storage.local.set({domain: domain});
       }
     );
   });

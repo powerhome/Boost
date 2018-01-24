@@ -31,11 +31,11 @@
   },
 
 
-  "browser_action": {
+  "page_action": {
   "default_icon": {
     "16": "icons/paint-blue-16.png"
     },
-    "default_title": "BOOST"
+    "default_title": "Lock this Domain for Boost"
   },
 
   "web_accessible_resources": [
