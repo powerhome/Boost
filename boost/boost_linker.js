@@ -333,7 +333,7 @@ function setupDomain() {
    //          		chrome.pageAction.show(tabs[0].id)
    //      	});
 
-			// currDomain = getDomain();
+			currDomain = getDomain();
 		}
 	});
 }
