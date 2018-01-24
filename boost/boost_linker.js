@@ -34,7 +34,7 @@ function onError(error) {
 				//TODO lock domain? dialog. reponse determines
 				response += "locking domain";
 				answer["domain"] = getDomain();
-				answer["domain_lock"] = true;
+				answer["domain_lock_needed"] = true;
 				break;
 			case "command pressed":
 				response += "command pressed recieved";
