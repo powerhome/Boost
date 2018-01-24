@@ -31,7 +31,10 @@ function onError(error) {
 
 		switch(request.greeting) {
 			case "action clicked":	
-				response = getDomain();
+				//TODO lock domain? dialog. reponse determines
+				response += "locking domain";
+				answer["domain"] = getDomain();
+				answer["domain_lock"] = true;
 				break;
 			case "command pressed":
 				response += "command pressed recieved";
@@ -49,6 +52,7 @@ function onError(error) {
 
 	setupBottomBar();
 	setupPreferenceKeys();
+	setupPageAction();
 
 	document.onkeypress = handleKeyPress;
 
@@ -320,22 +324,10 @@ function toggleBottomBar() {
 }
 
 function setupDomain() {
-
-	//gets the current locked domain from storage
-	chrome.storage.local.get(["domain"], function(result) {
-		currDomain = result.domain;
-
 		if(currDomain == undefined) {
-
-			// chrome.tabs.query(
-   //      		{currentWindow: true, active: true},
-   //      		function(tabs) {
-   //          		chrome.pageAction.show(tabs[0].id)
-   //      	});
 
 			currDomain = getDomain();
 		}
-	});
 }
 
 
@@ -346,7 +338,17 @@ function getDomain() {
 	return domain;
 }
 
+//sends a msg to bg to turn page action on if needed
+function setupPageAction() {
+	chrome.runtime.sendMessage({greeting: "try pageAction"},
+		function(response) {
+			console.log(response);
+			
 
+		});
+
+
+}
 
 
 

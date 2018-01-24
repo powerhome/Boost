@@ -15,12 +15,17 @@ function onError(error) {
 
 var patternLinkerContainer = false;
 var recentMatches = [];
+var domainLocked = false;
 
 //sets up pattern linker using domain 
 function setupPatternLinkers(newDomain) {
 
-  if(newDomain === patternLinkerContainer.domain)
+  if(newDomain === patternLinkerContainer.domain || domainLocked)
   {
+    if(domainLocked) {
+      console.log("DOMAIN LOCKED");
+      return
+    }
     console.log("DOMAIN SAME");
     return;
   }
@@ -97,8 +102,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.log("BG"+response);
         break;
 
+        case "try pageAction":
+        response += "returning page action status";
+        if(tryPageAction())
+        {
+          chrome.pageAction.show(sender.tab.id);
+        }
+        break;
+
         case "get links":
         response += "returning links";
+         console.log(sender)
         answer["links"] = buildLinksFromInput(request.value, request.domain);
         console.log("returning links " + answer);
         console.log(answer);
@@ -158,14 +172,28 @@ chrome.pageAction.onClicked.addListener(() => {
 chrome.tabs.query({active:true, currentWindow: true}
   ,function(tabs){
     chrome.tabs.sendMessage(tabs[0].id,{greeting: action_msg},
-      function(response) {
-        console.log("callback in send messagE");
-        let domain = response.response;
-        setupPatternLinkers(domain);
-        chrome.storage.local.set({domain: domain});
+       function(response) {
+        if(response.domain_lock) {
+          lockDomain(response.domain);
+        }
+
+        console.log(response.response);
+      //   console.log("callback in send messagE");
+      //   let domain = response.response;
+      //   setupPatternLinkers(domain);
+      //   chrome.storage.local.set({domain: domain, locked: true});
       }
     );
   });
+
+function lockDomain(domain) {
+
+  domainLocked = true;
+  setupPatternLinkers(domain);
+  chrome.storage.local.set({domain: domain, locked: true});
+
+
+}
 
 
   // chrome.tabs.query({
@@ -200,7 +228,7 @@ chrome.tabs.query({active:true, currentWindow: true}
 
 function buildLinksFromInput(textArr, domain) {
   if(domain) {
-    console.log("domain changed to " + domain);
+    console.log("Trying domain change");
     setupPatternLinkers(domain);
   }
 
@@ -285,6 +313,11 @@ function linksFromText(text) {
     return result;
   }
 
+}
+
+function tryPageAction() {
+
+  return !domainLocked;
 }
 // //TO BE USED LATER MAYBE
 // function getSelectionText() {
