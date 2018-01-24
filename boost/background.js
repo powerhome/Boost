@@ -16,6 +16,7 @@ function onError(error) {
 var patternLinkerContainer = false;
 var recentMatches = [];
 var domainLocked = false;
+var tabsWithPageActionIndexes = [];
 
 //sets up pattern linker using domain 
 function setupPatternLinkers(newDomain) {
@@ -107,6 +108,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if(tryPageAction())
         {
           chrome.pageAction.show(sender.tab.id);
+          tabsWithPageActionIndexes.push(sender.tab.id);
+          console.log(tabsWithPageActionIndexes);
+        }
+        else
+        {
+          chrome.pageAction.hide(sender.tab.id);
         }
         break;
 
@@ -153,27 +160,34 @@ Sets listener for browser action
 chrome.pageAction.onClicked.addListener(() => {
   console.log("action clicked");
 
-chrome.tabs.query({active:true, currentWindow: true}
+  chrome.tabs.query({active:true, currentWindow: true}
   ,function(tabs){
     chrome.tabs.sendMessage(tabs[0].id,{greeting: action_msg},
-       function(response) {
-        if(response.domain_lock_needed) {
-          lockDomain(response.domain);
-          setupPatternLinkers(response.domain);
-          chrome.pageAction.hide(tabs[0].id);
-        }
+        function(response) {
+          if(response.domain_lock_needed) {
+            lockDomain(response.domain);
+           //  setupPatternLinkers(response.domain);
+            //chrome.pageAction.hide(tabs[0].id);
+          }
 
-        console.log(response.response);
-      }
-    );
+          console.log(response.response);
+      });
   });
 
-function lockDomain(domain) {
+  function lockDomain(domain) {
 
-  setupPatternLinkers(domain);
-  chrome.storage.local.set({domain: domain, locked: true});
-  domainLocked = true;
+    setupPatternLinkers(domain);
+    chrome.storage.local.set({domain: domain, locked: true});
+    console.log("TESTTAETASDF");
+    domainLocked = true;
 
+    console.log(tabsWithPageActionIndexes);
+    for(let i = 0; i < tabsWithPageActionIndexes.length; i++)
+    {
+      chrome.pageAction.hide(tabsWithPageActionIndexes[i]);
+
+    }
+    tabsWithPageActionIndexes = [];
   }
 
 });
