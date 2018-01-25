@@ -226,12 +226,6 @@ function setupPreferenceKeys() {
 	chrome.storage.local.get(["bottomKey","linkKey"], function(result) {
 		bottomKey = result.bottomKey;
 		linkKey = result.linkKey;
-
-		console.log(bottomKey);
-		console.log(linkKey);
-
-
-
 	});
 
 }
@@ -239,7 +233,6 @@ function setupPreferenceKeys() {
 function handleKeyPress(event) {
 	let key = event.key;
 	if(key == bottomKey.key) {
-		console.log("bottom key match");
 		switch(bottomKey.mod) {
 			case "Ctrl": 
 				if(event.ctrlKey)
@@ -314,8 +307,6 @@ function handleKeyPress(event) {
 }
 
 function toggleBottomBar() {
-	console.log("toggling bottom");
-
 	let bottomBar = document.getElementById("bottomBar");
 
 	bottomBar.classList.toggle("hideBar")
@@ -340,12 +331,7 @@ function getDomain() {
 
 //sends a msg to bg to turn page action on if needed
 function setupPageAction() {
-	chrome.runtime.sendMessage({greeting: "try pageAction"},
-		function(response) {
-			console.log(response.response);
-			
-
-		});
+	chrome.runtime.sendMessage({greeting: "try pageAction"});
 }
 
 

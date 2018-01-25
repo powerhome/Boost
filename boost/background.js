@@ -16,7 +16,25 @@ function onError(error) {
 var patternLinkerContainer = false;
 var recentMatches = [];
 var domainLocked = false;
-var tabsWithPageActionIndexes = [];
+var tabsWithPageActionIndexes;
+
+(function setup() {
+
+  console.log("BG SETTING UP");
+
+  tabsWithPageActionIndexes = [];
+  chrome.storage.local.get(["domain","domainLocked"],
+    function(response){
+      domainLocked = response.domainLocked;
+      let domain = response.domain;
+
+      if(domain != undefined)
+        setupPatternLinkers(domain);
+
+    });
+
+
+})();
 
 //sets up pattern linker using domain 
 function setupPatternLinkers(newDomain) {
@@ -97,6 +115,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         answer.value = recentMatches;
         break;
 
+        case "unlock domain":
+        response += "unlocking domain"
+        domainLocked = false;
+
+        break;
+
         case "get PLC":  
         response += "returning patt linker con";
         answer["patternLinkerContainer"] = patternLinkerContainer;
@@ -104,16 +128,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         break;
 
         case "try pageAction":
-        response += "returning page action status";
+        
         if(tryPageAction())
         {
+          response += "pageAction Shown";
           chrome.pageAction.show(sender.tab.id);
           tabsWithPageActionIndexes.push(sender.tab.id);
           console.log(tabsWithPageActionIndexes);
         }
         else
         {
-          chrome.pageAction.hide(sender.tab.id);
+          response += "no PA: domain locked";
+          //chrome.pageAction.hide(sender.tab.id);
         }
         break;
 
@@ -134,25 +160,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     answer["response"] = response;
     sendResponse(answer);
   });
-
-
-
-/*
-Sets listeners for commands
-*/
-chrome.commands.onCommand.addListener(function(command) {
-
-  console.log(command);
-  
-chrome.tabs.query({active:true,windowType:"normal", currentWindow: true}
-  ,function(tabs){
-    chrome.tabs.sendMessage(
-      tabs[0].id,
-      {greeting: command_msg}
-    );
-  });
-});
-
 
 /*
 Sets listener for browser action
@@ -177,11 +184,9 @@ chrome.pageAction.onClicked.addListener(() => {
   function lockDomain(domain) {
 
     setupPatternLinkers(domain);
-    chrome.storage.local.set({domain: domain, locked: true});
-    console.log("TESTTAETASDF");
+    chrome.storage.local.set({domain: domain, domainLocked: true});
     domainLocked = true;
 
-    console.log(tabsWithPageActionIndexes);
     for(let i = 0; i < tabsWithPageActionIndexes.length; i++)
     {
       chrome.pageAction.hide(tabsWithPageActionIndexes[i]);
@@ -228,14 +233,11 @@ function buildLinksFromInput(textArr, domain) {
   Checks all patternLinkers in patternLinkers obj against text and returns links for those matches
 */
 function linksFromText(text, domainArg) {
-  console.log(text);
   //determines if a specific domain is needed or to use the previously saved one
   let domain = domainArg || patternLinkerContainer.domain;
-  console.log(domain);
   //accumulate all the matches
   let results = [];
 
-  console.log(patternLinkerContainer);
   //patternLinkers in PLC holds the patterns to match
   for(patt in patternLinkers = patternLinkerContainer.patternLinkers) {
     let thisPatt = patternLinkers[patt];
@@ -249,7 +251,6 @@ function linksFromText(text, domainArg) {
       results.push(res);
     }
   }
-  console.log("matches made: " + results.length);
   return results;
 
   /*
@@ -258,8 +259,6 @@ function linksFromText(text, domainArg) {
     assumes that the capture group collectively concat to the proper number
   */
   function getMatchesFromText(text, pattern) {
-    console.log(text);
-    console.log(pattern);
     let resultArray;
     let results = [];
 

@@ -17,13 +17,19 @@ function saveOptions(e) {
       linkKey: newLinkKey
     });
   }
-  // let bbKey = document.getElementById("bottomInput").value;
-  // let lKey = document.getElementById("linkInput").value;
+}
 
-  // chrome.storage.local.set({
-  //   bottomKey: bbKey,
-  //   linkKey: lKey
-  // });
+function resetOptions(e) {
+  console.log("resetting options");
+  e.preventDefault();
+  chrome.storage.local.set({
+    bottomKey: {"mod": "Ctrl", "key": "X"},
+    linkKey: {mod: "Ctrl", key: "Z"},
+    domain: undefined,
+    domainLocked: false
+  }, function() {
+    restoreOptions();
+  });
 }
 
 function restoreOptions() {
@@ -59,7 +65,6 @@ function restoreOptions() {
 
     result = result + e.key;
     resultObj["key"] = e.key;
-    console.log(resultObj);
     inputField.value = result;
     return resultObj;
   }
@@ -67,8 +72,8 @@ function restoreOptions() {
   function setCurrentChoice(result) {
     let bottomKey = result.bottomKey;
     let linkKey = result.linkKey;
-    bottomInput.value = `${bottomKey.mod} + ${bottomKey.key}` || "MacCmd + Z";
-    linkInput.value = `${linkKey.mod} + ${linkKey.key}` || "MacCtrl + B";
+    bottomInput.value = `${bottomKey.mod} + ${bottomKey.key}` || "Ctrl + Z";
+    linkInput.value = `${linkKey.mod} + ${linkKey.key}` || "Ctrl + X";
   }
 
   function onError(error) {
@@ -80,3 +85,4 @@ function restoreOptions() {
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);
+document.querySelector("form").addEventListener("reset", resetOptions);

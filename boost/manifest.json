@@ -47,16 +47,6 @@
     "16": "icons/page-16.png",
     "32": "icons/page-32.png",
     "48": "icons/page-48.png"
-  },
-
-  "commands": {
-    "boost_command": {
-      "suggested_key": {
-        "default": "Alt+Z",
-        "mac": "MacCtrl+Z"
-      },
-      "description": "Boosts a certain page"
-    }
   }
 
 }
