@@ -42,7 +42,7 @@ function onError(error) {
 				break;
 			
 			default:
-				response += "unknown message";
+				//response += "unknown message";
 				break;
 		}
 		answer["response"] = response;
@@ -297,6 +297,7 @@ function handleKeyPress(event) {
 	}
 
 	function bottomCommandPressed() {
+
 		toggleBottomBar();
 		event.preventDefault();
 	}
@@ -310,9 +311,13 @@ function handleKeyPress(event) {
 function toggleBottomBar() {
 	let bottomBar = document.getElementById("bottomBar");
 
-	bottomBar.classList.toggle("hideBar")
-
-
+		bottomBar.classList.toggle("hideBar");
+		if(!bottomBar.classList.contains("hideBar"))
+		{
+			setTimeout(function () {
+				bottomBar.firstChild.contentWindow.document.getElementById("smartSearchText").focus()
+			}, 500);
+		}
 }
 
 function setupDomain() {

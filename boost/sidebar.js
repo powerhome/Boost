@@ -8,7 +8,15 @@ function onError(error) {
   console.log(`Error: ${error}`);
 }
 
+var bottomKey;
+var linkKey;
+
 window.onload = () =>  {
+
+	chrome.storage.local.get(["bottomKey","linkKey"], function(result) {
+		bottomKey = result.bottomKey;
+		linkKey = result.linkKey;
+	});
 
 
 	chrome.runtime.sendMessage({greeting: "get Recent"}, function(response) {
@@ -99,3 +107,25 @@ function addResults(links) {
 		resultDiv.insertBefore(resultLink, resultDiv.firstChild);
 	}
 }
+
+chrome.runtime.onMessage.addListener(
+	function(request, sender, sendResponse) {
+		console.log(equest.greeting);
+		let answer = new Object();
+		let response = "response: ";
+
+		switch(request.greeting) {
+			case "focus search text":	
+				document.getElementById("smartSearchText").focus();
+				break;
+
+			default:
+				break;
+		}
+		answer["response"] = response;
+		console.log(answer);
+		sendResponse(answer);
+});
+
+
+
