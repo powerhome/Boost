@@ -233,6 +233,7 @@ function setupPreferenceKeys() {
 function handleKeyPress(event) {
 	let key = event.key;
 	if(key == bottomKey.key) {
+		console.log("bot key matched");
 		switch(bottomKey.mod) {
 			case "Ctrl": 
 				if(event.ctrlKey)

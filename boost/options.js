@@ -23,8 +23,8 @@ function resetOptions(e) {
   console.log("resetting options");
   e.preventDefault();
   chrome.storage.local.set({
-    bottomKey: {"mod": "Ctrl", "key": "X"},
-    linkKey: {mod: "Ctrl", key: "Z"},
+    bottomKey: {"mod": "Ctrl", "key": "x"},
+    linkKey: {mod: "Ctrl", key: "z"},
     domain: undefined,
     domainLocked: false
   }, function() {
@@ -72,8 +72,10 @@ function restoreOptions() {
   function setCurrentChoice(result) {
     let bottomKey = result.bottomKey;
     let linkKey = result.linkKey;
-    bottomInput.value = `${bottomKey.mod} + ${bottomKey.key}` || "Ctrl + Z";
-    linkInput.value = `${linkKey.mod} + ${linkKey.key}` || "Ctrl + X";
+    
+    bottomInput.value = `${bottomKey.mod} + ${bottomKey.key}`; 
+
+    linkInput.value = `${linkKey.mod} + ${linkKey.key}`;
   }
 
   function onError(error) {

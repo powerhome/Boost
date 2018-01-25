@@ -22,14 +22,39 @@ var tabsWithPageActionIndexes;
 
   console.log("BG SETTING UP");
 
+
   tabsWithPageActionIndexes = [];
-  chrome.storage.local.get(["domain","domainLocked"],
+  chrome.storage.local.get(["domain","domainLocked","bottomKey","linkKey"],
     function(response){
       domainLocked = response.domainLocked;
       let domain = response.domain;
 
       if(domain != undefined)
         setupPatternLinkers(domain);
+
+      let bottomKeyDefault = {"mod": "Ctrl", "key": "x"};
+      let linkKeyDefault = {mod: "Ctrl", key: "z"};
+      let defaultsToSet = {};
+      if(response.bottomKey == undefined)
+      {
+        console.log("setting bot to default");
+        defaultsToSet["bottomKey"] = bottomKeyDefault;
+      }
+
+      if(response.linkKey == undefined)
+      {
+        defaultsToSet["linkKey"] = linkKeyDefault;
+      }
+
+      if(Object.keys(defaultsToSet).length > 0)
+      {
+        console.log("setting defaults");
+        chrome.storage.local.set(defaultsToSet, 
+          function() {
+            console.log("Defaults set");
+          });
+      }
+
 
     });
 
