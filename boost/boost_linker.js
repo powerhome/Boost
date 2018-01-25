@@ -30,6 +30,10 @@ function onError(error) {
 		let response = "response: ";
 
 		switch(request.greeting) {
+			case "toggle bottom":
+				console.log("toggling bot");
+				toggleBottomBar();
+			break;
 			case "action clicked":	
 				//TODO lock domain? dialog. reponse determines
 				response += "locking domain";
@@ -42,11 +46,11 @@ function onError(error) {
 				break;
 			
 			default:
+				console.log("unknown msg recieved");
 				//response += "unknown message";
 				break;
 		}
 		answer["response"] = response;
-		console.log(answer);
 		sendResponse(answer);
 	});
 
@@ -188,13 +192,13 @@ function setupBottomBar() {
 	body.appendChild(bottomBar);
 
 
-	let frame = document.createElement("IFRAME");
-	frame.id = "bottomFrame";
-	resizeBottomBar(frame);
+	let bottomFrame = document.createElement("IFRAME");
+	bottomFrame.id = "bottomFrame";
+	resizeBottomBar(bottomFrame);
 
 
-	frame.src = chrome.extension.getURL("bottomBar.html");
-	bottomBar.appendChild(frame);
+	bottomFrame.src = chrome.extension.getURL("bottomBar.html");
+	bottomBar.appendChild(bottomFrame);
 
 
 	window.addEventListener("resize", resizeThrottler, false);
@@ -205,7 +209,7 @@ function setupBottomBar() {
     	if ( !resizeTimeout ) {
 		      	resizeTimeout = setTimeout(function() {
 		        resizeTimeout = null;
-		        resizeBottomBar(frame, bottomBar);
+		        resizeBottomBar(bottomFrame, bottomBar);
 	     
 	       // The actualResizeHandler will execute at a rate of 15fps
 	       }, 66);
@@ -337,9 +341,22 @@ function getDomain() {
 
 //sends a msg to bg to turn page action on if needed
 function setupPageAction() {
-	chrome.runtime.sendMessage({greeting: "try pageAction"});
+	chrome.runtime.sendMessage({greeting: "try pageAction"},
+		function (response) {
+			console.log(response.response);
+
+
+		});
 }
 
+function closeBottomBar() {
+	document.querySelector("body").focus();
+//TODO HERE
 
+	let bottomBar = document.getElementById("bottomBar");
+	bottomBar.classList.add("hideBar");
+
+	
+}
 
 

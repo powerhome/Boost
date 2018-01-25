@@ -136,6 +136,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         recentMatches = [];
         break;
 
+        case "toggle bottom":
+        response += "toggle bottom OK";
+        //TODO CLOSE ALL 
+        chrome.tabs.query({currentWindow: true},
+          function(tabs) {
+            console.log(tabs);
+            for(let i = 0; i < tabs.length; i++)
+            {
+              console.log(tabs[i].id);
+              chrome.tabs.sendMessage(tabs[i].id, {greeting:request.greeting});
+         
+            }
+
+          });
+        break;
+
         case "get Recent":
         answer.value = recentMatches;
         break;

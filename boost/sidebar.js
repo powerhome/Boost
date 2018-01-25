@@ -18,6 +18,7 @@ window.onload = () =>  {
 		linkKey = result.linkKey;
 	});
 
+	document.onkeypress = handleKeyPress;
 
 	chrome.runtime.sendMessage({greeting: "get Recent"}, function(response) {
 
@@ -127,5 +128,51 @@ chrome.runtime.onMessage.addListener(
 		sendResponse(answer);
 });
 
+function handleKeyPress(event) {
+	let key = event.key;
+	if(key == bottomKey.key) {
+		console.log("bot key matched");
+		switch(bottomKey.mod) {
+			case "Ctrl": 
+				if(event.ctrlKey)
+				{
+					bottomCommandPressed()
+				}
+				break;
 
+			case "Alt":
+				if(event.altKey)
+				{
+					bottomCommandPressed()
+				}
+				break;
 
+			case "Meta":
+			if(event.metaKey)
+				{
+					bottomCommandPressed()
+				}
+				break;
+			case "":
+				bottomCommandPressed()
+			break;
+
+			default:
+				
+
+		}
+	}
+
+}
+
+function bottomCommandPressed () {
+	
+	//closeBottomBar();
+
+	chrome.runtime.sendMessage({greeting:"toggle bottom"},
+		function (response) {
+			console.log(response.response);
+		});
+}
+
+//TODO SEND COMMAND TO CS TO FOCUS AND LINK
