@@ -17,10 +17,40 @@ var patternLinkerContainer = false;
 var recentMatches = [];
 var domainLocked = false;
 var tabsWithPageActionIndexes;
+var tabsURLInfo = {};
 
 (function setup() {
 
   console.log("BG SETTING UP");
+
+
+
+
+  chrome.tabs.onUpdated.addListener(
+    function(tabID, changeInfo, tab) {
+
+      window.console.log(changeInfo);
+
+      if(changeInfo.status) {
+        console.log("STATUS UPDATE ON " + tabID);
+
+        chrome.tabs.sendMessage(tabID, {greeting:"check bottom"}, function(response) {
+
+          console.log(response.response);
+
+        });
+
+
+      }
+  });
+
+
+
+
+
+
+
+
 
 
   tabsWithPageActionIndexes = [];
@@ -141,10 +171,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         //TODO CLOSE ALL 
         chrome.tabs.query({currentWindow: true},
           function(tabs) {
-            console.log(tabs);
             for(let i = 0; i < tabs.length; i++)
             {
-              console.log(tabs[i].id);
               chrome.tabs.sendMessage(tabs[i].id, {greeting:request.greeting});
          
             }
@@ -262,7 +290,17 @@ function buildLinksFromInput(textArr, domain) {
         //links to return
         result.push(links[i]);
         //links saved in history
-        recentMatches.push(links[i]);
+
+        let thisMatchIndex = recentMatches.indexOf(links[i]);
+        if(thisMatchIndex >= 0)
+        {
+          console.log("DUPE" );
+          recentMatches.splice(thisMatchIndex, 1);
+          recentMatches.push(links[i]);
+        }
+        else {
+          recentMatches.push(links[i]);
+        }
       }
     }
   }

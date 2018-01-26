@@ -22,6 +22,16 @@ function onError(error) {
 
 	setupDomain();
 
+
+
+
+
+
+
+
+
+
+
 	//sets up listener to get command press from BG Script
 	chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {
@@ -30,6 +40,19 @@ function onError(error) {
 		let response = "response: ";
 
 		switch(request.greeting) {
+
+			case "check bottom":
+				let bottomExists = checkBottomBarExists();
+				console.log("checking bottom" + bottomExists);
+				if(bottomExists){
+					response += "bottom bar OK";
+				}
+				else {
+					response += "setting up bottombar";
+					setupBottomBar();
+
+				}
+				break;
 			case "toggle bottom":
 				console.log("toggling bot");
 				toggleBottomBar();
@@ -216,6 +239,8 @@ function setupBottomBar() {
 	    }
 	}
 
+	bottomBar.classList.add("hideBar");
+
 }
 
 function resizeBottomBar(frame, bar) {
@@ -349,14 +374,13 @@ function setupPageAction() {
 		});
 }
 
-function closeBottomBar() {
-	document.querySelector("body").focus();
-//TODO HERE
-
+function checkBottomBarExists() {
 	let bottomBar = document.getElementById("bottomBar");
-	bottomBar.classList.add("hideBar");
+	let exists = false;
+	if(bottomBar != undefined){
+		exists = true;
+	}
 
-	
+	return exists;
+
 }
-
-

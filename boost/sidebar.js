@@ -20,12 +20,13 @@ window.onload = () =>  {
 
 	document.onkeypress = handleKeyPress;
 
-	chrome.runtime.sendMessage({greeting: "get Recent"}, function(response) {
+	//getRecent();
 
-		if(response != undefined){
-			addResults(response.value);
-		}
-	});
+	let input = document.getElementById("smartSearchText");
+	input.onfocus = getRecent;
+
+
+
 
 
 	let button = document.getElementById("clearResultsBtn");
@@ -46,6 +47,15 @@ window.onload = () =>  {
 	}
 };
 
+function getRecent() {
+
+	chrome.runtime.sendMessage({greeting: "get Recent"}, function(response) {
+
+		if(response != undefined){
+			addResults(response.value);
+		}
+	});
+}
 
 /*
 	gets the value from the input field in the form and processes it
@@ -167,7 +177,6 @@ function handleKeyPress(event) {
 
 function bottomCommandPressed () {
 	
-	//closeBottomBar();
 
 	chrome.runtime.sendMessage({greeting:"toggle bottom"},
 		function (response) {
