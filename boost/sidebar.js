@@ -31,7 +31,8 @@ window.onload = () =>  {
 
 	let button = document.getElementById("clearResultsBtn");
 	button.onclick = () => {
-		document.getElementById("smartSearchResults").innerHTML = "";
+		//document.getElementById("smartSearchResults").innerHTML = "";
+		clearRecentDisplay();
 		chrome.runtime.sendMessage({greeting: "clear Recent"});
 
 	}
@@ -47,8 +48,14 @@ window.onload = () =>  {
 	}
 };
 
+function clearRecentDisplay() {
+	document.getElementById("smartSearchResults").innerHTML = "";
+}
+
 function getRecent() {
 
+	clearRecentDisplay();
+	
 	chrome.runtime.sendMessage({greeting: "get Recent"}, function(response) {
 
 		if(response != undefined){
