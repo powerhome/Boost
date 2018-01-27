@@ -140,24 +140,28 @@ body {
 }
 
 #spacingDiv {
-	margin-top: 5%;
-
+	margin-top: 80px
 }
 
 .slide {
-	transition-property: height;
-	transition-duration: .5s;
+	transition-duration: .25s;
 }
 
 .hideBar {
 	height: 0 !important;
+	margin-top: 0 !important;
 	
 }
 
 
 
 #bottomFrame {
+	position: absolute;
+	margin: 0;
+	margin-top: 3px;
+
 	overflow: hidden;
-	border-width: 0;
-	border-style: none;
+	border-width: 3px;
+	border-color: #0072CE;
+	border-style: solid none none none;
 }

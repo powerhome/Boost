@@ -55,7 +55,7 @@ function clearRecentDisplay() {
 function getRecent() {
 
 	clearRecentDisplay();
-	
+
 	chrome.runtime.sendMessage({greeting: "get Recent"}, function(response) {
 
 		if(response != undefined){
@@ -184,7 +184,7 @@ function handleKeyPress(event) {
 
 function bottomCommandPressed () {
 	
-
+	//TODO clear recent here??
 	chrome.runtime.sendMessage({greeting:"toggle bottom"},
 		function (response) {
 			console.log(response.response);

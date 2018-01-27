@@ -5,6 +5,7 @@ var invalidTargets = [];
 var currDomain;
 var bottomKey;
 var linkKey;
+var pendingFocus;
 
 /*
 Called when there was an error.
@@ -77,7 +78,9 @@ function onError(error) {
 		sendResponse(answer);
 	});
 
-	setupBottomBar();
+	if(!checkBottomBarExists()){
+		setupBottomBar();
+	}
 	setupPreferenceKeys();
 	setupPageAction();
 
@@ -209,6 +212,8 @@ function setupBottomBar() {
 	spacingDiv.id = "spacingDiv";
 	bottomBar.id = "bottomBar";
 	bottomBar.classList.add("slide");
+	spacingDiv.classList.add("slide");
+
 
 	
 	body.appendChild(spacingDiv);
@@ -217,7 +222,7 @@ function setupBottomBar() {
 
 	let bottomFrame = document.createElement("IFRAME");
 	bottomFrame.id = "bottomFrame";
-	resizeBottomBar(bottomFrame);
+	resizeBottomBar(bottomFrame, bottomBar);
 
 
 	bottomFrame.src = chrome.extension.getURL("bottomBar.html");
@@ -239,7 +244,7 @@ function setupBottomBar() {
 	    }
 	}
 
-	bottomBar.classList.add("hideBar");
+	toggleBottomBar();
 
 }
 
@@ -247,7 +252,7 @@ function resizeBottomBar(frame, bar) {
 	let bottomFrame = frame || window.getElementById("bottomFrame");
 	let bottomBar = bar || document.getElementById("bottomBar");
 	bottomFrame.width = `${bottomBar.clientWidth} + px`;
-
+	bottomFrame.height = "83px";
 }
 
 function setupPreferenceKeys() {
@@ -338,15 +343,24 @@ function handleKeyPress(event) {
 }
 
 function toggleBottomBar() {
-	let bottomBar = document.getElementById("bottomBar");
 
-		bottomBar.classList.toggle("hideBar");
-		if(!bottomBar.classList.contains("hideBar"))
-		{
-			setTimeout(function () {
-				bottomBar.firstChild.contentWindow.document.getElementById("smartSearchText").focus()
-			}, 500);
-		}
+	if(pendingFocus)
+	{
+		clearTimeout(pendingFocus);
+		pendingFocus = false;
+	}
+	let bottomBar = document.getElementById("bottomBar");
+	let spacingDiv = document.getElementById("spacingDiv");
+
+	bottomBar.classList.toggle("hideBar");
+	spacingDiv.classList.toggle("hideBar");
+
+	if(!bottomBar.classList.contains("hideBar"))
+	{
+		pendingFocus = setTimeout(function () {
+			bottomBar.firstChild.contentWindow.document.getElementById("smartSearchText").focus()
+		}, 1);
+	}
 }
 
 function setupDomain() {

@@ -168,7 +168,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
         case "toggle bottom":
         response += "toggle bottom OK";
-        //TODO CLOSE ALL 
+  
         chrome.tabs.query({currentWindow: true},
           function(tabs) {
             for(let i = 0; i < tabs.length; i++)
