@@ -180,11 +180,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           });
         break;
 
-        // case "unlock domain":
-        // unlockDomain();
-        // response += "unlocking domain OK";
-        // break;
-
         case "get Recent":
         answer.value = recentMatches;
         break;
@@ -255,17 +250,6 @@ chrome.pageAction.onClicked.addListener(() => {
       });
   });
 
-  // function unlockDomain() {
-
-  //   console.log("domain unlocked");
-  //   domainLocked = false;
-
-
-  // }
-
-
-
-
   function lockDomain(domain) {
 
     setupPatternLinkers(domain);
@@ -281,8 +265,6 @@ chrome.pageAction.onClicked.addListener(() => {
   }
 
 });
-
-
 
 function buildLinksFromInput(textArr, domain) {
 

@@ -13,6 +13,8 @@ var linkKey;
 
 window.onload = () =>  {
 
+	window.addEventListener("message", receiveMessage, false);
+
 	chrome.storage.local.get(["bottomKey","linkKey"], function(result) {
 		bottomKey = result.bottomKey;
 		linkKey = result.linkKey;
@@ -117,7 +119,7 @@ function noMatches(value)
 function addResults(links) {
 	let resultDiv = document.getElementById("smartSearchResults");
 
-	for(let i = 0; i < links.length; i++)
+	for(let i = 0; links != undefined && i < links.length; i++)
 	{
 		let resultLink = document.createElement("DIV");
 		resultLink.className = "bottomMidSection";
@@ -126,24 +128,39 @@ function addResults(links) {
 	}
 }
 
-chrome.runtime.onMessage.addListener(
-	function(request, sender, sendResponse) {
-		console.log(equest.greeting);
-		let answer = new Object();
-		let response = "response: ";
+function receiveMessage(event) {
+	if(event.data == "focus search text")
+	{
+		console.log("TEST");
+		console.log(document.getElementById("smartSearchText"));
 
-		switch(request.greeting) {
-			case "focus search text":	
-				document.getElementById("smartSearchText").focus();
-				break;
+		//setTimeout( function() {
 
-			default:
-				break;
-		}
-		answer["response"] = response;
-		console.log(answer);
-		sendResponse(answer);
-});
+
+			document.getElementById("smartSearchText").focus();
+	}
+}
+
+
+
+// chrome.runtime.onMessage.addListener(
+// 	function(request, sender, sendResponse) {
+// 		console.log(request.greeting);
+// 		let answer = new Object();
+// 		let response = "response: ";
+
+// 		switch(request.greeting) {
+// 			case "focus search text":	
+// 				document.getElementById("smartSearchText").focus();
+// 				break;
+
+// 			default:
+// 				break;
+// 		}
+// 		answer["response"] = response;
+// 		console.log(answer);
+// 		sendResponse(answer);
+// });
 
 function handleKeyPress(event) {
 	let key = event.key;

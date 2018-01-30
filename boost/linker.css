@@ -87,7 +87,8 @@ body {
 
 .bottomTitle {
 	padding-left: 3px;
-		padding-right: 3px;
+	padding-right: 3px;
+	padding-top: 3px;
 	margin-bottom: 3px;
 	font-size: .85em;
 	font-weight: 550;
@@ -158,10 +159,10 @@ body {
 #bottomFrame {
 	position: absolute;
 	margin: 0;
-	margin-top: 3px;
+	margin-top: 0px;
 
 	overflow: hidden;
-	border-width: 3px;
+	border-width: 0px;
 	border-color: #0072CE;
-	border-style: solid none none none;
+	border-style: none none none none;
 }

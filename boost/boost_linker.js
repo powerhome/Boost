@@ -209,9 +209,10 @@ function setupBottomBar() {
 	body.appendChild(spacingDiv);
 	body.appendChild(bottomBar);
 
-
+	//TODO SANDBOX MAYBE?
 	let bottomFrame = document.createElement("IFRAME");
 	bottomFrame.id = "bottomFrame";
+	bottomFrame.sandbox = "allow-forms allow-scripts allow-same-origin";
 	resizeBottomBar(bottomFrame, bottomBar);
 
 
@@ -348,7 +349,11 @@ function toggleBottomBar() {
 	if(!bottomBar.classList.contains("hideBar"))
 	{
 		pendingFocus = setTimeout(function () {
+			//this is enough for chrome.
+			bottomBar.firstChild.contentWindow.focus();
 			bottomBar.firstChild.contentWindow.document.getElementById("smartSearchText").focus()
+			//bottomBar.firstChild.contentWindow.postMessage("focus search text", "*");
+			//TODO CLEAN UP. Check if FF, and if so use getleemntbyid
 		}, 1);
 	}
 }
