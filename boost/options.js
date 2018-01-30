@@ -22,6 +22,9 @@ function saveOptions(e) {
 function resetOptions(e) {
   console.log("resetting options");
   e.preventDefault();
+
+  chrome.runtime.sendMessage({greeting: "unlock domain"});
+
   chrome.storage.local.set({
     bottomKey: {"mod": "Ctrl", "key": "x"},
     linkKey: {mod: "Ctrl", key: "z"},
@@ -85,6 +88,19 @@ function restoreOptions() {
   chrome.storage.local.get(["bottomKey","linkKey"], setCurrentChoice);
 }
 
+function resetDomain(e) {
+  chrome.runtime.sendMessage({greeting: "unlock domain"}, function(response) {
+    console.log(response.response);
+  });
+
+  chrome.storage.local.set({
+    domain: undefined,
+    domainLocked: false
+  });
+
+}
+
 document.addEventListener("DOMContentLoaded", restoreOptions);
+document.getElementById("resetDomainButton").addEventListener("click", resetDomain);
 document.querySelector("form").addEventListener("submit", saveOptions);
 document.querySelector("form").addEventListener("reset", resetOptions);

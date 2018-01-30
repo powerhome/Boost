@@ -23,16 +23,6 @@ function onError(error) {
 
 	setupDomain();
 
-
-
-
-
-
-
-
-
-
-
 	//sets up listener to get command press from BG Script
 	chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {

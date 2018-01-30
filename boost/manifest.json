@@ -3,7 +3,7 @@
   "manifest_version": 2,
   "name": "__MSG_extensionName__",
   "description": "Gives It A Boost",
-  "version": "1.0",
+  "version": "2.0",
   "default_locale": "en",
 
   "background": {
