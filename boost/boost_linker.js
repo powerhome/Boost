@@ -209,7 +209,6 @@ function setupBottomBar() {
 	body.appendChild(spacingDiv);
 	body.appendChild(bottomBar);
 
-	//TODO SANDBOX MAYBE?
 	let bottomFrame = document.createElement("IFRAME");
 	bottomFrame.id = "bottomFrame";
 	bottomFrame.sandbox = "allow-forms allow-scripts allow-same-origin";
@@ -337,6 +336,7 @@ function toggleBottomBar() {
 
 	if(pendingFocus)
 	{
+		//if we had a focus already waiting, dont let that one run and just use the new one if needed
 		clearTimeout(pendingFocus);
 		pendingFocus = false;
 	}
@@ -350,10 +350,15 @@ function toggleBottomBar() {
 	{
 		pendingFocus = setTimeout(function () {
 			//this is enough for chrome.
-			bottomBar.firstChild.contentWindow.focus();
-			bottomBar.firstChild.contentWindow.document.getElementById("smartSearchText").focus()
-			//bottomBar.firstChild.contentWindow.postMessage("focus search text", "*");
-			//TODO CLEAN UP. Check if FF, and if so use getleemntbyid
+
+			try {
+				bottomBar.firstChild.contentWindow.document.getElementById("smartSearchText").focus()
+			}
+			catch (e)
+			{
+				//the try block should work in FF, this focus accomplishes the same in chrome(but not in FF) so this should cover both
+				bottomBar.firstChild.contentWindow.focus();
+			}
 		}, 1);
 	}
 }
