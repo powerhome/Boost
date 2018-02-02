@@ -41,8 +41,8 @@ function onError(error) {
 				else {
 					response += "setting up bottombar";
 					setupBottomBar();
-					correctBottomBar(request.bottomOpen);
 				}
+				correctBottomBar(request.bottomOpen);
 				break;
 			case "toggle bottom":
 				console.log("toggling bot");
@@ -202,8 +202,8 @@ function setupBottomBar() {
 
 	spacingDiv.id = "spacingDiv";
 	bottomBar.id = "bottomBar";
-	bottomBar.classList.add("slide");
-	spacingDiv.classList.add("slide");
+	// bottomBar.classList.add("slide");
+	// spacingDiv.classList.add("slide");
 
 
 	
@@ -344,13 +344,22 @@ function toggleBottomBar() {
 	let bottomBar = document.getElementById("bottomBar");
 	let spacingDiv = document.getElementById("spacingDiv");
 
+	if(document.hasFocus()) {
+		console.log("FOCUSED");
+		bottomBar.classList.add("slide");
+		spacingDiv.classList.add("slide");
+	}
+	else {
+		bottomBar.classList.remove("slide");
+		spacingDiv.classList.remove("slide");
+	}
+
 	bottomBar.classList.toggle("hideBar");
 	spacingDiv.classList.toggle("hideBar");
 
 	if(!bottomBar.classList.contains("hideBar"))
 	{
 		pendingFocus = setTimeout(function () {
-			//this is enough for chrome.
 
 			try {
 				bottomBar.firstChild.contentWindow.document.getElementById("smartSearchText").focus();
@@ -362,6 +371,8 @@ function toggleBottomBar() {
 			}
 		}, 1);
 	}
+
+
 }
 
 function setupDomain() {
@@ -370,8 +381,6 @@ function setupDomain() {
 			currDomain = getDomain();
 		}
 }
-
-
 
 //gets the current domain from the url of the page
 function getDomain() {
@@ -402,15 +411,10 @@ function checkBottomBarExists() {
 
 function correctBottomBar(bottomOpen) {
 
-	console.log(bottomOpen);
+	let isVisible = !document.getElementById("bottomBar").classList.contains("hidebar");
+
+	if(isVisible != bottomOpen) {
+		toggleBottomBar();
+	}
 
 }
-
-
-
-
-
-
-
-
-

@@ -1,4 +1,4 @@
-console.log("sidebar.js loaded");
+console.log("bottomBar.js loaded");
 
 /*
 Called when there was an error.
