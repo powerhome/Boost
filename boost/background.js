@@ -243,10 +243,7 @@ chrome.pageAction.onClicked.addListener(() => {
         function(response) {
           if(response.domain_lock_needed) {
             lockDomain(response.domain);
-           //  setupPatternLinkers(response.domain);
-            //chrome.pageAction.hide(tabs[0].id);
           }
-
           console.log(response.response);
       });
   });

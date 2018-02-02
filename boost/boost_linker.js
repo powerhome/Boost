@@ -22,7 +22,6 @@ function onError(error) {
 	invalidTargets.push(document.body);
 
 	setupDomain();
-
 	//sets up listener to get command press from BG Script
 	chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {
@@ -31,11 +30,9 @@ function onError(error) {
 		let response = "response: ";
 
 		switch(request.greeting) {
-
 			case "check bottom":
-				let bottomExists = checkBottomBarExists();
-				console.log("checking bottom" + bottomExists);
-				if(bottomExists){
+				console.log("checking bottom");
+				if(checkBottomBarExists() != null){
 					response += "bottom bar OK";
 				}
 				else {
@@ -46,14 +43,12 @@ function onError(error) {
 				break;
 			case "toggle bottom":
 				console.log("toggling bot");
-				console.log(request.bottomOpen);
 				toggleBottomBar();
 			break;
 			case "action clicked":	
-				//TODO lock domain? dialog. reponse determines
 				response += "locking domain";
 				answer["domain"] = getDomain();
-				answer["domain_lock_needed"] = true;
+				answer["domain_lock_needed"] = true;//tells bg to lock the domain
 				break;
 			case "command pressed":
 				response += "command pressed recieved";
@@ -62,7 +57,6 @@ function onError(error) {
 			
 			default:
 				console.log("unknown msg recieved");
-				//response += "unknown message";
 				break;
 		}
 		answer["response"] = response;
@@ -77,10 +71,7 @@ function onError(error) {
 
 	document.onkeypress = handleKeyPress;
 
-
 })();
-
-
 
 //checks to see that a node is valid
 //if it is, adds to list so it wont be again
@@ -202,23 +193,16 @@ function setupBottomBar() {
 
 	spacingDiv.id = "spacingDiv";
 	bottomBar.id = "bottomBar";
-	// bottomBar.classList.add("slide");
-	// spacingDiv.classList.add("slide");
 
-
-	
 	body.appendChild(spacingDiv);
 	body.appendChild(bottomBar);
 
 	let bottomFrame = document.createElement("IFRAME");
 	bottomFrame.id = "bottomFrame";
-	bottomFrame.sandbox = "allow-forms allow-scripts allow-same-origin";
 	resizeBottomBar(bottomFrame, bottomBar);
-
 
 	bottomFrame.src = chrome.extension.getURL("bottomBar.html");
 	bottomBar.appendChild(bottomFrame);
-
 
 	window.addEventListener("resize", resizeThrottler, false);
 
@@ -234,9 +218,6 @@ function setupBottomBar() {
 	       }, 66);
 	    }
 	}
-
-	//toggleBottomBar();
-
 }
 
 function resizeBottomBar(frame, bar) {
@@ -275,7 +256,7 @@ function handleKeyPress(event) {
 				break;
 
 			case "Meta":
-			if(event.metaKey)
+				if(event.metaKey)
 				{
 					bottomCommandPressed()
 				}
@@ -283,32 +264,25 @@ function handleKeyPress(event) {
 			case "":
 				bottomCommandPressed()
 			break;
-
 			default:
-				
-
 		}
 	}
 
 	if(key == linkKey.key) {
 		switch(linkKey.mod) {
 			case "Ctrl": 
-				if(event.ctrlKey)
-				{
+				if(event.ctrlKey) {
 					linkCommandPressed()
 				}
-				break;
 
+				break;
 			case "Alt":
-				if(event.altKey)
-				{
+				if(event.altKey) {
 					linkCommandPressed()
 				}
 				break;
-
 			case "Meta":
-			if(event.metaKey)
-				{
+				if(event.metaKey) {
 					linkCommandPressed()
 				}
 				break;
@@ -316,14 +290,12 @@ function handleKeyPress(event) {
 				linkCommandPressed()
 				break;
 			default:
-			
-
 		}
 	}
 
 	function bottomCommandPressed() {
+		//sends message to bg so all tabs get cmd
 		chrome.runtime.sendMessage({greeting:"toggle bottom"});
-		//toggleBottomBar();
 		event.preventDefault();
 	}
 
@@ -334,18 +306,10 @@ function handleKeyPress(event) {
 }
 
 function toggleBottomBar() {
-
-	if(pendingFocus)
-	{
-		//if we had a focus already waiting, dont let that one run and just use the new one if needed
-		clearTimeout(pendingFocus);
-		pendingFocus = false;
-	}
 	let bottomBar = document.getElementById("bottomBar");
 	let spacingDiv = document.getElementById("spacingDiv");
 
 	if(document.hasFocus()) {
-		console.log("FOCUSED");
 		bottomBar.classList.add("slide");
 		spacingDiv.classList.add("slide");
 	}
@@ -359,8 +323,7 @@ function toggleBottomBar() {
 
 	if(!bottomBar.classList.contains("hideBar"))
 	{
-		pendingFocus = setTimeout(function () {
-
+		setTimeout(function () {
 			try {
 				bottomBar.firstChild.contentWindow.document.getElementById("smartSearchText").focus();
 			}
@@ -371,15 +334,12 @@ function toggleBottomBar() {
 			}
 		}, 1);
 	}
-
-
 }
 
 function setupDomain() {
-		if(currDomain == undefined) {
-
-			currDomain = getDomain();
-		}
+	if(currDomain == undefined) {
+		currDomain = getDomain();
+	}
 }
 
 //gets the current domain from the url of the page
@@ -399,22 +359,12 @@ function setupPageAction() {
 }
 
 function checkBottomBarExists() {
-	let bottomBar = document.getElementById("bottomBar");
-	let exists = false;
-	if(bottomBar != undefined){
-		exists = true;
-	}
-
-	return exists;
-
+	return document.getElementById("bottomBar");
 }
 
 function correctBottomBar(bottomOpen) {
-
 	let isVisible = !document.getElementById("bottomBar").classList.contains("hidebar");
-
 	if(isVisible != bottomOpen) {
 		toggleBottomBar();
 	}
-
 }
