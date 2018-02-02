@@ -132,7 +132,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     var response = "response: ";
 
     switch(request.greeting) {
-
+        case "get bottom open":
+          answer.bottomOpen = bottomOpen;
+          reponse += "returning if open bottom";
+          break;
         case "clear Recent":
           recentMatches = [];
           break;
@@ -145,7 +148,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               for(let i = 0; i < tabs.length; i++)
               {
                 chrome.tabs.sendMessage(tabs[i].id, {greeting:request.greeting, bottomOpen: bottomOpen});
-           
               }
           });
           break;

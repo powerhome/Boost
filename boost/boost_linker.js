@@ -32,7 +32,7 @@ function onError(error) {
 		switch(request.greeting) {
 			case "check bottom":
 				console.log("checking bottom");
-				if(checkBottomBarExists() != null){
+				if(checkBottomBarExists()){
 					response += "bottom bar OK";
 				}
 				else {
@@ -66,6 +66,11 @@ function onError(error) {
 	if(!checkBottomBarExists()){
 		setupBottomBar();
 	}
+
+	chrome.runtime.sendMessage({greeting:"get bottom open"}, function(response) {
+		correctBottomBar(response.bottomOpen);
+	})
+
 	setupPreferenceKeys();
 	setupPageAction();
 
@@ -361,7 +366,9 @@ function checkBottomBarExists() {
 }
 
 function correctBottomBar(bottomOpen) {
+	console.log( "BO" + bottomOpen);
 	let isVisible = !document.getElementById("bottomBar").classList.contains("hidebar");
+	console.log("IV" + isVisible);
 	if(isVisible != bottomOpen) {
 		toggleBottomBar();
 	}

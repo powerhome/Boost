@@ -10,12 +10,10 @@
     "scripts": ["background.js"]
   },
 
-
   "permissions": [
     "tabs","storage"
   ],
   
-
   "content_scripts": [
     {
       "exclude_globs": [""],
@@ -23,13 +21,11 @@
       "js": ["boost_linker.js"],
       "css": ["linker.css"]
     }
-
   ],
 
   "options_ui": {
     "page": "options.html"
   },
-
 
   "page_action": {
   "default_icon": {
@@ -41,7 +37,6 @@
   "web_accessible_resources": [
     "bottomBar.html"
   ],
-
 
   "icons": {
     "16": "icons/page-16.png",

@@ -12,9 +12,6 @@ var bottomKey;
 var linkKey;
 
 window.onload = () =>  {
-
-	window.addEventListener("message", receiveMessage, false);
-
 	chrome.storage.local.get(["bottomKey","linkKey"], function(result) {
 		bottomKey = result.bottomKey;
 		linkKey = result.linkKey;
@@ -22,21 +19,14 @@ window.onload = () =>  {
 
 	document.onkeypress = handleKeyPress;
 
-	//getRecent();
-
 	let input = document.getElementById("smartSearchText");
 	input.onfocus = getRecent;
 
-
-
-
-
-	let button = document.getElementById("clearResultsBtn");
-	button.onclick = () => {
-		//document.getElementById("smartSearchResults").innerHTML = "";
+	let clearResultsButton = document.getElementById("clearResultsBtn");
+	clearResultsButton.onclick = () => {
 		clearRecentDisplay();
+		//tells bg to lose recent history
 		chrome.runtime.sendMessage({greeting: "clear Recent"});
-
 	}
 
 	let form = document.getElementById('smartSearchForm');
@@ -55,11 +45,9 @@ function clearRecentDisplay() {
 }
 
 function getRecent() {
-
-	clearRecentDisplay();
+	clearRecentDisplay();//clears because it checks and repulls here
 
 	chrome.runtime.sendMessage({greeting: "get Recent"}, function(response) {
-
 		if(response != undefined){
 			addResults(response.value);
 		}
@@ -71,17 +59,9 @@ function getRecent() {
 */
 function formSubmitted(form)
 {
-	
-
-	//gets value from input field
-	let value =  form.childNodes[1].value;
-
-	//let links = linksFromText(value);
+	let value = document.getElementById("smartSearchText").value;
 	getLinksFromBG(value);
-	
 	form.reset();
-	
-
 }
 
 
@@ -90,7 +70,6 @@ function getLinksFromBG(targetValue) {
 	let msg = {greeting: "get links", value: targetValue};
 
 	chrome.runtime.sendMessage(msg, function(response) {
-
 		let links = response.links;
 		if(links.length > 0) {
 			addResults(links);
@@ -128,19 +107,6 @@ function addResults(links) {
 	}
 }
 
-function receiveMessage(event) {
-	if(event.data == "focus search text")
-	{
-		console.log("TEST");
-		console.log(document.getElementById("smartSearchText"));
-
-		//setTimeout( function() {
-
-
-			document.getElementById("smartSearchText").focus();
-	}
-}
-
 function handleKeyPress(event) {
 	let key = event.key;
 	if(key == bottomKey.key) {
@@ -161,30 +127,24 @@ function handleKeyPress(event) {
 				break;
 
 			case "Meta":
-			if(event.metaKey)
+				if(event.metaKey)
 				{
 					bottomCommandPressed()
 				}
 				break;
+				
 			case "":
 				bottomCommandPressed()
-			break;
-
+				break;
 			default:
-				
-
 		}
 	}
 
 }
 
 function bottomCommandPressed () {
-	
-	//TODO clear recent here??
 	chrome.runtime.sendMessage({greeting:"toggle bottom"},
 		function (response) {
 			console.log(response.response);
 		});
 }
-
-//TODO SEND COMMAND TO CS TO FOCUS AND LINK
