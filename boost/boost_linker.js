@@ -353,8 +353,6 @@ function setupPageAction() {
 	chrome.runtime.sendMessage({greeting: "try pageAction"},
 		function (response) {
 			console.log(response.response);
-
-
 		});
 }
 

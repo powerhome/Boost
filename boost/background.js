@@ -16,44 +16,23 @@ function onError(error) {
 var patternLinkerContainer = false;
 var recentMatches = [];
 var domainLocked = false;
-var tabsWithPageActionIndexes;
+var tabsWithPageActionIndexes = [];
 var tabsURLInfo = {};
 var bottomOpen = true;
 
 (function setup() {
-
-  console.log("BG SETTING UP");
-
-
-
-
+  //listens for changes in tabs mostly for pages that reload w/o changes url
   chrome.tabs.onUpdated.addListener(
     function(tabID, changeInfo, tab) {
 
-      window.console.log(changeInfo);
-
       if(changeInfo.status) {
-
         chrome.tabs.sendMessage(tabID, {greeting:"check bottom", bottomOpen: bottomOpen}, function(response) {
-
           console.log(response.response);
-
         });
-
-
       }
   });
 
-
-
-
-
-
-
-
-
-
-  tabsWithPageActionIndexes = [];
+  //checks storage to see if defaults need to be set(as well as some setup)
   chrome.storage.local.get(["domain","domainLocked","bottomKey","linkKey"],
     function(response){
       domainLocked = response.domainLocked;
@@ -67,7 +46,6 @@ var bottomOpen = true;
       let defaultsToSet = {};
       if(response.bottomKey == undefined)
       {
-        console.log("setting bot to default");
         defaultsToSet["bottomKey"] = bottomKeyDefault;
       }
 
@@ -84,14 +62,10 @@ var bottomOpen = true;
             console.log("Defaults set");
           });
       }
+    });//Storage get and callback function
+})();//setup IIFE
 
-
-    });
-
-
-})();
-
-//sets up pattern linker using domain 
+//sets up pattern linker using domain TODO Pull out to json maybe?
 function setupPatternLinkers(newDomain) {
 
   if(newDomain === patternLinkerContainer.domain || domainLocked)
@@ -103,8 +77,6 @@ function setupPatternLinkers(newDomain) {
     console.log("DOMAIN SAME");
     return;
   }
-  recentMatches = [];
-
   patternLinkerContainer = new Object();
   let placeholder = "#placeholder#";
   patternLinkerContainer["placeholder"] = placeholder;
@@ -152,10 +124,9 @@ function setupPatternLinkers(newDomain) {
 }
 
 /*
-  adds a listener to messages
+  adds a listener to messages, specifically any to chrome.runtime
 */
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-
     console.log("msg recieved: " + request.greeting);
     let answer = new Object();
     var response = "response: ";
@@ -163,63 +134,56 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     switch(request.greeting) {
 
         case "clear Recent":
-        recentMatches = [];
-        break;
-
+          recentMatches = [];
+          break;
         case "toggle bottom":
-        response += "toggle bottom OK";
-        bottomOpen = !bottomOpen;
-  
-        chrome.tabs.query({currentWindow: true},
-          function(tabs) {
-            for(let i = 0; i < tabs.length; i++)
-            {
-              chrome.tabs.sendMessage(tabs[i].id, {greeting:request.greeting, bottomOpen: bottomOpen});
-         
-            }
-
+          response += "toggle bottom OK";
+          bottomOpen = !bottomOpen;
+    
+          chrome.tabs.query({currentWindow: true},
+            function(tabs) {
+              for(let i = 0; i < tabs.length; i++)
+              {
+                chrome.tabs.sendMessage(tabs[i].id, {greeting:request.greeting, bottomOpen: bottomOpen});
+           
+              }
           });
-        break;
+          break;
 
         case "get Recent":
-        answer.value = recentMatches;
-        break;
+          answer.value = recentMatches;
+          break;
 
         case "unlock domain":
-        response += "unlocking domain"
-        domainLocked = false;
-
-        break;
+          response += "unlocking domain"
+          domainLocked = false;
+          break;
 
         case "get PLC":  
-        response += "returning patt linker con";
-        answer["patternLinkerContainer"] = patternLinkerContainer;
-        console.log("BG"+response);
-        break;
+          response += "returning patt linker con";
+          answer["patternLinkerContainer"] = patternLinkerContainer;
+          console.log("BG"+response);
+          break;
 
         case "try pageAction":
-        
-        if(tryPageAction())
-        {
-          response += "pageAction Shown";
-          chrome.pageAction.show(sender.tab.id);
-          tabsWithPageActionIndexes.push(sender.tab.id);
-          console.log(tabsWithPageActionIndexes);
-        }
-        else
-        {
-          response += "no PA: domain locked";
-          //chrome.pageAction.hide(sender.tab.id);
-        }
-        break;
+          if(tryPageAction())
+          {
+            response += "pageAction Shown";
+            chrome.pageAction.show(sender.tab.id);
+            tabsWithPageActionIndexes.push(sender.tab.id);
+            console.log(tabsWithPageActionIndexes);
+          }
+          else
+          {
+            response += "no PA: domain locked";
+          }
+          break;
 
         case "get links":
-        response += "returning links";
-        answer["links"] = buildLinksFromInput(request.value, request.domain);
-        console.log("returning links " + answer);
-        console.log(answer);
-        break;
-
+          response += "returning links";
+          answer["links"] = buildLinksFromInput(request.value, request.domain);
+          console.log("returning links " + answer);
+          break;
 
       default:
         response += "unknown message";
@@ -232,7 +196,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   });
 
 /*
-Sets listener for browser action
+  Sets listener for page action
 */
 chrome.pageAction.onClicked.addListener(() => {
   console.log("action clicked");
@@ -248,8 +212,8 @@ chrome.pageAction.onClicked.addListener(() => {
       });
   });
 
+  //when pageaction is clicked, lock the domain and hide all current page actions
   function lockDomain(domain) {
-
     setupPatternLinkers(domain);
     chrome.storage.local.set({domain: domain, domainLocked: true});
     domainLocked = true;
@@ -264,8 +228,8 @@ chrome.pageAction.onClicked.addListener(() => {
 
 });
 
+//takes an array of strings and finds all the links that match the text
 function buildLinksFromInput(textArr, domain) {
-
   if(!patternLinkerContainer && domain)
   {
     setupPatternLinkers(domain);
@@ -290,7 +254,7 @@ function buildLinksFromInput(textArr, domain) {
         let thisMatchIndex = recentMatches.indexOf(links[i]);
         if(thisMatchIndex >= 0)
         {
-          console.log("DUPE" );
+          console.log("DUPE" );//if dupe, remove from array and put in front
           recentMatches.splice(thisMatchIndex, 1);
           recentMatches.push(links[i]);
         }
@@ -365,7 +329,6 @@ function linksFromText(text, domainArg) {
 }
 
 function tryPageAction() {
-
   return !domainLocked;
 }
 
