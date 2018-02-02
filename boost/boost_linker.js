@@ -41,11 +41,12 @@ function onError(error) {
 				else {
 					response += "setting up bottombar";
 					setupBottomBar();
-
+					correctBottomBar(request.bottomOpen);
 				}
 				break;
 			case "toggle bottom":
 				console.log("toggling bot");
+				console.log(request.bottomOpen);
 				toggleBottomBar();
 			break;
 			case "action clicked":	
@@ -234,7 +235,7 @@ function setupBottomBar() {
 	    }
 	}
 
-	toggleBottomBar();
+	//toggleBottomBar();
 
 }
 
@@ -321,8 +322,8 @@ function handleKeyPress(event) {
 	}
 
 	function bottomCommandPressed() {
-
-		toggleBottomBar();
+		chrome.runtime.sendMessage({greeting:"toggle bottom"});
+		//toggleBottomBar();
 		event.preventDefault();
 	}
 
@@ -352,7 +353,7 @@ function toggleBottomBar() {
 			//this is enough for chrome.
 
 			try {
-				bottomBar.firstChild.contentWindow.document.getElementById("smartSearchText").focus()
+				bottomBar.firstChild.contentWindow.document.getElementById("smartSearchText").focus();
 			}
 			catch (e)
 			{
@@ -398,3 +399,18 @@ function checkBottomBarExists() {
 	return exists;
 
 }
+
+function correctBottomBar(bottomOpen) {
+
+	console.log(bottomOpen);
+
+}
+
+
+
+
+
+
+
+
+

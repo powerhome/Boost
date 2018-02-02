@@ -18,6 +18,7 @@ var recentMatches = [];
 var domainLocked = false;
 var tabsWithPageActionIndexes;
 var tabsURLInfo = {};
+var bottomOpen = true;
 
 (function setup() {
 
@@ -32,9 +33,8 @@ var tabsURLInfo = {};
       window.console.log(changeInfo);
 
       if(changeInfo.status) {
-        console.log("STATUS UPDATE ON " + tabID);
 
-        chrome.tabs.sendMessage(tabID, {greeting:"check bottom"}, function(response) {
+        chrome.tabs.sendMessage(tabID, {greeting:"check bottom", bottomOpen: bottomOpen}, function(response) {
 
           console.log(response.response);
 
@@ -168,12 +168,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
         case "toggle bottom":
         response += "toggle bottom OK";
+        bottomOpen = !bottomOpen;
   
         chrome.tabs.query({currentWindow: true},
           function(tabs) {
             for(let i = 0; i < tabs.length; i++)
             {
-              chrome.tabs.sendMessage(tabs[i].id, {greeting:request.greeting});
+              chrome.tabs.sendMessage(tabs[i].id, {greeting:request.greeting, bottomOpen: bottomOpen});
          
             }
 

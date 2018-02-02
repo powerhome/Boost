@@ -141,27 +141,6 @@ function receiveMessage(event) {
 	}
 }
 
-
-
-// chrome.runtime.onMessage.addListener(
-// 	function(request, sender, sendResponse) {
-// 		console.log(request.greeting);
-// 		let answer = new Object();
-// 		let response = "response: ";
-
-// 		switch(request.greeting) {
-// 			case "focus search text":	
-// 				document.getElementById("smartSearchText").focus();
-// 				break;
-
-// 			default:
-// 				break;
-// 		}
-// 		answer["response"] = response;
-// 		console.log(answer);
-// 		sendResponse(answer);
-// });
-
 function handleKeyPress(event) {
 	let key = event.key;
 	if(key == bottomKey.key) {
