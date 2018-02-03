@@ -78,9 +78,7 @@ function getLinksFromBG(targetValue) {
 		else {
 			noMatches(targetValue);
 		}
-
 		return false
-
 	})
 }
 

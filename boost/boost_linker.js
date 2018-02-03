@@ -330,7 +330,6 @@ function handleKeyPress(event) {
 	}
 
 	function bottomCommandPressed() {
-		console.log("TEST");
 		if(!checkBottomBarExists()) {
 			setupBottomBar();
 			chrome.runtime.sendMessage({greeting: "open bottom"});
@@ -420,9 +419,7 @@ function checkBottomBarExists() {
 }
 
 function correctBottomBar(bottomOpen) {
-	console.log( "BO" + bottomOpen);
 	let isVisible = !document.getElementById("bottomBar").classList.contains("hideBar"); 
-	console.log("IV" + isVisible);
 	if(isVisible != bottomOpen) {
 		toggleBottomBar();
 	}
