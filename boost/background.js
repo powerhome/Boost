@@ -138,19 +138,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         break;
 
       case "clear Recent":
+        response += "clearing recent OK";
         recentMatches = [];
         break;
 
       case "open bottom":
         response += "Open bottom OK";
         bottomOpen = true;
-        chrome.tabs.query({currentWindow: true},
-          function(tabs) {
-            for(let i = 0; i < tabs.length; i++)
-            {
-              chrome.tabs.sendMessage(tabs[i].id, {greeting:request.greeting, bottomOpen: bottomOpen});
-            }
-        });
+        sendMessageToAllTabs({greeting:request.greeting, bottomOpen: bottomOpen});
         break;
 
       case "close bottom":
@@ -162,14 +157,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       case "toggle bottom":
         response += "toggle bottom OK";
         bottomOpen = !bottomOpen;
-  
-        chrome.tabs.query({currentWindow: true},
-          function(tabs) {
-            for(let i = 0; i < tabs.length; i++)
-            {
-              chrome.tabs.sendMessage(tabs[i].id, {greeting:request.greeting, bottomOpen: bottomOpen});
-            }
-        });
+        sendMessageToAllTabs({greeting:request.greeting, bottomOpen: bottomOpen});
         break;
 
       case "get Recent":
@@ -189,15 +177,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         break;
 
       case "try pageAction":
-        if(tryPageAction())
-        {
+        if(tryPageAction()) {
           response += "pageAction Shown";
           chrome.pageAction.show(sender.tab.id);
           tabsWithPageActionIndexes.push(sender.tab.id);
-          console.log(tabsWithPageActionIndexes);
         }
-        else
-        {
+        else {
           response += "no PA: domain locked";
         }
         break;

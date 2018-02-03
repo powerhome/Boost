@@ -132,7 +132,7 @@ function handleKeyPress(event) {
 					bottomCommandPressed()
 				}
 				break;
-				
+
 			case "":
 				bottomCommandPressed()
 				break;
@@ -146,5 +146,5 @@ function bottomCommandPressed () {
 	chrome.runtime.sendMessage({greeting:"toggle bottom"},
 		function (response) {
 			console.log(response.response);
-		});
+	});
 }
