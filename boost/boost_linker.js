@@ -92,7 +92,9 @@ function onError(error) {
 	chrome.runtime.sendMessage({greeting:"get bottom open"}, function(response) {
 		if(response.bottomOpen)
 		{
+			if(!checkBottomBarExists()) {
 			setupBottomBar();
+			}
 			let bottomBar = document.getElementById("bottomBar");
 			bottomBar.classList.remove("slide");
 			bottomBar.classList.remove("hideBar");
