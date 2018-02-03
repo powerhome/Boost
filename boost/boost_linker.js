@@ -30,6 +30,24 @@ function onError(error) {
 		let response = "response: ";
 
 		switch(request.greeting) {
+			case "open bottom":
+				console.log("opening bot");
+				if(!checkBottomBarExists()) {
+					setupBottomBar();
+				}
+				if(document.getElementById("bottomBar").classList.contains("hideBar")) {
+					toggleBottomBar();
+				}
+				break;
+
+			case "close bottom":
+				console.log("close bottom");
+				response += "closing Bottom OK";
+				if(checkBottomBarExists() && checkBottomOpen()) {
+					toggleBottomBar();
+				}
+				break;
+
 			case "check bottom":
 				console.log("checking bottom");
 				if(checkBottomBarExists()){
@@ -43,7 +61,10 @@ function onError(error) {
 				break;
 			case "toggle bottom":
 				console.log("toggling bot");
-				toggleBottomBar();
+				if(!checkBottomBarExists()) {
+					setupBottomBar();
+				}
+				correctBottomBar(request.bottomOpen);
 			break;
 			case "action clicked":	
 				response += "locking domain";
@@ -63,12 +84,17 @@ function onError(error) {
 		sendResponse(answer);
 	});
 
-	if(!checkBottomBarExists()){
-		setupBottomBar();
-	}
+	
 
 	chrome.runtime.sendMessage({greeting:"get bottom open"}, function(response) {
-		correctBottomBar(response.bottomOpen);
+		if(response.bottomOpen)
+		{
+			setupBottomBar();
+			let bottomBar = document.getElementById("bottomBar");
+			bottomBar.classList.remove("slide");
+			bottomBar.classList.remove("hideBar");
+			bottomBar.classList.add("slide");
+		}
 	})
 
 	setupPreferenceKeys();
@@ -198,6 +224,7 @@ function setupBottomBar() {
 
 	spacingDiv.id = "spacingDiv";
 	bottomBar.id = "bottomBar";
+	bottomBar.classList = "hideBar";
 
 	body.appendChild(spacingDiv);
 	body.appendChild(bottomBar);
@@ -299,8 +326,26 @@ function handleKeyPress(event) {
 	}
 
 	function bottomCommandPressed() {
+		console.log("TEST");
+		if(!checkBottomBarExists()) {
+			setupBottomBar();
+			chrome.runtime.sendMessage({greeting: "open bottom"});
+		}
+		else {
 		//sends message to bg so all tabs get cmd
-		chrome.runtime.sendMessage({greeting:"toggle bottom"});
+
+			if(checkBottomOpen()) {
+				chrome.runtime.sendMessage({greeting: "close bottom"});
+			}
+			else {
+				chrome.runtime.sendMessage({greeting: "open bottom"});
+			}
+
+
+
+			//chrome.runtime.sendMessage({greeting:"toggle bottom"});	
+		}
+
 		event.preventDefault();
 	}
 
@@ -308,6 +353,16 @@ function handleKeyPress(event) {
 		linkifyAtMouseover();
 		event.preventDefault();
 	}
+}
+
+function checkBottomOpen() {
+	let bottomBar = document.getElementById("bottomBar");
+	let open = true;
+	if(bottomBar.classList.contains("hideBar")) {
+		open = false;
+	}
+
+	return open;
 }
 
 function toggleBottomBar() {
@@ -362,12 +417,12 @@ function setupPageAction() {
 }
 
 function checkBottomBarExists() {
-	return document.getElementById("bottomBar");
+	return document.getElementById("bottomBar") != null;
 }
 
 function correctBottomBar(bottomOpen) {
 	console.log( "BO" + bottomOpen);
-	let isVisible = !document.getElementById("bottomBar").classList.contains("hidebar");
+	let isVisible = !document.getElementById("bottomBar").classList.contains("hideBar"); 
 	console.log("IV" + isVisible);
 	if(isVisible != bottomOpen) {
 		toggleBottomBar();

@@ -132,70 +132,104 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     var response = "response: ";
 
     switch(request.greeting) {
-        case "get bottom open":
-          answer.bottomOpen = bottomOpen;
-          reponse += "returning if open bottom";
-          break;
-        case "clear Recent":
-          recentMatches = [];
-          break;
-        case "toggle bottom":
-          response += "toggle bottom OK";
-          bottomOpen = !bottomOpen;
-    
-          chrome.tabs.query({currentWindow: true},
-            function(tabs) {
-              for(let i = 0; i < tabs.length; i++)
-              {
-                chrome.tabs.sendMessage(tabs[i].id, {greeting:request.greeting, bottomOpen: bottomOpen});
-              }
-          });
-          break;
+      case "get bottom open":
+        answer.bottomOpen = bottomOpen;
+        response += "returning if open bottom";
+        break;
 
-        case "get Recent":
-          answer.value = recentMatches;
-          break;
+      case "clear Recent":
+        recentMatches = [];
+        break;
 
-        case "unlock domain":
-          response += "unlocking domain"
-          domainLocked = false;
-          break;
+      case "open bottom":
+        response += "Open bottom OK";
+        bottomOpen = true;
+        chrome.tabs.query({currentWindow: true},
+          function(tabs) {
+            for(let i = 0; i < tabs.length; i++)
+            {
+              chrome.tabs.sendMessage(tabs[i].id, {greeting:request.greeting, bottomOpen: bottomOpen});
+            }
+        });
+        break;
 
-        case "get PLC":  
-          response += "returning patt linker con";
-          answer["patternLinkerContainer"] = patternLinkerContainer;
-          console.log("BG"+response);
-          break;
+      case "close bottom":
+        response += "close bottom OK";
+        console.log("TEST");
+        sendMessageToAllTabs({greeting:request.greeting, bottomOpen: bottomOpen});
+        break;
 
-        case "try pageAction":
-          if(tryPageAction())
-          {
-            response += "pageAction Shown";
-            chrome.pageAction.show(sender.tab.id);
-            tabsWithPageActionIndexes.push(sender.tab.id);
-            console.log(tabsWithPageActionIndexes);
-          }
-          else
-          {
-            response += "no PA: domain locked";
-          }
-          break;
+      case "toggle bottom":
+        response += "toggle bottom OK";
+        bottomOpen = !bottomOpen;
+  
+        chrome.tabs.query({currentWindow: true},
+          function(tabs) {
+            for(let i = 0; i < tabs.length; i++)
+            {
+              chrome.tabs.sendMessage(tabs[i].id, {greeting:request.greeting, bottomOpen: bottomOpen});
+            }
+        });
+        break;
 
-        case "get links":
-          response += "returning links";
-          answer["links"] = buildLinksFromInput(request.value, request.domain);
-          console.log("returning links " + answer);
-          break;
+      case "get Recent":
+        reponse += "sending recent";
+        answer.value = recentMatches;
+        break;
+
+      case "unlock domain":
+        response += "unlocking domain"
+        domainLocked = false;
+        break;
+
+      case "get PLC":  
+        response += "returning patt linker con";
+        answer["patternLinkerContainer"] = patternLinkerContainer;
+        console.log("BG"+response);
+        break;
+
+      case "try pageAction":
+        if(tryPageAction())
+        {
+          response += "pageAction Shown";
+          chrome.pageAction.show(sender.tab.id);
+          tabsWithPageActionIndexes.push(sender.tab.id);
+          console.log(tabsWithPageActionIndexes);
+        }
+        else
+        {
+          response += "no PA: domain locked";
+        }
+        break;
+
+      case "get links":
+        response += "returning links";
+        answer["links"] = buildLinksFromInput(request.value, request.domain);
+        console.log("returning links " + answer);
+        break;
 
       default:
         response += "unknown message";
         console.log("unknown message: " + request.greeting);
         break;
     }
-
+    console.log("sending response: " + response);
     answer["response"] = response;
     sendResponse(answer);
   });
+
+function sendMessageToAllTabs(msg) {
+
+  chrome.tabs.query({currentWindow: true},
+    function(tabs) {
+    for(let i = 0; i < tabs.length; i++)
+    {
+      chrome.tabs.sendMessage(tabs[i].id, msg);
+    }
+  });
+
+
+}
 
 /*
   Sets listener for page action
