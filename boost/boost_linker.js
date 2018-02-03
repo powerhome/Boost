@@ -32,6 +32,7 @@ function onError(error) {
 		switch(request.greeting) {
 			case "open bottom":
 				console.log("opening bot");
+				response += "opening bottom OK";
 				if(!checkBottomBarExists()) {
 					setupBottomBar();
 				}
@@ -51,7 +52,7 @@ function onError(error) {
 			case "check bottom":
 				console.log("checking bottom");
 				if(checkBottomBarExists()){
-					response += "bottom bar OK";
+					response += "bottom bar checked good";
 				}
 				else {
 					response += "setting up bottombar";
@@ -59,6 +60,7 @@ function onError(error) {
 				}
 				correctBottomBar(request.bottomOpen);
 				break;
+
 			case "toggle bottom":
 				console.log("toggling bot");
 				if(!checkBottomBarExists()) {
@@ -66,11 +68,13 @@ function onError(error) {
 				}
 				correctBottomBar(request.bottomOpen);
 			break;
+
 			case "action clicked":	
 				response += "locking domain";
 				answer["domain"] = getDomain();
 				answer["domain_lock_needed"] = true;//tells bg to lock the domain
 				break;
+
 			case "command pressed":
 				response += "command pressed recieved";
 				linkifyAtMouseover();
@@ -333,17 +337,12 @@ function handleKeyPress(event) {
 		}
 		else {
 		//sends message to bg so all tabs get cmd
-
 			if(checkBottomOpen()) {
 				chrome.runtime.sendMessage({greeting: "close bottom"});
 			}
 			else {
 				chrome.runtime.sendMessage({greeting: "open bottom"});
 			}
-
-
-
-			//chrome.runtime.sendMessage({greeting:"toggle bottom"});	
 		}
 
 		event.preventDefault();
