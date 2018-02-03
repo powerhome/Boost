@@ -5,7 +5,6 @@ var invalidTargets = [];
 var currDomain;
 var bottomKey;
 var linkKey;
-var pendingFocus;
 
 /*
 Called when there was an error.
