@@ -30,7 +30,7 @@ function onError(error) {
 		let response = "response: ";
 
 		switch(request.greeting) {
-			case "open bottom":
+			case "open bottom"://open used by content script
 				console.log("opening bot");
 				response += "opening bottom OK";
 				if(!checkBottomBarExists()) {
@@ -41,7 +41,7 @@ function onError(error) {
 				}
 				break;
 
-			case "close bottom":
+			case "close bottom"://close used by content script
 				console.log("close bottom");
 				response += "closing Bottom OK";
 				if(checkBottomBarExists() && checkBottomOpen()) {
@@ -61,7 +61,7 @@ function onError(error) {
 				correctBottomBar(request.bottomOpen);
 				break;
 
-			case "toggle bottom":
+			case "toggle bottom"://toggle used by side bar
 				console.log("toggling bot");
 				if(!checkBottomBarExists()) {
 					setupBottomBar();

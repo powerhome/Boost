@@ -161,7 +161,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         break;
 
       case "get Recent":
-        reponse += "sending recent";
+        response += "sending recent";
         answer.value = recentMatches;
         break;
 
