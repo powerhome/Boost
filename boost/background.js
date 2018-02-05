@@ -15,17 +15,68 @@ function onError(error) {
 
 var patternLinkerContainer = false;
 var recentMatches = [];
+var domainLocked = false;
+var tabsWithPageActionIndexes = [];
+var tabsURLInfo = {};
+var bottomOpen = true;
 
-//sets up pattern linker using domain 
+(function setup() {
+  //listens for changes in tabs mostly for pages that reload w/o changes url
+  chrome.tabs.onUpdated.addListener(
+    function(tabID, changeInfo, tab) {
+
+      if(changeInfo.status) {
+        chrome.tabs.sendMessage(tabID, {greeting:"check bottom", bottomOpen: bottomOpen}, function(response) {
+          console.log(response.response);
+        });
+      }
+  });
+
+  //checks storage to see if defaults need to be set(as well as some setup)
+  chrome.storage.local.get(["domain","domainLocked","bottomKey","linkKey"],
+    function(response){
+      domainLocked = response.domainLocked;
+      let domain = response.domain;
+
+      if(domain != undefined)
+        setupPatternLinkers(domain);
+
+      let bottomKeyDefault = {"mod": "Ctrl", "key": "x"};
+      let linkKeyDefault = {mod: "Ctrl", key: "z"};
+      let defaultsToSet = {};
+      if(response.bottomKey == undefined)
+      {
+        defaultsToSet["bottomKey"] = bottomKeyDefault;
+      }
+
+      if(response.linkKey == undefined)
+      {
+        defaultsToSet["linkKey"] = linkKeyDefault;
+      }
+
+      if(Object.keys(defaultsToSet).length > 0)
+      {
+        console.log("setting defaults");
+        chrome.storage.local.set(defaultsToSet, 
+          function() {
+            console.log("Defaults set");
+          });
+      }
+    });//Storage get and callback function
+})();//setup IIFE
+
+//sets up pattern linker using domain TODO Pull out to json maybe?
 function setupPatternLinkers(newDomain) {
 
-  if(newDomain === patternLinkerContainer.domain)
+  if(newDomain === patternLinkerContainer.domain || domainLocked)
   {
+    if(domainLocked) {
+      console.log("DOMAIN LOCKED");
+      return
+    }
     console.log("DOMAIN SAME");
     return;
   }
-  recentMatches = [];
-
   patternLinkerContainer = new Object();
   let placeholder = "#placeholder#";
   patternLinkerContainer["placeholder"] = placeholder;
@@ -35,19 +86,19 @@ function setupPatternLinkers(newDomain) {
   let domain = newDomain;//https?:\/\/(?:www.)?\S{1,30}.com\/|file:\/\/\/\S*.html/i.exec(document.URL)[0];
   patternLinkerContainer["domain"] = domain;
 
-  var homePatternLinker = new PatternLinker(/H#(\d{1,8})/igm, domain + "homes/" + placeholder, "Home#: ");
+  var homePatternLinker = new PatternLinker(/H#(\d{1,8})/igm, ("homes/" + placeholder), "Home#: ");
   addPattern("home pattern", homePatternLinker);
 
-  var phonePatternLinker = new PatternLinker(/\(?(\d{3})\)?(?: |\-)*(\d{3})\-?(\d{4})/igm, domain + "homes?page=1&homes_filter[phone_number_cond]=eq&homes_filter[phone_number]=" + placeholder, "Phone#: ");
+  var phonePatternLinker = new PatternLinker(/\(?(\d{3})\)?(?: |\-)*(\d{3})\-?(\d{4})/igm, "homes?page=1&homes_filter[phone_number_cond]=eq&homes_filter[phone_number]=" + placeholder, "Phone#: ");
   addPattern("phone pattern", phonePatternLinker);
 
-  var projPatternLinker = new PatternLinker(/(?:^|\b)(3\d)\-?(\d{5})\b/igm, domain + "projects?q[project_number_eq]=" + placeholder, "Project#: ");
+  var projPatternLinker = new PatternLinker(/(?:^|\b)(3\d)\-?(\d{5})\b/igm, "projects?q[project_number_eq]=" + placeholder, "Project#: ");
   addPattern("project pattern", projPatternLinker);
 
-  var apptPatternLinker = new PatternLinker(/(?:^#?|\s|[^ht]#)([0-2|4-9]\d{4,7})\b/igm, domain + "homes?homes_filter[lead_id_cond]=eq&homes_filter[lead_id]=" + placeholder, "Appt #: ");
+  var apptPatternLinker = new PatternLinker(/(?:^#?|\s|[^ht]#)([0-2|4-9]\d{4,7})\b/igm, "homes?homes_filter[lead_id_cond]=eq&homes_filter[lead_id]=" + placeholder, "Appt #: ");
   addPattern("appointment pattern", apptPatternLinker);
 
-  var ticketPatternLinker = new PatternLinker(/\b(?:t(?:icket)? ?#? ?)(\d+)\b/igm, domain + "support/tickets/" + placeholder, "Ticket #:");
+  var ticketPatternLinker = new PatternLinker(/\b(?:t(?:icket)? ?#? ?)(\d+)\b/igm, "support/tickets/" + placeholder, "Ticket #:");
   addPattern("ticket pattern", ticketPatternLinker);
 
   //store patternLinkers in PLC
@@ -73,105 +124,135 @@ function setupPatternLinkers(newDomain) {
 }
 
 /*
-  adds a listener to messages
+  adds a listener to messages, specifically any to chrome.runtime
 */
-browser.runtime.onMessage.addListener(request => {
-
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log("msg recieved: " + request.greeting);
     let answer = new Object();
     var response = "response: ";
 
     switch(request.greeting) {
+      case "get bottom open":
+        answer.bottomOpen = bottomOpen;
+        response += "returning if open bottom";
+        break;
 
-        case "clear Recent":
+      case "clear Recent":
+        response += "clearing recent OK";
         recentMatches = [];
         break;
 
-        case "get Recent":
+      case "open bottom":
+        response += "Open bottom OK";
+        bottomOpen = true;
+        sendMessageToAllTabs({greeting:request.greeting, bottomOpen: bottomOpen});
+        break;
+
+      case "close bottom":
+        response += "close bottom OK";
+        console.log("TEST");
+        sendMessageToAllTabs({greeting:request.greeting, bottomOpen: bottomOpen});
+        break;
+
+      case "toggle bottom":
+        response += "toggle bottom OK";
+        bottomOpen = !bottomOpen;
+        sendMessageToAllTabs({greeting:request.greeting, bottomOpen: bottomOpen});
+        break;
+
+      case "get Recent":
+        response += "sending recent";
         answer.value = recentMatches;
         break;
 
-        case "get PLC":  
+      case "unlock domain":
+        response += "unlocking domain"
+        domainLocked = false;
+        break;
+
+      case "get PLC":  
         response += "returning patt linker con";
         answer["patternLinkerContainer"] = patternLinkerContainer;
         console.log("BG"+response);
         break;
 
-        case "get links":
-        response += "returning links";
-        answer["links"] = buildLinksFromInput(request.value, request.domain);
-        console.log("returning links ");
+      case "try pageAction":
+        if(tryPageAction()) {
+          response += "pageAction Shown";
+          chrome.pageAction.show(sender.tab.id);
+          tabsWithPageActionIndexes.push(sender.tab.id);
+        }
+        else {
+          response += "no PA: domain locked";
+        }
         break;
 
+      case "get links":
+        response += "returning links";
+        answer["links"] = buildLinksFromInput(request.value, request.domain);
+        console.log("returning links " + answer);
+        break;
 
       default:
         response += "unknown message";
         console.log("unknown message: " + request.greeting);
         break;
     }
-
+    console.log("sending response: " + response);
     answer["response"] = response;
-    return Promise.resolve(answer);
+    sendResponse(answer);
   });
 
-/*
-Sets listeners for commands
-*/
-browser.commands.onCommand.addListener(function(command) {
+function sendMessageToAllTabs(msg) {
 
-  console.log(command);
-  
-  browser.tabs.query({
-    currentWindow: true,
-    active: true
-  }).then(tabs =>
-    sendMessageToTab(tabs[0], command_msg))
-    .then(response => {
-      console.log(response.response);
-    }).catch(onError);
-
-});
-
-
-/*
-Sets listener for browser action
-*/
-browser.browserAction.onClicked.addListener(() => {
-  console.log("action clicked");
-
-  browser.tabs.query({
-    currentWindow: true,
-    active: true
-  }).then(tabs =>
-    sendMessageToTab(tabs[0], action_msg)
-    .then(resp => {
-      let domain = resp.response;
-      setupPatternLinkers(domain);
-    })
-    .catch(onError));
-});
-
-
-function sendMessageToTab(tab,msg,obj) {
-
-  console.log(`sent: ${msg} to tab ${tab.id}`);
-
-    message = {greeting:  msg};
-    if(obj)
+  chrome.tabs.query({currentWindow: true},
+    function(tabs) {
+    for(let i = 0; i < tabs.length; i++)
     {
-      message["obj"] = obj;
+      chrome.tabs.sendMessage(tabs[i].id, msg);
     }
+  });
 
-    return browser.tabs.sendMessage(
-      tab.id,
-      message
-    );
 
 }
 
+/*
+  Sets listener for page action
+*/
+chrome.pageAction.onClicked.addListener(() => {
+  console.log("action clicked");
+
+  chrome.tabs.query({active:true, currentWindow: true}
+  ,function(tabs){
+    chrome.tabs.sendMessage(tabs[0].id,{greeting: action_msg},
+        function(response) {
+          if(response.domain_lock_needed) {
+            lockDomain(response.domain);
+          }
+          console.log(response.response);
+      });
+  });
+
+  //when pageaction is clicked, lock the domain and hide all current page actions
+  function lockDomain(domain) {
+    setupPatternLinkers(domain);
+    chrome.storage.local.set({domain: domain, domainLocked: true});
+    domainLocked = true;
+
+    for(let i = 0; i < tabsWithPageActionIndexes.length; i++)
+    {
+      chrome.pageAction.hide(tabsWithPageActionIndexes[i]);
+
+    }
+    tabsWithPageActionIndexes = [];
+  }
+
+});
+
+//takes an array of strings and finds all the links that match the text
 function buildLinksFromInput(textArr, domain) {
-  if(domain) {
-    console.log("domain changed to " + domain);
+  if(!patternLinkerContainer && domain)
+  {
     setupPatternLinkers(domain);
   }
 
@@ -183,14 +264,24 @@ function buildLinksFromInput(textArr, domain) {
 
   for(let i = 0; i < textArr.length; i++) {
     let item = textArr[i];
-    let links = linksFromText(item);
+    let links = linksFromText(item, domain);
 
     if(links.length > 0){
       for(let i = 0; i < links.length; i++) {
         //links to return
         result.push(links[i]);
         //links saved in history
-        recentMatches.push(links[i]);
+
+        let thisMatchIndex = recentMatches.indexOf(links[i]);
+        if(thisMatchIndex >= 0)
+        {
+          console.log("DUPE" );//if dupe, remove from array and put in front
+          recentMatches.splice(thisMatchIndex, 1);
+          recentMatches.push(links[i]);
+        }
+        else {
+          recentMatches.push(links[i]);
+        }
       }
     }
   }
@@ -201,10 +292,12 @@ function buildLinksFromInput(textArr, domain) {
 /*
   Checks all patternLinkers in patternLinkers obj against text and returns links for those matches
 */
-function linksFromText(text) {
-
+function linksFromText(text, domainArg) {
+  //determines if a specific domain is needed or to use the previously saved one
+  let domain = domainArg || patternLinkerContainer.domain;
   //accumulate all the matches
   let results = [];
+
   //patternLinkers in PLC holds the patterns to match
   for(patt in patternLinkers = patternLinkerContainer.patternLinkers) {
     let thisPatt = patternLinkers[patt];
@@ -214,11 +307,10 @@ function linksFromText(text) {
     {
       //replace placeholder value in link with num from matches
       let res = thisPatt.link.replace(patternLinkerContainer.placeholder, matches[i]);
-      res = thisPatt.linkText + linkify(res,  matches[i]);
+      res = thisPatt.linkText + linkify(domain, res,  matches[i]);
       results.push(res);
     }
   }
-  console.log("matches made: " + results.length);
   return results;
 
   /*
@@ -227,7 +319,6 @@ function linksFromText(text) {
     assumes that the capture group collectively concat to the proper number
   */
   function getMatchesFromText(text, pattern) {
-
     let resultArray;
     let results = [];
 
@@ -250,26 +341,15 @@ function linksFromText(text) {
   /*
     Takes an address and text for link and builds the tag accordingly
   */
-  function linkify(linkAddress, textToLink) {
-    result = "<a target=\"_blank\" href =\"" + linkAddress + "\">" + textToLink + "</a>";
+  function linkify(domain, path, textToLink) {
+    result = "<a target=\"_blank\" href =\"" + domain + path + "\">" + textToLink + "</a>";
 
     return result;
   }
 
 }
-// //TO BE USED LATER MAYBE
-// function getSelectionText() {
-//     var text = "";
-//     var activeEl = document.activeElement;
-//     var activeElTagName = activeEl ? activeEl.tagName.toLowerCase() : null;
-//     if (
-//       (activeElTagName == "textarea") || (activeElTagName == "input" &&
-//       /^(?:text|search|password|tel|url)$/i.test(activeEl.type)) &&
-//       (typeof activeEl.selectionStart == "number")
-//     ) {
-//         text = activeEl.value.slice(activeEl.selectionStart, activeEl.selectionEnd);
-//     } else if (window.getSelection) {
-//         text = window.getSelection().toString();
-//     }
-//     return text;
-// }
+
+function tryPageAction() {
+  return !domainLocked;
+}
+

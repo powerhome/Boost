@@ -3,6 +3,8 @@ console.log("Content Script Loaded");
 //targets not to hit with links
 var invalidTargets = [];
 var currDomain;
+var bottomKey;
+var linkKey;
 
 /*
 Called when there was an error.
@@ -17,43 +19,95 @@ function onError(error) {
 */
 (function () {
 	invalidTargets.push(document.body);
-	if(currDomain == undefined) {
-		currDomain = getDomain();
-	}
 
+	setupDomain();
 	//sets up listener to get command press from BG Script
-	browser.runtime.onMessage.addListener(request => {
+	chrome.runtime.onMessage.addListener(
+		function(request, sender, sendResponse) {
 		console.log("from bg: " + request.greeting);
 		let answer = new Object();
 		let response = "response: ";
 
 		switch(request.greeting) {
-			case "action clicked":	
-				response = getDomain();
+			case "open bottom"://open used by content script
+				console.log("opening bot");
+				response += "opening bottom OK";
+				if(!checkBottomBarExists()) {
+					setupBottomBar();
+				}
+				if(document.getElementById("bottomBar").classList.contains("hideBar")) {
+					toggleBottomBar();
+				}
 				break;
+
+			case "close bottom"://close used by content script
+				console.log("close bottom");
+				response += "closing Bottom OK";
+				if(checkBottomBarExists() && checkBottomOpen()) {
+					toggleBottomBar();
+				}
+				break;
+
+			case "check bottom":
+				console.log("checking bottom");
+				if(checkBottomBarExists()){
+					response += "bottom bar checked good";
+				}
+				else {
+					response += "setting up bottombar";
+					setupBottomBar();
+				}
+				correctBottomBar(request.bottomOpen);
+				break;
+
+			case "toggle bottom"://toggle used by side bar
+				console.log("toggling bot");
+				if(!checkBottomBarExists()) {
+					setupBottomBar();
+				}
+				correctBottomBar(request.bottomOpen);
+			break;
+
+			case "action clicked":	
+				response += "locking domain";
+				answer["domain"] = getDomain();
+				answer["domain_lock_needed"] = true;//tells bg to lock the domain
+				break;
+
 			case "command pressed":
 				response += "command pressed recieved";
 				linkifyAtMouseover();
 				break;
-			case "sending PLC":
-				patternLinkerContainer = request.obj;
-				response += "got PLC";
-				break;
+			
 			default:
-				response += "unknown message";
+				console.log("unknown msg recieved");
 				break;
 		}
 		answer["response"] = response;
-		return Promise.resolve(answer);
+		sendResponse(answer);
 	});
+
+	
+
+	chrome.runtime.sendMessage({greeting:"get bottom open"}, function(response) {
+		if(response.bottomOpen)
+		{
+			if(!checkBottomBarExists()) {
+			setupBottomBar();
+			}
+			let bottomBar = document.getElementById("bottomBar");
+			bottomBar.classList.remove("slide");
+			bottomBar.classList.remove("hideBar");
+			bottomBar.classList.add("slide");
+		}
+	})
+
+	setupPreferenceKeys();
+	setupPageAction();
+
+	document.onkeypress = handleKeyPress;
+
 })();
-
-//gets the current domain from the url of the page
-function getDomain() {
-	let domain = /https?:\/\/(?:www.)?\S{1,30}.com\/|file:\/\/\/\S*.html/i.exec(document.URL)[0];
-	return domain;
-}
-
 
 //checks to see that a node is valid
 //if it is, adds to list so it wont be again
@@ -105,8 +159,8 @@ function linkifyAtMouseover() {
 		var resultDiv;
 		msg = {greeting: "get links", value: textArr, domain: currDomain};
 
-		browser.runtime.sendMessage(msg)
-		.then(response => {
+		chrome.runtime.sendMessage(msg, function(response) {
+			console.log("resp: " + response);
 			let resultDiv = buildResultDiv();
 			let links = response.links; //get from result eventually
 			
@@ -125,7 +179,7 @@ function linkifyAtMouseover() {
 				target.parentNode.insertBefore(resultDiv, target.nextSibling); //add result div to dom after target
 			}
 
-		}).catch(onError);
+		});
 	})(textToSend, target);
 	
 	//builds the div to hold results and eventually put on screen (if needed)
@@ -165,4 +219,209 @@ function getMouseoverElement() {
 		return item;
 	}
 	return null;
+}
+
+function setupBottomBar() {
+
+	let bottomBar = document.createElement("DIV");
+	let spacingDiv = document.createElement("DIV");
+	let body = document.querySelector("Body");
+
+	spacingDiv.id = "spacingDiv";
+	bottomBar.id = "bottomBar";
+	bottomBar.classList = "hideBar";
+
+	body.appendChild(spacingDiv);
+	body.appendChild(bottomBar);
+
+	let bottomFrame = document.createElement("IFRAME");
+	bottomFrame.id = "bottomFrame";
+	resizeBottomBar(bottomFrame, bottomBar);
+
+	bottomFrame.src = chrome.extension.getURL("bottomBar.html");
+	bottomBar.appendChild(bottomFrame);
+
+	window.addEventListener("resize", resizeThrottler, false);
+
+	var resizeTimeout;
+	function resizeThrottler() {
+		// ignore resize events as long as an actualResizeHandler execution is in the queue
+    	if ( !resizeTimeout ) {
+		      	resizeTimeout = setTimeout(function() {
+		        resizeTimeout = null;
+		        resizeBottomBar(bottomFrame, bottomBar);
+	     
+	       // The actualResizeHandler will execute at a rate of 15fps
+	       }, 66);
+	    }
+	}
+}
+
+function resizeBottomBar(frame, bar) {
+	let bottomFrame = frame || window.getElementById("bottomFrame");
+	let bottomBar = bar || document.getElementById("bottomBar");
+	bottomFrame.width = `${bottomBar.clientWidth} + px`;
+	bottomFrame.height = "83px";
+}
+
+function setupPreferenceKeys() {
+
+	chrome.storage.local.get(["bottomKey","linkKey"], function(result) {
+		bottomKey = result.bottomKey;
+		linkKey = result.linkKey;
+	});
+
+}
+
+function handleKeyPress(event) {
+	let key = event.key;
+	if(key == bottomKey.key) {
+		console.log("bot key matched");
+		switch(bottomKey.mod) {
+			case "Ctrl": 
+				if(event.ctrlKey)
+				{
+					bottomCommandPressed()
+				}
+				break;
+
+			case "Alt":
+				if(event.altKey)
+				{
+					bottomCommandPressed()
+				}
+				break;
+
+			case "Meta":
+				if(event.metaKey)
+				{
+					bottomCommandPressed()
+				}
+				break;
+			case "":
+				bottomCommandPressed()
+			break;
+			default:
+		}
+	}
+
+	if(key == linkKey.key) {
+		switch(linkKey.mod) {
+			case "Ctrl": 
+				if(event.ctrlKey) {
+					linkCommandPressed()
+				}
+
+				break;
+			case "Alt":
+				if(event.altKey) {
+					linkCommandPressed()
+				}
+				break;
+			case "Meta":
+				if(event.metaKey) {
+					linkCommandPressed()
+				}
+				break;
+			case "":
+				linkCommandPressed()
+				break;
+			default:
+		}
+	}
+
+	function bottomCommandPressed() {
+		if(!checkBottomBarExists()) {
+			setupBottomBar();
+			chrome.runtime.sendMessage({greeting: "open bottom"});
+		}
+		else {
+		//sends message to bg so all tabs get cmd
+			if(checkBottomOpen()) {
+				chrome.runtime.sendMessage({greeting: "close bottom"});
+			}
+			else {
+				chrome.runtime.sendMessage({greeting: "open bottom"});
+			}
+		}
+
+		event.preventDefault();
+	}
+
+	function linkCommandPressed() {
+		linkifyAtMouseover();
+		event.preventDefault();
+	}
+}
+
+function checkBottomOpen() {
+	let bottomBar = document.getElementById("bottomBar");
+	let open = true;
+	if(bottomBar.classList.contains("hideBar")) {
+		open = false;
+	}
+
+	return open;
+}
+
+function toggleBottomBar() {
+	let bottomBar = document.getElementById("bottomBar");
+	let spacingDiv = document.getElementById("spacingDiv");
+
+	if(document.hasFocus()) {
+		bottomBar.classList.add("slide");
+		spacingDiv.classList.add("slide");
+	}
+	else {
+		bottomBar.classList.remove("slide");
+		spacingDiv.classList.remove("slide");
+	}
+
+	bottomBar.classList.toggle("hideBar");
+	spacingDiv.classList.toggle("hideBar");
+
+	if(!bottomBar.classList.contains("hideBar"))
+	{
+		setTimeout(function () {
+			try {
+				bottomBar.firstChild.contentWindow.document.getElementById("smartSearchText").focus();
+			}
+			catch (e)
+			{
+				//the try block should work in FF, this focus accomplishes the same in chrome(but not in FF) so this should cover both
+				bottomBar.firstChild.contentWindow.focus();
+			}
+		}, 1);
+	}
+}
+
+function setupDomain() {
+	if(currDomain == undefined) {
+		currDomain = getDomain();
+	}
+}
+
+//gets the current domain from the url of the page
+function getDomain() {
+	let domain = /https?:\/\/(?:www.)?\S{1,30}.com\/|file:\/\/\/\S*.html/i.exec(document.URL)[0];
+	return domain;
+}
+
+//sends a msg to bg to turn page action on if needed
+function setupPageAction() {
+	chrome.runtime.sendMessage({greeting: "try pageAction"},
+		function (response) {
+			console.log(response.response);
+		});
+}
+
+function checkBottomBarExists() {
+	return document.getElementById("bottomBar") != null;
+}
+
+function correctBottomBar(bottomOpen) {
+	let isVisible = !document.getElementById("bottomBar").classList.contains("hideBar"); 
+	if(isVisible != bottomOpen) {
+		toggleBottomBar();
+	}
 }

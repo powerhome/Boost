@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="linker.css">
+  </head>
+  <body> 
+  	<div class="flexContainer" id="bottomBarContainer">
+      <div class="bottomSpacer"></div>
+	  	<div id="smartSearchDiv">
+	  	  <div id="smartSearchTitle" class="bottomTitle">Smart(ish) Search</div>
+		  	<form  autocomplete="off" name="smart_search_form" target="_blank" id="smartSearchForm">
+		   	 	<input tabindex="1" id="smartSearchText" type="text" name="text" autofocus required placeholder="search for something" class="bottomMidSection">
+          <input class="BLButton" id="submitSearchBtn" type="submit" value="Search">
+		   	 	<input class="BLButton" id="clearSearchBtn" type="reset" value="Clear">
+		   	</form>
+      </div>
+      <div id="searchResultsContainer">
+        <div class="bottomTitle">Results:</div>
+        <div id="smartSearchResults" class="flexContainer">
+        </div>
+        <button class="BLButton" id="clearResultsBtn">Clear Results</button>
+      </div>
+      <div class="bottomSpacer"></div>
+	</div>
+   	<script src="bottomBar.js"></script>
+  </body>
+</html>
