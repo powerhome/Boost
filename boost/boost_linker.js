@@ -230,6 +230,7 @@ function setupBottomBar() {
 	spacingDiv.id = "spacingDiv";
 	bottomBar.id = "bottomBar";
 	bottomBar.classList = "hideBar";
+	spacingDiv.classList = "hideBar";
 
 	body.appendChild(spacingDiv);
 	body.appendChild(bottomBar);
