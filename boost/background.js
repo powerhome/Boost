@@ -22,6 +22,7 @@ var bottomOpen = true;
 
 (function setup() {
   //listens for changes in tabs mostly for pages that reload w/o changes url
+
   chrome.tabs.onUpdated.addListener(
     function(tabID, changeInfo, tab) {
 
@@ -150,7 +151,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
       case "close bottom":
         response += "close bottom OK";
-        console.log("TEST");
+        bottomOpen = false;
         sendMessageToAllTabs({greeting:request.greeting, bottomOpen: bottomOpen});
         break;
 

@@ -49,15 +49,17 @@ function onError(error) {
 				break;
 
 			case "check bottom":
+			
 				console.log("checking bottom");
-				if(checkBottomBarExists()){
-					response += "bottom bar checked good";
-				}
-				else {
-					response += "setting up bottombar";
-					setupBottomBar();
-				}
-				correctBottomBar(request.bottomOpen);
+				checkNeedToShow();
+				// if(checkBottomBarExists()){
+				// 	response += "bottom bar checked good";
+				// }
+				// else {
+				// 	response += "setting up bottombar";
+				// 	setupBottomBar();
+				// }
+				// correctBottomBar(request.bottomOpen);
 				break;
 
 			case "toggle bottom"://toggle used by side bar
@@ -88,7 +90,32 @@ function onError(error) {
 	});
 
 	
+	checkNeedToShow();
 
+
+
+
+	// chrome.runtime.sendMessage({greeting:"get bottom open"}, function(response) {
+	// 	if(response.bottomOpen)
+	// 	{
+	// 		if(!checkBottomBarExists()) {
+	// 		setupBottomBar();
+	// 		}
+	// 		let bottomBar = document.getElementById("bottomBar");
+	// 		bottomBar.classList.remove("slide");
+	// 		bottomBar.classList.remove("hideBar");
+	// 		bottomBar.classList.add("slide");
+	// 	}
+	// })
+
+	setupPreferenceKeys();
+	setupPageAction();
+
+	document.onkeypress = handleKeyPress;
+
+})();
+
+function checkNeedToShow() {
 	chrome.runtime.sendMessage({greeting:"get bottom open"}, function(response) {
 		if(response.bottomOpen)
 		{
@@ -102,12 +129,7 @@ function onError(error) {
 		}
 	})
 
-	setupPreferenceKeys();
-	setupPageAction();
-
-	document.onkeypress = handleKeyPress;
-
-})();
+}
 
 //checks to see that a node is valid
 //if it is, adds to list so it wont be again
