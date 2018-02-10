@@ -51,7 +51,7 @@ function onError(error) {
 				break;
 
 			case "check bottom":
-			
+				//TODO pass in request, send bool to checkNeedToShow();
 				console.log("checking bottom");
 				checkNeedToShow();
 				break;
@@ -109,6 +109,7 @@ function onError(error) {
 
 })();
 
+//TODO Default just show
 function checkNeedToShow() {
 	chrome.runtime.sendMessage({greeting:"get bottom open"}, function(response) {
 		if(response.bottomOpen)
@@ -238,6 +239,7 @@ function getMouseoverElement() {
 }
 
 function setupBottomBar() {
+	//TODO default just show it
 
 	let bottomBar = document.createElement("DIV");
 	let spacingDiv = document.createElement("DIV");

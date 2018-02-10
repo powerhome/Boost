@@ -18,7 +18,7 @@ var recentMatches = [];
 var domainLocked = false;
 var tabsWithPageActionIndexes = [];
 var tabsURLInfo = {};
-var bottomOpen = true;
+//var bottomOpen = true;
 var windows = {};
 
 (function setup() {
@@ -28,7 +28,8 @@ var windows = {};
     function(tabID, changeInfo, tab) {
 
       if(changeInfo.status) {
-        chrome.tabs.sendMessage(tabID, {greeting:"check bottom", bottomOpen: bottomOpen}, function(response) {
+        //TODO Send open status here - use windows[tab.windowId] in getBottomOpenStatus
+        chrome.tabs.sendMessage(tabID, {greeting:"check bottom"}, function(response) {
           console.log(response.response);
         });
       }
@@ -135,7 +136,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     switch(request.greeting) {
       case "get bottom open":
-        answer.bottomOpen = bottomOpen;
+        answer.bottomOpen = getWindowOpenStatus(sender.tab.windowId);
         response += "returning if open bottom";
         break;
 
@@ -145,20 +146,23 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         break;
 
       case "open bottom":
+        console.log(sender.tab.windowId)
         response += "Open bottom OK";
-        bottomOpen = true;
-        sendMessageToAllTabs({greeting:request.greeting, bottomOpen: bottomOpen});
+        //bottomOpen = true;
+        setWindowOpenStatus(sender.tab.windowId, true);
+        sendMessageToAllTabs({greeting:request.greeting});
         break;
 
       case "close bottom":
         response += "close bottom OK";
-        bottomOpen = false;
-        sendMessageToAllTabs({greeting:request.greeting, bottomOpen: bottomOpen});
+        setWindowOpenStatus(sender.tab.windowId, false);
+        sendMessageToAllTabs({greeting:request.greeting});
         break;
 
       case "toggle bottom":
         response += "toggle bottom OK";
-        bottomOpen = !bottomOpen;
+        let bottomOpen = !getWindowOpenStatus(sender.tab.windowId);
+        setWindowOpenStatus(sender.tab.windowId, bottomOpen);
         sendMessageToAllTabs({greeting:request.greeting, bottomOpen: bottomOpen});
         break;
 
@@ -216,6 +220,30 @@ function sendMessageToAllTabs(msg) {
   });
 
 
+}
+
+function setWindowOpenStatus(windowId, isOpen) {
+  if(windows[windowId] != undefined) {
+    windows[windowId].openStatus = isOpen;
+  }
+  else {
+    windows[windowId] = {openStatus: isOpen};
+  }
+
+}
+
+function getWindowOpenStatus(windowId) {
+  let currWindow;
+  if(windows[windowId] != undefined) {
+    currWindow = windows[windowId];
+  }
+  else {
+    //default to closed, let setter handler default
+    setWindowOpenStatus(windowId, false)
+    currWindow = windows[windowId];
+  }
+
+  return currWindow.openStatus;
 }
 
 /*
