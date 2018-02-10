@@ -29,7 +29,7 @@ var windows = {};
 
       if(changeInfo.status) {
         //TODO Send open status here - use windows[tab.windowId] in getBottomOpenStatus
-        chrome.tabs.sendMessage(tabID, {greeting:"check bottom"}, function(response) {
+        chrome.tabs.sendMessage(tabID, {greeting:"check bottom", bottomOpen: getWindowOpenStatus(tab.windowId)}, function(response) {
           console.log(response.response);
         });
       }

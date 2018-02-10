@@ -53,7 +53,7 @@ function onError(error) {
 			case "check bottom":
 				//TODO pass in request, send bool to checkNeedToShow();
 				console.log("checking bottom");
-				checkNeedToShow();
+				checkNeedToShow(request.bottomOpen);
 				break;
 
 			case "toggle bottom"://toggle used by side bar
@@ -84,7 +84,7 @@ function onError(error) {
 	});
 
 	
-	checkNeedToShow();
+	initialCheckNeedToShow();
 
 
 
@@ -109,21 +109,27 @@ function onError(error) {
 
 })();
 
-//TODO Default just show
-function checkNeedToShow() {
+function initialCheckNeedToShow() {
 	chrome.runtime.sendMessage({greeting:"get bottom open"}, function(response) {
-		if(response.bottomOpen)
-		{
-			if(!checkBottomBarExists()) {
-			setupBottomBar();
-			}
-			let bottomBar = document.getElementById("bottomBar");
-			bottomBar.classList.remove("slide");
-			bottomBar.classList.remove("hideBar");
-			bottomBar.classList.add("slide");
-		}
-	})
+		checkNeedToShow(response.bottomOpen);
+	});
 
+}
+
+
+//TODO Default just show
+function checkNeedToShow(bottomOpen) {
+
+	if(bottomOpen)
+	{
+		if(!checkBottomBarExists()) {
+		setupBottomBar();
+		}
+		let bottomBar = document.getElementById("bottomBar");
+		bottomBar.classList.remove("slide");
+		bottomBar.classList.remove("hideBar");
+		bottomBar.classList.add("slide");
+	}
 }
 
 //checks to see that a node is valid
