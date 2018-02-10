@@ -58,7 +58,7 @@ function onError(error) {
 
 			case "toggle bottom"://toggle used by side bar
 				console.log("toggling bot");
-				if(!checkBottomBarExists()) {
+				if(request.bottomOpen && !checkBottomBarExists()) {
 					setupBottomBar();
 				}
 				correctBottomBar(request.bottomOpen);
@@ -85,23 +85,6 @@ function onError(error) {
 
 	
 	initialCheckNeedToShow();
-
-
-
-
-	// chrome.runtime.sendMessage({greeting:"get bottom open"}, function(response) {
-	// 	if(response.bottomOpen)
-	// 	{
-	// 		if(!checkBottomBarExists()) {
-	// 		setupBottomBar();
-	// 		}
-	// 		let bottomBar = document.getElementById("bottomBar");
-	// 		bottomBar.classList.remove("slide");
-	// 		bottomBar.classList.remove("hideBar");
-	// 		bottomBar.classList.add("slide");
-	// 	}
-	// })
-
 	setupPreferenceKeys();
 	setupPageAction();
 
@@ -126,8 +109,10 @@ function checkNeedToShow(bottomOpen) {
 		setupBottomBar();
 		}
 		let bottomBar = document.getElementById("bottomBar");
+		let spacingDiv = documents.getElemenyById("spacingDiv");
 		bottomBar.classList.remove("slide");
 		bottomBar.classList.remove("hideBar");
+		spacingDiv.classList.remove("hideBar");
 		bottomBar.classList.add("slide");
 	}
 }
