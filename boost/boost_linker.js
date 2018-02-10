@@ -51,7 +51,6 @@ function onError(error) {
 				break;
 
 			case "check bottom":
-				//TODO pass in request, send bool to checkNeedToShow();
 				console.log("checking bottom");
 				checkNeedToShow(request.bottomOpen);
 				break;
@@ -109,7 +108,7 @@ function checkNeedToShow(bottomOpen) {
 		setupBottomBar();
 		}
 		let bottomBar = document.getElementById("bottomBar");
-		let spacingDiv = documents.getElemenyById("spacingDiv");
+		let spacingDiv = document.getElemenyById("spacingDiv");
 		bottomBar.classList.remove("slide");
 		bottomBar.classList.remove("hideBar");
 		spacingDiv.classList.remove("hideBar");
@@ -238,8 +237,8 @@ function setupBottomBar() {
 
 	spacingDiv.id = "spacingDiv";
 	bottomBar.id = "bottomBar";
-	bottomBar.classList = "hideBar";
-	spacingDiv.classList = "hideBar";
+	spacingDiv.classList.add("hideBar");
+	bottomBar.classList.add("hideBar");
 
 	body.appendChild(spacingDiv);
 	body.appendChild(bottomBar);
@@ -343,7 +342,7 @@ function handleKeyPress(event) {
 	function bottomCommandPressed() {
 
 		if(!checkBottomBarExists()) {
-			setupBottomBar();
+			//setupBottomBar();
 			chrome.runtime.sendMessage({greeting: "open bottom"});
 		}
 		else {
