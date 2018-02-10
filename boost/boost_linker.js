@@ -1,10 +1,12 @@
 console.log("Content Script Loaded");
-
 //targets not to hit with links
 var invalidTargets = [];
 var currDomain;
 var bottomKey;
 var linkKey;
+
+//TODO TABS HAS WINDOW ID
+console.log(window);
 
 /*
 Called when there was an error.
@@ -83,6 +85,22 @@ function onError(error) {
 
 	
 	checkNeedToShow();
+
+
+
+
+	// chrome.runtime.sendMessage({greeting:"get bottom open"}, function(response) {
+	// 	if(response.bottomOpen)
+	// 	{
+	// 		if(!checkBottomBarExists()) {
+	// 		setupBottomBar();
+	// 		}
+	// 		let bottomBar = document.getElementById("bottomBar");
+	// 		bottomBar.classList.remove("slide");
+	// 		bottomBar.classList.remove("hideBar");
+	// 		bottomBar.classList.add("slide");
+	// 	}
+	// })
 
 	setupPreferenceKeys();
 	setupPageAction();
@@ -330,6 +348,7 @@ function handleKeyPress(event) {
 	}
 
 	function bottomCommandPressed() {
+
 		if(!checkBottomBarExists()) {
 			setupBottomBar();
 			chrome.runtime.sendMessage({greeting: "open bottom"});

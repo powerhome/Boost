@@ -19,6 +19,7 @@ var domainLocked = false;
 var tabsWithPageActionIndexes = [];
 var tabsURLInfo = {};
 var bottomOpen = true;
+var windows = {};
 
 (function setup() {
   //listens for changes in tabs mostly for pages that reload w/o changes url
