@@ -75,11 +75,18 @@ body {
 
 #clearSearchBtn {
 	float: right;
+
 }
 
 #clearResultsBtn {
 	width: 100px;
+	float: left;
+
+}
+
+#submitSearchBtn {
 	display: block;
+	float: left;
 }
 
 #smartSearchTitle {
