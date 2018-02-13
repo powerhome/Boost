@@ -270,7 +270,7 @@ function resizeBottomBar(frame, bar) {
 	let bottomFrame = frame || window.getElementById("bottomFrame");
 	let bottomBar = bar || document.getElementById("bottomBar");
 	bottomFrame.width = `${bottomBar.clientWidth} + px`;
-	bottomFrame.height = "83px";
+	bottomFrame.height = "80px";
 }
 
 function setupPreferenceKeys() {

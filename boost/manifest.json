@@ -4,7 +4,6 @@
   "name": "__MSG_extensionName__",
   "description": "Gives It A Boost",
   "version": "2.3",
-  "update_url": "http://0.0.0.0.0",
   "default_locale": "en",
 
   "background": {
