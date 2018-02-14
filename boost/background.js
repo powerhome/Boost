@@ -70,12 +70,9 @@ var windows = {};
 //sets up pattern linker using domain TODO Pull out to json maybe?
 function setupPatternLinkers(newDomain) {
 
-  if(newDomain === patternLinkerContainer.domain || domainLocked)
+  if(newDomain === patternLinkerContainer.domain)
   {
-    if(domainLocked) {
-      console.log("DOMAIN LOCKED");
-      return
-    }
+    
     console.log("DOMAIN SAME");
     return;
   }
@@ -280,7 +277,7 @@ chrome.pageAction.onClicked.addListener(() => {
 
 //takes an array of strings and finds all the links that match the text
 function buildLinksFromInput(textArr, domain) {
-  if(!patternLinkerContainer && domain)
+  if(!domainLocked && !patternLinkerContainer && domain)
   {
     setupPatternLinkers(domain);
   }
