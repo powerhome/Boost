@@ -104,14 +104,14 @@ function requestListener() {
   console.log(this.responseText);
   let test = JSON.parse(this.responseText);
   console.log(test);
-  console.log(test.data);
+  console.log(test["home pattern"].link);
 }
 
 function jsonTest(e) {
   var jsonReq = new XMLHttpRequest();
   jsonReq.overrideMimeType("application/json");
   jsonReq.addEventListener("load",requestListener);
-  jsonReq.open("GET", "test.json");
+  jsonReq.open("GET", "patternLinker.json");
   jsonReq.send();
 
 }
