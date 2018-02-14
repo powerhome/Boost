@@ -100,7 +100,24 @@ function resetDomain(e) {
 
 }
 
+function requestListener() {
+  console.log(this.responseText);
+  let test = JSON.parse(this.responseText);
+  console.log(test);
+  console.log(test.data);
+}
+
+function jsonTest(e) {
+  var jsonReq = new XMLHttpRequest();
+  jsonReq.overrideMimeType("application/json");
+  jsonReq.addEventListener("load",requestListener);
+  jsonReq.open("GET", "test.json");
+  jsonReq.send();
+
+}
+
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.getElementById("resetDomainButton").addEventListener("click", resetDomain);
+document.getElementById("jsonTestButton").addEventListener("click", jsonTest);
 document.querySelector("form").addEventListener("submit", saveOptions);
 document.querySelector("form").addEventListener("reset", resetOptions);
