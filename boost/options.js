@@ -101,10 +101,18 @@ function resetDomain(e) {
 }
 
 function requestListener() {
-  console.log(this.responseText);
+
   let test = JSON.parse(this.responseText);
   console.log(test);
-  console.log(test["home pattern"].link);
+  console.log(test["home pattern"]);
+
+  for(thisPattern in test) {
+    test[thisPattern].pattern = new RegExp(test[thisPattern].pattern, 'igm');
+   
+  }
+
+  console.log(test);
+  console.log(test["home pattern"]);
 }
 
 function jsonTest(e) {

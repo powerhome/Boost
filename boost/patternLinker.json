@@ -1,31 +1,31 @@
 {
 	"home pattern": {
-		"pattern": "/H#(\\d{1,8})/gim",
+		"pattern": "H#(\\d{1,8})",
 		"link": "homes/#placeholder#",
 		"linkText": "Home#: "
 	},
 	
 	"phone pattern": {
-		"pattern": "/\\(?(\\d{3})\\)?(?: |\\-)*(\\d{3})\\-?(\\d{4})/gim",
+		"pattern": "\\(?(\\d{3})\\)?(?: |\\-)*(\\d{3})\\-?(\\d{4})",
 		"link": "homes?page=1&homes_filter[phone_number_cond]=eq&homes_filter[phone_number]=#placeholder#",
 		"linkText": "Phone#: "
 	},
 	
 	"project pattern": { 
-		"pattern": "/(?:^|\\b)(3\\d)\\-?(\\d{5})\\b/gim",
+		"pattern": "(?:^|\\b)(3\\d)\\-?(\\d{5})\\b",
 		"link": "projects?q[project_number_eq]=#placeholder#",
 		"linkText": "Project#: "
 	},
 
 	"appointment pattern": {
-		"pattern": "/(?:^#?|\\s|[^ht]#)([0-2|4-9]\\d{4,7})\\b/gim",
+		"pattern": "(?:^#?|\\s|[^ht]#)([0-2|4-9]\\d{4,7})\\b",
 		"link": "homes?homes_filter[lead_id_cond]=eq&homes_filter[lead_id]=#placeholder#",
 		"linkText": "Appt #: " 
 
 	},
 
 	"ticket pattern": {
-		"pattern": "/\\b(?:t(?:icket)? ?#? ?)(\\d+)\\b/gim",
+		"pattern": "\\b(?:t(?:icket)? ?#? ?)(\\d+)\\b",
 		"link": "support/tickets/#placeholder#",
 		"linkText": "Ticket #:"
 	}
