@@ -100,7 +100,7 @@ function resetDomain(e) {
 
 }
 
-function requestListener() {
+function jsonParser() {
 
   let test = JSON.parse(this.responseText);
   console.log(test);
@@ -118,8 +118,21 @@ function requestListener() {
 function jsonTest(e) {
   var jsonReq = new XMLHttpRequest();
   jsonReq.overrideMimeType("application/json");
-  jsonReq.addEventListener("load",requestListener);
+  jsonReq.addEventListener("load",jsonParser);
   jsonReq.open("GET", "patternLinker.json");
+  jsonReq.send();
+
+}
+
+function useNewPattern(e) {
+  let selectedFile = document.getElementById("newPatternInput");
+  console.log(selectedFile.files[0]);
+  //let newPattern = JSON.parse(selectedFile.files[0]);
+
+  var jsonReq = new XMLHttpRequest();
+  jsonReq.overrideMimeType("application/json");
+  jsonReq.addEventListener("load",jsonParser);
+  jsonReq.open("GET", selectedFile.files[0].name);
   jsonReq.send();
 
 }
@@ -129,3 +142,4 @@ document.getElementById("resetDomainButton").addEventListener("click", resetDoma
 document.getElementById("jsonTestButton").addEventListener("click", jsonTest);
 document.querySelector("form").addEventListener("submit", saveOptions);
 document.querySelector("form").addEventListener("reset", resetOptions);
+document.getElementById("useNewPatternButton").addEventListener("click", useNewPattern);
