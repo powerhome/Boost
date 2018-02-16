@@ -1,6 +1,9 @@
 const action_msg = "action clicked";
 const command_msg = "command pressed";
 const sending_pattern_msg = "sending PLC";
+const default_pattern = '{\n\t\"home pattern\": {\n\t\t\"pattern\": \"H#(\\\\d{1,8})\",\n\t\t\"link\": \"homes/#placeholder#\",\n\t\t\"linkText\": \"DEFAULTHome#: \"\n\t},\n\t\n\t\"phone pattern\": {\n\t\t\"pattern\": \"\\\\(?(\\\\d{3})\\\\)?(?: |\\\\-)*(\\\\d{3})\\\\-?(\\\\d{4})\",\n\t\t\"link\": \"homes?page=1&homes_filter[phone_number_cond]=eq&homes_filter[phone_number]=#placeholder#\",\n\t\t\"linkText\": \"Phone#: \"\n\t},\n\t\n\t\"project pattern\": { \n\t\t\"pattern\": \"(?:^|\\\\b)(3\\\\d)\\\\-?(\\\\d{5})\\\\b\",\n\t\t\"link\": \"projects?q[project_number_eq]=#placeholder#\",\n\t\t\"linkText\": \"Project#: \"\n\t},\n\n\t\"appointment pattern\": {\n\t\t\"pattern\": \"(?:^#?|\\\\s|[^ht]#)([0-2|4-9]\\\\d{4,7})\\\\b\",\n\t\t\"link\": \"homes?homes_filter[lead_id_cond]=eq&homes_filter[lead_id]=#placeholder#\",\n\t\t\"linkText\": \"Appt #: \" \n\n\t},\n\n\t\"ticket pattern\": {\n\t\t\"pattern\": \"\\\\b(?:t(?:icket)? ?#? ?)(\\\\d+)\\\\b\",\n\t\t\"link\": \"support/tickets/#placeholder#\",\n\t\t\"linkText\": \"Ticket #:\"\n\t}\n}'
+
+
 
 console.log("BG Loaded");
 
@@ -18,7 +21,6 @@ var recentMatches = [];
 var domainLocked = false;
 var tabsWithPageActionIndexes = [];
 var tabsURLInfo = {};
-//var bottomOpen = true;
 var windows = {};
 
 (function setup() {
@@ -35,13 +37,24 @@ var windows = {};
   });
 
   //checks storage to see if defaults need to be set(as well as some setup)
-  chrome.storage.local.get(["domain","domainLocked","bottomKey","linkKey"],
+  chrome.storage.local.get(["domain","domainLocked","bottomKey","linkKey","patternLinkers"],
     function(response){
       domainLocked = response.domainLocked;
       let domain = response.domain;
 
+      setupPatternLinkers();
+
       if(domain != undefined) {
-        setupPatternLinkers(domain);
+        changePatternLinkerDomain(domain);
+      }
+
+      let patternLinkers = response.patternLinkers;
+
+      if(patternLinkers != undefined) {
+        let newPatternLinkers = rawPatternLinkerParser(patternLinkers);
+        if(newPatternLinkers) {//false if parse was bad
+          changePatterns(newPatternLinkers);
+        }
       }
 
 
@@ -79,56 +92,11 @@ function changePatternLinkerDomain(newDomain) {
 //sets up pattern linker using domain TODO Pull out to json maybe?
 function setupPatternLinkers(newDomain) {
 
-  if(newDomain === patternLinkerContainer.domain)
-  {
-    
-    console.log("DOMAIN SAME");
-    return;
-  }
   patternLinkerContainer = new Object();
-  let placeholder = "#placeholder#";
-  patternLinkerContainer["placeholder"] = placeholder;
 
-  let patternLinkers = new Object();
-  
-  if(newDomain != undefined) {
-    patternLinkerContainer["domain"] = newDomain;
-  }
+  changePatterns(rawPatternLinkerParser(default_pattern));
 
-  var homePatternLinker = new PatternLinker(/H#(\d{1,8})/igm, ("homes/" + placeholder), "Home#: ");
-  addPattern("home pattern", homePatternLinker);
-
-  var phonePatternLinker = new PatternLinker(/\(?(\d{3})\)?(?: |\-)*(\d{3})\-?(\d{4})/igm, "homes?page=1&homes_filter[phone_number_cond]=eq&homes_filter[phone_number]=" + placeholder, "Phone#: ");
-  addPattern("phone pattern", phonePatternLinker);
-
-  var projPatternLinker = new PatternLinker(/(?:^|\b)(3\d)\-?(\d{5})\b/igm, "projects?q[project_number_eq]=" + placeholder, "Project#: ");
-  addPattern("project pattern", projPatternLinker);
-
-  var apptPatternLinker = new PatternLinker(/(?:^#?|\s|[^ht]#)([0-2|4-9]\d{4,7})\b/igm, "homes?homes_filter[lead_id_cond]=eq&homes_filter[lead_id]=" + placeholder, "Appt #: ");
-  addPattern("appointment pattern", apptPatternLinker);
-
-  var ticketPatternLinker = new PatternLinker(/\b(?:t(?:icket)? ?#? ?)(\d+)\b/igm, "support/tickets/" + placeholder, "Ticket #:");
-  addPattern("ticket pattern", ticketPatternLinker);
-
-  //store patternLinkers in PLC
-  patternLinkerContainer["patternLinkers"] = patternLinkers;
-
-  //adds patternLinkers to patternLinkers obj
-  function addPattern(name, patternLinker)
-  {
-    patternLinkers[name] = patternLinker;
-  }
-
-  /* 
-  holds a regex pattern and the proper way to link to that item if it matches
-  added: linkText to use when making link
-  */ 
-  function PatternLinker(pattern, link, linkText)
-  {
-    this.pattern = pattern;
-    this.link = link;
-    this.linkText = linkText;
-  }
+  patternLinkerContainer["placeholder"] = "#placeholder#";
 
 }
 
@@ -146,9 +114,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         break;
 
       case "sending new patternLinker":
-        console.log(request.patternLinkerRaw);
         let newPatternLinkers = rawPatternLinkerParser(request.patternLinkerRaw);
-        console.log(newPatternLinkers);
         if(newPatternLinkers) {//false if parse was bad
           changePatterns(newPatternLinkers);
           response += "new pattern set";
@@ -345,10 +311,6 @@ chrome.pageAction.onClicked.addListener(() => {
 
 //takes an array of strings and finds all the links that match the text
 function buildLinksFromInput(textArr, domain) {
-  if(!domainLocked && !patternLinkerContainer && domain)
-  {
-    setupPatternLinkers(domain);
-  }
 
   if(!(textArr instanceof Array)) {
       textArr = [textArr];

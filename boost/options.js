@@ -100,24 +100,17 @@ function resetDomain(e) {
 
 }
 
-function jsonParser(rawText) {
-
-  let newPatternLinker = JSON.parse(rawText);
-
-  for(thisPattern in newPatternLinker) {
-    //change the string pattern to Regex
-    newPatternLinker[thisPattern].pattern = new RegExp(newPatternLinker[thisPattern].pattern, 'igm');
-  }
-  //chrome.runtime.sendMessage({greeting:"sending new patternLinker", patternLinker: newPatternLinker});
-}
-
 function useNewPattern(e) {
   console.log("saving new Patterns");
   let selectedFile = document.getElementById("newPatternInput").files[0];
   var fr = new FileReader();
 
   fr.onload = function(e) {
-    //jsonParser(fr.result);
+    console.log(fr.result);
+    console.log(fr);
+    chrome.storage.local.set({
+      patternLinkers: fr.result
+    });
     chrome.runtime.sendMessage({greeting:"sending new patternLinker", patternLinkerRaw: fr.result}, function(response) {
       console.log(response.response);
       if(!response.newPatternSet) {
@@ -136,6 +129,9 @@ function useNewPattern(e) {
 
 function resetPatterns() {
   console.log("resetting patterns");
+  chrome.storage.local.set({
+    patternLinkers: undefined
+  });
   chrome.runtime.sendMessage({greeting:"reset patterns"});
 }
 
