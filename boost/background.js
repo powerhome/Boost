@@ -40,8 +40,11 @@ var windows = {};
       domainLocked = response.domainLocked;
       let domain = response.domain;
 
-      if(domain != undefined)
+      if(domain != undefined) {
         setupPatternLinkers(domain);
+      }
+
+
 
       let bottomKeyDefault = {"mod": "Ctrl", "key": "x"};
       let linkKeyDefault = {mod: "Ctrl", key: "z"};
@@ -110,7 +113,7 @@ function setupPatternLinkers(newDomain) {
   //store patternLinkers in PLC
   patternLinkerContainer["patternLinkers"] = patternLinkers;
 
-  //adds patternlinkers to patternLinkers obj
+  //adds patternLinkers to patternLinkers obj
   function addPattern(name, patternLinker)
   {
     patternLinkers[name] = patternLinker;
@@ -143,11 +146,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         break;
 
       case "sending new patternLinker":
-        console.log(request.patternLinker);
-        patternLinkerContainer.patternLinkers = request.patternLinker;
-        response += "setting up new PLC";
-        break;
+        console.log(request.patternLinkerRaw);
+        let newPatternLinkers = rawPatternLinkerParser(request.patternLinkerRaw);
+        console.log(newPatternLinkers);
+        if(newPatternLinkers) {//false if parse was bad
+          //changePatterns(newPatternLinkers);
+          response += "new pattern set";
+          answer.newPatternSet = true;
+        }
+        else {
+          response += "issue with new pattern";
+          answer.newPatternSet = false;
+        }
         
+        break;
+
       case "get bottom open":
         answer.bottomOpen = getWindowOpenStatus(sender.tab.windowId);
         response += "returning if open bottom";
@@ -157,6 +170,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         response += "clearing recent OK";
         recentMatches = [];
         break;
+
 
       case "open bottom":
         console.log(sender.tab.windowId)
@@ -233,6 +247,46 @@ function sendMessageToAllTabs(msg) {
   });
 
 
+}
+
+function changePatterns(newPatternLinkers) {
+  patternLinkerContainer.patternLinkers = newPatternLinkers;
+}
+
+/*
+  attempts to parse a string into a new pattern linker.
+  returns false if it was un able to 
+*/
+function rawPatternLinkerParser(rawText) {
+  try {
+    var newPatternLinker = JSON.parse(rawText);
+    console.log(newPatternLinker);
+    for(thisPattern in newPatternLinker) {
+      let currPattern = newPatternLinker[thisPattern];
+      //checks if this pattern is valid. if not, throws exception
+      if(!validatePatternLinker(currPattern)){
+        throw "Badly formed";
+      }
+        //change the string pattern to Regex
+        newPatternLinker[thisPattern].pattern = new RegExp(currPattern.pattern, 'igm');
+    }
+    console.log(newPatternLinker);
+  }
+  catch (e) {
+    onError(e);
+    newPatternLinker = false;
+  }
+
+  return newPatternLinker;
+  //chrome.runtime.sendMessage({greeting:"sending new patternLinker", patternLinker: newPatternLinker});
+}
+
+function validatePatternLinker(patternLinker) {
+  let isValid = false;
+  if(patternLinker.pattern && patternLinker.linkText && patternLinker.link) {
+    isValid = true;
+  }
+  return isValid
 }
 
 function setWindowOpenStatus(windowId, isOpen) {

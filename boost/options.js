@@ -108,7 +108,7 @@ function jsonParser(rawText) {
     //change the string pattern to Regex
     newPatternLinker[thisPattern].pattern = new RegExp(newPatternLinker[thisPattern].pattern, 'igm');
   }
-  chrome.runtime.sendMessage({greeting:"sending new patternLinker", patternLinker: newPatternLinker});
+  //chrome.runtime.sendMessage({greeting:"sending new patternLinker", patternLinker: newPatternLinker});
 }
 
 function useNewPattern(e) {
@@ -117,10 +117,21 @@ function useNewPattern(e) {
   var fr = new FileReader();
 
   fr.onload = function(e) {
-    jsonParser(fr.result);
+    //jsonParser(fr.result);
+    chrome.runtime.sendMessage({greeting:"sending new patternLinker", patternLinkerRaw: fr.result}, function(response) {
+      console.log(response.response);
+      if(!response.newPatternSet) {
+        console.log("pattern change aborted");
+      }
+      else {
+        console.log("pattern changed");
+      }
+    });
   }
 
   fr.readAsText(selectedFile)
+
+
 }
 
 function resetPatterns() {
