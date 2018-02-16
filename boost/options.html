@@ -9,16 +9,24 @@
 
 
     <form>
-        <input accept=".json" id="newPatternInput" type="file" name="jsonSelector"><button id="useNewPatternButton" type="button"">Use new Pattern</button>
-        <button id="resetPLCButton" type="button">Reset Patterns</button>
-        <br>
+       
+   
+        <span>These commands DO NOT catch commands that already exist in your browser. I leave it up to you to make sure there are no conflicts. Only allowed a single key or a single key and a single modifier</span><br><br>
+        <span>This command opens and closes the bottom bar</span><br>
         <label>Open Bottom Bar: <input type="text" id="bottomInput" ></label>
-        <br>
+        <br><br>
+        <span>This command finds text at your mouse, and attempts to create links based on pattern matching</span><br>
         <label>Make Link At Mouse: <input type="text" id="linkInput" ></label>
         <br>
         <button type="submit">Save</button>
-        <button style="float: right" type="reset">Reset All</button>
+
         <button style="float: right" id="resetDomainButton" type="button">Reset Domain Lock</button>
+        <br><br>
+        <span>Choose a JSON to describe new search patterns</span><br>
+        <input accept=".json" id="newPatternInput" type="file" name="jsonSelector"><button id="useNewPatternButton" type="button"">Use new Pattern</button>
+        <button style="float: right" id="resetPLCButton" type="button">Reset Patterns</button>
+        <br>
+        <button style="float: right" type="reset">Reset All</button>
 
     </form>
 
