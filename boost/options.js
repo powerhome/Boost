@@ -112,28 +112,15 @@ function jsonParser(rawText) {
 }
 
 function useNewPattern(e) {
+  console.log("saving new Patterns");
   let selectedFile = document.getElementById("newPatternInput").files[0];
-  console.log(selectedFile);
-
   var fr = new FileReader();
 
   fr.onload = function(e) {
-    console.log(fr.result);
     jsonParser(fr.result);
   }
 
-
   fr.readAsText(selectedFile)
-
-
-
-  //might not need to do all this
-  // var jsonReq = new XMLHttpRequest();
-  // jsonReq.overrideMimeType("application/json");
-  // jsonReq.addEventListener("load",jsonParser);
-  // jsonReq.open("GET", selectedFile.value);
-  // jsonReq.send();
-
 }
 
 function resetPatterns() {
