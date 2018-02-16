@@ -115,6 +115,7 @@ function useNewPattern(e) {
       console.log(response.response);
       if(!response.newPatternSet) {
         console.log("pattern change aborted");
+        alert("issue with new pattern - no change made");
       }
       else {
         console.log("pattern changed");
