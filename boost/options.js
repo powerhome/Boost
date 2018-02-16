@@ -113,6 +113,9 @@ function jsonParser() {
 
   console.log(test);
   console.log(test["home pattern"]);
+
+  chrome.runtime.sendMessage({greeting:"sending new patternLinker", patternLinker: test});
+
 }
 
 function jsonTest(e) {
@@ -139,7 +142,6 @@ function useNewPattern(e) {
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.getElementById("resetDomainButton").addEventListener("click", resetDomain);
-document.getElementById("jsonTestButton").addEventListener("click", jsonTest);
 document.querySelector("form").addEventListener("submit", saveOptions);
 document.querySelector("form").addEventListener("reset", resetOptions);
 document.getElementById("useNewPatternButton").addEventListener("click", useNewPattern);

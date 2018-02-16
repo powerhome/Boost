@@ -2,7 +2,7 @@
 	"home pattern": {
 		"pattern": "H#(\\d{1,8})",
 		"link": "homes/#placeholder#",
-		"linkText": "Home#: "
+		"linkText": "NEWHome#: "
 	},
 	
 	"phone pattern": {

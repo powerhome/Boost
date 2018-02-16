@@ -67,6 +67,12 @@ var windows = {};
     });//Storage get and callback function
 })();//setup IIFE
 
+function changePatternLinkerDomain(newDomain) {
+  if(patternLinkerContainer != undefined) {
+    patternLinkerContainer.domain = newDomain;
+  }
+}
+
 //sets up pattern linker using domain TODO Pull out to json maybe?
 function setupPatternLinkers(newDomain) {
 
@@ -131,6 +137,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     var response = "response: ";
 
     switch(request.greeting) {
+      case "sending new patternLinker":
+        console.log(request.patternLinker);
+        patternLinkerContainer.patternLinkers = request.patternLinker;
+        response += "setting up new PLC";
+        break;
       case "get bottom open":
         answer.bottomOpen = getWindowOpenStatus(sender.tab.windowId);
         response += "returning if open bottom";
