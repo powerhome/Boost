@@ -150,7 +150,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         let newPatternLinkers = rawPatternLinkerParser(request.patternLinkerRaw);
         console.log(newPatternLinkers);
         if(newPatternLinkers) {//false if parse was bad
-          //changePatterns(newPatternLinkers);
+          changePatterns(newPatternLinkers);
           response += "new pattern set";
           answer.newPatternSet = true;
         }
@@ -260,7 +260,6 @@ function changePatterns(newPatternLinkers) {
 function rawPatternLinkerParser(rawText) {
   try {
     var newPatternLinker = JSON.parse(rawText);
-    console.log(newPatternLinker);
     for(thisPattern in newPatternLinker) {
       let currPattern = newPatternLinker[thisPattern];
       //checks if this pattern is valid. if not, throws exception
@@ -270,7 +269,6 @@ function rawPatternLinkerParser(rawText) {
         //change the string pattern to Regex
         newPatternLinker[thisPattern].pattern = new RegExp(currPattern.pattern, 'igm');
     }
-    console.log(newPatternLinker);
   }
   catch (e) {
     onError(e);
@@ -278,7 +276,6 @@ function rawPatternLinkerParser(rawText) {
   }
 
   return newPatternLinker;
-  //chrome.runtime.sendMessage({greeting:"sending new patternLinker", patternLinker: newPatternLinker});
 }
 
 function validatePatternLinker(patternLinker) {
