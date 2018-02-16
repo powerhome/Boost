@@ -88,8 +88,9 @@ function setupPatternLinkers(newDomain) {
 
   let patternLinkers = new Object();
   
-  let domain = newDomain;//https?:\/\/(?:www.)?\S{1,30}.com\/|file:\/\/\/\S*.html/i.exec(document.URL)[0];
-  patternLinkerContainer["domain"] = domain;
+  if(newDomain != undefined) {
+    patternLinkerContainer["domain"] = newDomain;
+  }
 
   var homePatternLinker = new PatternLinker(/H#(\d{1,8})/igm, ("homes/" + placeholder), "Home#: ");
   addPattern("home pattern", homePatternLinker);
@@ -137,11 +138,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     var response = "response: ";
 
     switch(request.greeting) {
+      case "reset patterns":
+        setupPatternLinkers();
+        break;
+
       case "sending new patternLinker":
         console.log(request.patternLinker);
         patternLinkerContainer.patternLinkers = request.patternLinker;
         response += "setting up new PLC";
         break;
+        
       case "get bottom open":
         answer.bottomOpen = getWindowOpenStatus(sender.tab.windowId);
         response += "returning if open bottom";

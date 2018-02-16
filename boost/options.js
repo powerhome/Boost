@@ -140,8 +140,14 @@ function useNewPattern(e) {
 
 }
 
+function resetPatterns() {
+  console.log("resetting patterns");
+  chrome.runtime.sendMessage({greeting:"reset patterns"});
+}
+
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.getElementById("resetDomainButton").addEventListener("click", resetDomain);
 document.querySelector("form").addEventListener("submit", saveOptions);
 document.querySelector("form").addEventListener("reset", resetOptions);
 document.getElementById("useNewPatternButton").addEventListener("click", useNewPattern);
+document.getElementById("resetPLCButton").addEventListener("click", resetPatterns);
