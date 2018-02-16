@@ -68,7 +68,7 @@ var windows = {};
 })();//setup IIFE
 
 function changePatternLinkerDomain(newDomain) {
-  if(patternLinkerContainer != undefined) {
+  if(patternLinkerContainer != false) {
     patternLinkerContainer.domain = newDomain;
   }
 }
@@ -272,7 +272,7 @@ chrome.pageAction.onClicked.addListener(() => {
 
   //when pageaction is clicked, lock the domain and hide all current page actions
   function lockDomain(domain) {
-    setupPatternLinkers(domain);
+    changePatternLinkerDomain(domain);
     chrome.storage.local.set({domain: domain, domainLocked: true});
     domainLocked = true;
 
