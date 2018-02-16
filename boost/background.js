@@ -1,12 +1,9 @@
 const action_msg = "action clicked";
 const command_msg = "command pressed";
 const sending_pattern_msg = "sending PLC";
-const default_pattern = '{\n\t\"home pattern\": {\n\t\t\"pattern\": \"H#(\\\\d{1,8})\",\n\t\t\"link\": \"homes/#placeholder#\",\n\t\t\"linkText\": \"DEFAULTHome#: \"\n\t},\n\t\n\t\"phone pattern\": {\n\t\t\"pattern\": \"\\\\(?(\\\\d{3})\\\\)?(?: |\\\\-)*(\\\\d{3})\\\\-?(\\\\d{4})\",\n\t\t\"link\": \"homes?page=1&homes_filter[phone_number_cond]=eq&homes_filter[phone_number]=#placeholder#\",\n\t\t\"linkText\": \"Phone#: \"\n\t},\n\t\n\t\"project pattern\": { \n\t\t\"pattern\": \"(?:^|\\\\b)(3\\\\d)\\\\-?(\\\\d{5})\\\\b\",\n\t\t\"link\": \"projects?q[project_number_eq]=#placeholder#\",\n\t\t\"linkText\": \"Project#: \"\n\t},\n\n\t\"appointment pattern\": {\n\t\t\"pattern\": \"(?:^#?|\\\\s|[^ht]#)([0-2|4-9]\\\\d{4,7})\\\\b\",\n\t\t\"link\": \"homes?homes_filter[lead_id_cond]=eq&homes_filter[lead_id]=#placeholder#\",\n\t\t\"linkText\": \"Appt #: \" \n\n\t},\n\n\t\"ticket pattern\": {\n\t\t\"pattern\": \"\\\\b(?:t(?:icket)? ?#? ?)(\\\\d+)\\\\b\",\n\t\t\"link\": \"support/tickets/#placeholder#\",\n\t\t\"linkText\": \"Ticket #:\"\n\t}\n}'
-
-
+const default_pattern = '{\n\t\"home pattern\": {\n\t\t\"pattern\": \"H#(\\\\d{1,8})\",\n\t\t\"link\": \"homes/#placeholder#\",\n\t\t\"linkText\": \"Home#: \"\n\t},\n\t\n\t\"phone pattern\": {\n\t\t\"pattern\": \"\\\\(?(\\\\d{3})\\\\)?(?: |\\\\-)*(\\\\d{3})\\\\-?(\\\\d{4})\",\n\t\t\"link\": \"homes?page=1&homes_filter[phone_number_cond]=eq&homes_filter[phone_number]=#placeholder#\",\n\t\t\"linkText\": \"Phone#: \"\n\t},\n\t\n\t\"project pattern\": { \n\t\t\"pattern\": \"(?:^|\\\\b)(3\\\\d)\\\\-?(\\\\d{5})\\\\b\",\n\t\t\"link\": \"projects?q[project_number_eq]=#placeholder#\",\n\t\t\"linkText\": \"Project#: \"\n\t},\n\n\t\"appointment pattern\": {\n\t\t\"pattern\": \"(?:^#?|\\\\s|[^ht]#)([0-2|4-9]\\\\d{4,7})\\\\b\",\n\t\t\"link\": \"homes?homes_filter[lead_id_cond]=eq&homes_filter[lead_id]=#placeholder#\",\n\t\t\"linkText\": \"Appt #: \" \n\n\t},\n\n\t\"ticket pattern\": {\n\t\t\"pattern\": \"\\\\b(?:t(?:icket)? ?#? ?)(\\\\d+)\\\\b\",\n\t\t\"link\": \"support/tickets/#placeholder#\",\n\t\t\"linkText\": \"Ticket #:\"\n\t}\n}'
 
 console.log("BG Loaded");
-
 
 /*
 Called when there was an error.

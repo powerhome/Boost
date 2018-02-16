@@ -106,8 +106,6 @@ function useNewPattern(e) {
   var fr = new FileReader();
 
   fr.onload = function(e) {
-    console.log(fr.result);
-    console.log(fr);
     chrome.storage.local.set({
       patternLinkers: fr.result
     });

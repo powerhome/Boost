@@ -134,8 +134,7 @@ body {
 .bottomMidSection {
 	font-size: .8em;
 	height: 2em;
-	width: 94px;
-	min-width: 94px;
+	min-width: 10em;
 	padding: 3px 3px;
 	margin-right: 3px;
 	overflow: hidden;
