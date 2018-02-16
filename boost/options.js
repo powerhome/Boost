@@ -100,43 +100,39 @@ function resetDomain(e) {
 
 }
 
-function jsonParser() {
+function jsonParser(rawText) {
 
-  let test = JSON.parse(this.responseText);
-  console.log(test);
-  console.log(test["home pattern"]);
+  let newPatternLinker = JSON.parse(rawText);
 
-  for(thisPattern in test) {
-    test[thisPattern].pattern = new RegExp(test[thisPattern].pattern, 'igm');
-   
+  for(thisPattern in newPatternLinker) {
+    //change the string pattern to Regex
+    newPatternLinker[thisPattern].pattern = new RegExp(newPatternLinker[thisPattern].pattern, 'igm');
   }
-
-  console.log(test);
-  console.log(test["home pattern"]);
-
-  chrome.runtime.sendMessage({greeting:"sending new patternLinker", patternLinker: test});
-
-}
-
-function jsonTest(e) {
-  var jsonReq = new XMLHttpRequest();
-  jsonReq.overrideMimeType("application/json");
-  jsonReq.addEventListener("load",jsonParser);
-  jsonReq.open("GET", "patternLinker.json");
-  jsonReq.send();
-
+  chrome.runtime.sendMessage({greeting:"sending new patternLinker", patternLinker: newPatternLinker});
 }
 
 function useNewPattern(e) {
-  let selectedFile = document.getElementById("newPatternInput");
-  console.log(selectedFile.files[0]);
-  //let newPattern = JSON.parse(selectedFile.files[0]);
+  let selectedFile = document.getElementById("newPatternInput").files[0];
+  console.log(selectedFile);
 
-  var jsonReq = new XMLHttpRequest();
-  jsonReq.overrideMimeType("application/json");
-  jsonReq.addEventListener("load",jsonParser);
-  jsonReq.open("GET", selectedFile.files[0].name);
-  jsonReq.send();
+  var fr = new FileReader();
+
+  fr.onload = function(e) {
+    console.log(fr.result);
+    jsonParser(fr.result);
+  }
+
+
+  fr.readAsText(selectedFile)
+
+
+
+  //might not need to do all this
+  // var jsonReq = new XMLHttpRequest();
+  // jsonReq.overrideMimeType("application/json");
+  // jsonReq.addEventListener("load",jsonParser);
+  // jsonReq.open("GET", selectedFile.value);
+  // jsonReq.send();
 
 }
 
