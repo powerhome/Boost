@@ -5,9 +5,6 @@ var currDomain;
 var bottomKey;
 var linkKey;
 
-//TODO TABS HAS WINDOW ID
-console.log(window);
-
 /*
 Called when there was an error.
 We'll just log the error here.
@@ -104,11 +101,12 @@ function checkNeedToShow(bottomOpen) {
 
 	if(bottomOpen)
 	{
+		console.log(checkBottomBarExists())
 		if(!checkBottomBarExists()) {
 		setupBottomBar();
 		}
 		let bottomBar = document.getElementById("bottomBar");
-		let spacingDiv = document.getElemenyById("spacingDiv");
+		let spacingDiv = document.getElementById("spacingDiv");
 		bottomBar.classList.remove("slide");
 		bottomBar.classList.remove("hideBar");
 		spacingDiv.classList.remove("hideBar");
