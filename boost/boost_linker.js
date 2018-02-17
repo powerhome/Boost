@@ -20,6 +20,7 @@ function onError(error) {
 	invalidTargets.push(document.body);
 
 	setupDomain();
+	setupBottomBar();
 	//sets up listener to get command press from BG Script
 	chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {
@@ -36,6 +37,7 @@ function onError(error) {
 				}
 				if(document.getElementById("bottomBar").classList.contains("hideBar")) {
 					toggleBottomBar();
+					focusBottomBar();
 				}
 				break;
 
@@ -389,17 +391,22 @@ function toggleBottomBar() {
 
 	if(!bottomBar.classList.contains("hideBar"))
 	{
-		setTimeout(function () {
-			try {
-				bottomBar.firstChild.contentWindow.document.getElementById("smartSearchText").focus();
-			}
-			catch (e)
-			{
-				//the try block should work in FF, this focus accomplishes the same in chrome(but not in FF) so this should cover both
-				bottomBar.firstChild.contentWindow.focus();
-			}
-		}, 1);
+		setTimeout(focusBottomBar, 5);
 	}
+}
+
+function focusBottomBar() {
+	let bottomBar = document.getElementById("bottomBar");
+
+	try {
+		bottomBar.firstChild.contentWindow.document.getElementById("smartSearchText").focus();
+	}
+	catch (e)
+	{
+		//the try block should work in FF, this focus accomplishes the same in chrome(but not in FF) so this should cover both
+		bottomBar.firstChild.contentWindow.focus();
+	}
+
 }
 
 function setupDomain() {
