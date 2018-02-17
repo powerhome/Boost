@@ -6,7 +6,7 @@
 	},
 	
 	"phone pattern": {
-		"pattern": "\\(?(\\d{3})\\)?(?: |\\-)*(\\d{3})\\-?(\\d{4})",
+		"pattern": "\\b\\(?(\\d{3})\\)?(?: |\\-)*(\\d{3})\\-?(\\d{4})\\b",
 		"link": "homes?page=1&homes_filter[phone_number_cond]=eq&homes_filter[phone_number]=#placeholder#",
 		"linkText": "Phone#: "
 	},
@@ -22,6 +22,12 @@
 		"link": "homes?homes_filter[lead_id_cond]=eq&homes_filter[lead_id]=#placeholder#",
 		"linkText": "Appt #: " 
 
+	},
+
+	"user number pattern": {
+		"pattern": "U#(\\d{1,8})",
+		"link": "usersusers/#placeholder#/edit",
+		"linkText": "User#: "
 	},
 
 	"ticket pattern": {

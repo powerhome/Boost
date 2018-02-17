@@ -1,0 +1,15 @@
+
+
+{
+	"asset pattern": {
+		"pattern": "A#(\\d{1,8})",
+		"link": "equipment_assets?page=1&equipment_assetsfilter[asset_number_cond]=starts_with&equipment_assetsfilter[asset_number]=#placeholder#",
+		"linkText": "Asset#: "
+	},
+	
+	"user number pattern": {
+		"pattern": "U#(\\d{1,8})",
+		"link": "users/#placeholder#/edit",
+		"linkText": "User#: "
+	}
+}
