@@ -1,49 +1,34 @@
-# menu-demo
+# BOOST
 
 WIP of boost for a particular web page
 
 
 ## how to
-The default key to active is MacCommand+B, this is set in the manifest.
-The script listens for this command and when found, checks the text at the target element on the page
-In the target element and its children, if a match is found against one of the patterns, a link is created to that item and shown on the page
+There are two commands: Make Link at Mouse and Open Bottom Bar
 
-MacCtrl+Z opens the side bar, which has a search that uses similar logic to the text search on the page. It builds links for input that matches patterns, links that work in a proprietary system. 
+Make link at mouse takes all the text at the most specific element at the mouse
+It then tried to match patterns against the text to determine if it needs to build links
 
-This addon is mostly for personal use.
+Open Bottom Bar opens the a bottom bar, which has a search field that checks the same patterns as the other command, and also displays all recent matches
 
-## What it does
 
-This Addon finds common patterns for various things(projects, homes, phone numbers) and creates an easily clicked link related to that number.
 
-## What it shows
+## how to structure the JSON for config for patterns
 
-a link to the item it found in text.
-
-## how the pattern linker object is structured 
-
-patternLinkerContainer: {
-	
-	//when trying to find a match, this obj is iterated over. Each pattern is checked against the target
-	//text, when matches are found, links are build using the related link and link text
 	patternLinkers: {
 		"some pattern linker": {
-			pattern: Regex pattern,
-			link: link text to fill,
-			linkText: link text to display
+			pattern: Regex pattern with a capture group,
+			link: "path/to/put/after/domain/#placeholder#",
+			linkText: "text that is shown:"
 		},
 
-		"some other pattern linker": {
-			pattern: Regex pattern,
-			link: link text to fill,
-			linkText: link text to display
+		"appointment pattern": {
+			pattern: /some pattern that matches appointments A#(12345)/,
+			link: "/search/appointments/#placeholder#/",
+			linkText: "Appt #: "
 		}
-	},
+	}
 
-	//text put into link to be replaced when pattern is matched
-	placeholder: "#placeholder#",
-
-	//domain of the site, used to build link
-	domain: domain_pulled_from_page
-
-}
+	IE: if i tried to link to A#12345 the result would be 
+	Appt #: 12345  where the 12345 is a link to DOMAIN/search/appointments/12345
+	

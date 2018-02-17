@@ -101,7 +101,6 @@ function checkNeedToShow(bottomOpen) {
 
 	if(bottomOpen)
 	{
-		console.log(checkBottomBarExists())
 		if(!checkBottomBarExists()) {
 		setupBottomBar();
 		}
