@@ -115,7 +115,7 @@ body {
 
 
 #smartSearchResults {
-		margin: 0;
+	margin: 0;
 	width: 100%;
 	
 	min-height: 2em;
@@ -145,6 +145,8 @@ body {
 
 .bottomSpacer {
 	width: 30%;
+	margin-right: 3px;
+	margin-left: 3px;
 }
 
 #spacingDiv {
@@ -159,6 +161,29 @@ body {
 	height: 0 !important;
 	margin-top: 0 !important;
 	
+}
+
+.closeBarButton {
+	text-align: center;
+
+}
+
+.closeBarButton:hover {
+	background: grey;
+	border-radius: 
+}
+
+.outerSection {
+	width: 2em;
+
+}
+
+#recentSearchesButton {
+	text-align: center;
+	width: 2em;
+	height: 2em;
+	background: #0072CE;
+	border-radius: 3px;
 }
 
 

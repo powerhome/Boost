@@ -17,6 +17,9 @@ window.onload = () =>  {
 		linkKey = result.linkKey;
 	});
 
+	document.getElementById("bottomLeftClose").addEventListener("click",closeBottom);
+	document.getElementById("bottomRightClose").addEventListener("click",closeBottom);
+
 	document.onkeypress = handleKeyPress;
 
 	let input = document.getElementById("smartSearchText");
@@ -39,6 +42,12 @@ window.onload = () =>  {
 		return false;
 	}
 };
+
+function closeBottom() {
+	console.log("closing Bottom");
+	sendToggleMessage();
+
+}
 
 function clearRecentDisplay() {
 	document.getElementById("smartSearchResults").innerHTML = "";
@@ -141,6 +150,13 @@ function handleKeyPress(event) {
 }
 
 function bottomCommandPressed () {
+	chrome.runtime.sendMessage({greeting:"toggle bottom"},
+		function (response) {
+			console.log(response.response);
+	});
+}
+
+function sendToggleMessage() {
 	chrome.runtime.sendMessage({greeting:"toggle bottom"},
 		function (response) {
 			console.log(response.response);

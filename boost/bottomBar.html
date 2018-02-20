@@ -6,7 +6,9 @@
   </head>
   <body> 
   	<div class="flexContainer" id="bottomBarContainer">
-      <div class="bottomSpacer"></div>
+      <div class="bottomSpacer">
+        <div style="float:right" id="bottomLeftClose" class="bottomTitle closeBarButton outerSection">▽</div>
+      </div>
 	  	<div id="smartSearchDiv">
 	  	  <div id="smartSearchTitle" class="bottomTitle">Smart(ish) Search</div>
 		  	<form  autocomplete="off" name="smart_search_form" target="_blank" id="smartSearchForm">
@@ -21,7 +23,10 @@
         </div>
         <button class="BLButton" id="clearResultsBtn">Clear Results</button>
       </div>
-      <div class="bottomSpacer"></div>
+      <div class="bottomSpacer">
+        <div id="bottomRightClose" class="bottomTitle  closeBarButton outerSection">▽</div>
+        <div id=recentSearchesButton class="outerSection">⏳</div>
+      </div>
 	</div>
    	<script src="bottomBar.js"></script>
   </body>
