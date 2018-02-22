@@ -188,30 +188,31 @@ function linkifyAtMouseover() {
 		});
 	})(textToSend, target);
 	
-	//builds the div to hold results and eventually put on screen (if needed)
-	function buildResultDiv() {
-		let resultDiv = document.createElement("DIV");
-		resultDiv.className = "BLresult";
-		invalidTargets.push(resultDiv);
+}
 
-		let title = document.createElement("DIV");
-		title.className = "BLtitle";
-		title.innerHTML = "Boost Links:";
-		resultDiv.appendChild(title);
-		invalidTargets.push(title);
+//builds the div to hold results and eventually put on screen (if needed)
+function buildResultDiv() {
+	let resultDiv = document.createElement("DIV");
+	resultDiv.className = "BLresult";
+	invalidTargets.push(resultDiv);
 
-		let itemsDiv = document.createElement("DIV");
-		itemsDiv.className = "BLitems";
-		resultDiv.appendChild(itemsDiv);
-		invalidTargets.push(itemsDiv);
+	let title = document.createElement("DIV");
+	title.className = "BLtitle";
+	title.innerHTML = "Boost Links:";
+	resultDiv.appendChild(title);
+	invalidTargets.push(title);
 
-		return resultDiv
-	}
+	let itemsDiv = document.createElement("DIV");
+	itemsDiv.className = "BLitems";
+	resultDiv.appendChild(itemsDiv);
+	invalidTargets.push(itemsDiv);
 
-	//appends "elem" to the proper place in  "resultDiv"
-	function addToResult(resultDiv, elem) {
-		resultDiv.childNodes[1].appendChild(elem);
-	}
+	return resultDiv
+}
+
+//appends "elem" to the proper place in  "resultDiv"
+function addToResult(resultDiv, elem) {
+	resultDiv.childNodes[1].appendChild(elem);
 }
 
 /*

@@ -19,6 +19,7 @@ window.onload = () =>  {
 
 	document.getElementById("bottomLeftClose").addEventListener("click",closeBottom);
 	document.getElementById("bottomRightClose").addEventListener("click",closeBottom);
+	document.getElementById("recentSearchesButton").addEventListener("click",showRecents);
 
 	document.onkeypress = handleKeyPress;
 
@@ -42,6 +43,10 @@ window.onload = () =>  {
 		return false;
 	}
 };
+
+function showRecents() {
+	
+}
 
 function closeBottom() {
 	console.log("closing Bottom");
