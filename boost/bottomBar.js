@@ -45,7 +45,10 @@ window.onload = () =>  {
 };
 
 function showRecents() {
-	
+	console.log("Showing recent");
+	let recentSearches = document.getElementById("recentSearchesDialog");
+	console.log(recentSearches);
+	recentSearches.showModal();
 }
 
 function closeBottom() {
