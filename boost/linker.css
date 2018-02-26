@@ -175,6 +175,7 @@
 
 .outerSection {
 	width: 2em;
+	border-radius: 3px;
 
 }
 
@@ -184,7 +185,6 @@
 	width: 2em;
 	height: 2em;
 	background: #0072CE;
-	border-radius: 3px;
 }
 
 #expandRecent {
