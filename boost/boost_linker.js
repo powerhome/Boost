@@ -22,9 +22,6 @@ function onError(error) {
 	setupDomain();
 	setupBottomBar();
 
-	window.addEventListener("message", receiveMessage, false);
-
-
 	//sets up listener to get command press from BG Script
 	chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {
@@ -33,9 +30,6 @@ function onError(error) {
 		let response = "response: ";
 
 		switch(request.greeting) {
-			case "show modal":
-				testDialog();
-				break;
 
 			case "open bottom"://open used by content script
 				console.log("opening bot");
@@ -70,7 +64,7 @@ function onError(error) {
 				correctBottomBar(request.bottomOpen);
 			break;
 
-			case "action clicked":	
+			case "action clicked":
 				response += "locking domain";
 				answer["domain"] = getDomain();
 				answer["domain_lock_needed"] = true;//tells bg to lock the domain
@@ -80,7 +74,7 @@ function onError(error) {
 				response += "command pressed recieved";
 				linkifyAtMouseover();
 				break;
-			
+
 			default:
 				console.log("unknown msg recieved");
 				break;
@@ -89,18 +83,12 @@ function onError(error) {
 		sendResponse(answer);
 	});
 
-	
+
 	initialCheckNeedToShow();
 	setupPreferenceKeys();
 	setupPageAction();
 
 	document.onkeypress = handleKeyPress;
-
-	function receiveMessage(e) {
-		console.log(e);
-		testDialog();
-
-	}
 
 })();
 
@@ -167,7 +155,7 @@ function linkifyAtMouseover() {
 					}
 				});
 				break;
-			case Node.TEXT_NODE: 
+			case Node.TEXT_NODE:
 				//add the current node to the array of nodes to check
 				textToSend.push(node.nodeValue);
 				break;
@@ -183,13 +171,13 @@ function linkifyAtMouseover() {
 			console.log("resp: " + response);
 			let resultDiv = buildResultDiv();
 			let links = response.links; //get from result eventually
-			
+
 		    for(let i = 0; i < links.length; i++) {
 				let thisDiv = document.createElement("DIV");
 				thisDiv.innerHTML = links[i];
 				//inserts the matched link in the result div
 				addToResult(resultDiv, thisDiv);
-				
+
 				//puts the div and the link elems into invalid targets so you cant make links from links
 				invalidTargets.push(thisDiv);
 				invalidTargets.push(thisDiv.childNodes[1]);
@@ -201,7 +189,7 @@ function linkifyAtMouseover() {
 
 		});
 	})(textToSend, target);
-	
+
 }
 
 //builds the div to hold results and eventually put on screen (if needed)
@@ -234,7 +222,7 @@ function addToResult(resultDiv, elem) {
 */
 function getMouseoverElement() {
 	var items = document.querySelectorAll( ":hover" );
-		
+
 	if(items.length > 0) {
 		item = items[items.length - 1];
 		return item;
@@ -273,7 +261,7 @@ function setupBottomBar() {
 		      	resizeTimeout = setTimeout(function() {
 		        resizeTimeout = null;
 		        resizeBottomBar(bottomFrame, bottomBar);
-	     
+
 	       // The actualResizeHandler will execute at a rate of 15fps
 	       }, 66);
 	    }
@@ -301,7 +289,7 @@ function handleKeyPress(event) {
 	if(key == bottomKey.key) {
 		console.log("bot key matched");
 		switch(bottomKey.mod) {
-			case "Ctrl": 
+			case "Ctrl":
 				if(event.ctrlKey)
 				{
 					bottomCommandPressed()
@@ -330,7 +318,7 @@ function handleKeyPress(event) {
 
 	if(key == linkKey.key) {
 		switch(linkKey.mod) {
-			case "Ctrl": 
+			case "Ctrl":
 				if(event.ctrlKey) {
 					linkCommandPressed()
 				}
@@ -449,27 +437,8 @@ function checkBottomBarExists() {
 }
 
 function correctBottomBar(bottomOpen) {
-	let isVisible = !document.getElementById("bottomBar").classList.contains("hideBar"); 
+	let isVisible = !document.getElementById("bottomBar").classList.contains("hideBar");
 	if(isVisible != bottomOpen) {
 		toggleBottomBar();
 	}
-}
-
-function testDialog() {
-	console.log("opening test dialog");
-
-
-	let dialog = document.createElement("dialog");
-	dialog.innerHTML = "TEST";
-
-	let body = document.getElementById("body");
-	console.log(dialog);
-
-	body.appendChild(dialog);
-
-	dialog.showModal();
-
-
-
-
 }

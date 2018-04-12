@@ -19,7 +19,6 @@ window.onload = () =>  {
 
 	document.getElementById("bottomLeftClose").addEventListener("click",closeBottom);
 	document.getElementById("bottomRightClose").addEventListener("click",closeBottom);
-	document.getElementById("recentSearchesButton").addEventListener("click",showRecents);
 
 	document.onkeypress = handleKeyPress;
 
@@ -43,16 +42,6 @@ window.onload = () =>  {
 		return false;
 	}
 };
-
-function showRecents() {
-	console.log("Showing recent");
-	window.parent.postMessage({greeting:"hello"},"*");
-
-
-	let recentSearches = document.getElementById("recentSearchesDialog");
-	console.log(recentSearches);
-	//recentSearches.showModal();
-}
 
 function closeBottom() {
 	console.log("closing Bottom");
@@ -103,7 +92,7 @@ function getLinksFromBG(targetValue) {
 }
 
 //helper method to put message in for no matches
-//uses same code as adding result 
+//uses same code as adding result
 function noMatches(value)
 {
 	let msgForNoMatches = ["No Match for: " + value];
@@ -130,7 +119,7 @@ function handleKeyPress(event) {
 	if(key == bottomKey.key) {
 		console.log("bot key matched");
 		switch(bottomKey.mod) {
-			case "Ctrl": 
+			case "Ctrl":
 				if(event.ctrlKey)
 				{
 					bottomCommandPressed()
