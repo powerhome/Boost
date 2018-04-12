@@ -21,6 +21,10 @@ function onError(error) {
 
 	setupDomain();
 	setupBottomBar();
+
+	window.addEventListener("message", receiveMessage, false);
+
+
 	//sets up listener to get command press from BG Script
 	chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {
@@ -29,6 +33,10 @@ function onError(error) {
 		let response = "response: ";
 
 		switch(request.greeting) {
+			case "show modal":
+				testDialog();
+				break;
+
 			case "open bottom"://open used by content script
 				console.log("opening bot");
 				response += "opening bottom OK";
@@ -87,6 +95,12 @@ function onError(error) {
 	setupPageAction();
 
 	document.onkeypress = handleKeyPress;
+
+	function receiveMessage(e) {
+		console.log(e);
+		testDialog();
+
+	}
 
 })();
 
@@ -439,4 +453,23 @@ function correctBottomBar(bottomOpen) {
 	if(isVisible != bottomOpen) {
 		toggleBottomBar();
 	}
+}
+
+function testDialog() {
+	console.log("opening test dialog");
+
+
+	let dialog = document.createElement("dialog");
+	dialog.innerHTML = "TEST";
+
+	let body = document.getElementById("body");
+	console.log(dialog);
+
+	body.appendChild(dialog);
+
+	dialog.showModal();
+
+
+
+
 }
